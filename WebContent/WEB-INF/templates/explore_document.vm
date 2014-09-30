@@ -1,0 +1,10 @@
+<script src="../web/js/d3.layout.cloud.js"></script>
+<div id="doc-input" class="large-16 medium-16 small-16" align="center">
+	<div id="simple-input">
+		<input id="docpid" type="text" class="biginput" placeholder="$labels.getString("explore.document.placeholder")" />
+	</div>
+	<div id="simple-buttons">
+		<button onclick="Whitelab.explore.document.load($('#docpid').val(),'')" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.explore.document.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button>
+	</div>
+</div>
+<div class="large-16 medium-16 small-16 content" id="docdisplay"></div>

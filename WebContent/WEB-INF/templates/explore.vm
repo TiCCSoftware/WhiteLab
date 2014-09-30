@@ -1,0 +1,71 @@
+#parse("header.vm")
+		#set($treemap = $labels.getString("explore.treemap"))
+		#set($ngram = $labels.getString("explore.ngram"))
+		#set($stats = $labels.getString("explore.statistics"))
+		#set($doc = $labels.getString("explore.document"))
+		<div id="explorepage">
+			<div class="row" id="subnav">
+				<dl id="explore-nav" class="sub-nav" data-tab>
+				#if($tab == "treemap")
+					<dd class="active"><a id="corpus-link" class="tablink" onclick="Whitelab.explore.switchTab('treemap')">$treemap</a></dd>
+				#else
+					<dd><a id="corpus-link" class="tablink" onclick="Whitelab.explore.switchTab('treemap')">$treemap</a></dd>
+				#end
+				#if($tab == "stats")
+					<dd class="active"><a id="stats-link" class="tablink" onclick="Whitelab.explore.switchTab('stats')">$stats</a></dd>
+				#else
+					<dd><a id="stats-link" class="tablink" onclick="Whitelab.explore.switchTab('stats')">$stats</a></dd>
+				#end
+				#if($tab == "ngram")
+					<dd class="active"><a id="ngram-link" class="tablink" onclick="Whitelab.explore.switchTab('ngram')">$ngram</a></dd>
+				#else
+					<dd><a id="ngram-link" class="tablink" onclick="Whitelab.explore.switchTab('ngram')">$ngram</a></dd>
+				#end
+				#if($tab == "document")
+					<dd class="active"><a id="doc-link" class="tablink" onclick="Whitelab.explore.switchTab('document')">$doc</a></dd>
+				#else
+					<dd><a id="doc-link" class="tablink" onclick="Whitelab.explore.switchTab('document')">$doc</a></dd>
+				#end
+				</dl>
+			</div>
+			
+			<div class="large-16 medium-16 small-16 row tabs-content" id="explore">
+				#set($meta = "")
+				#set($treemap_active = "")
+				#set($ngram_active = "")
+				#set($stats_active = "")
+				#set($doc_active = "")
+			
+				#if($tab == "treemap")
+					#set($treemap_active = "active")
+					#set($meta = "hidden")
+				#elseif($tab == "ngram")
+					#set($ngram_active = "active")
+				#elseif($tab == "stats")
+					#set($stats_active = "active")
+				#elseif($tab == "document")
+					#set($doc_active = "active")
+					#set($meta = "hidden")
+				#end
+				
+				<div id="metadata" $meta>
+					#parse("metadata.vm")
+				</div>
+				<div id="treemap" class="large-16 medium-16 small-16 content $treemap_active">
+					#parse("treemap.vm")
+				</div>
+				<div id="stats" class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1 content $stats_active">
+					#parse("statistics.vm")
+				</div>
+				<div id="ngram" class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1 content $ngram_active">
+					#parse("ngram.vm")
+				</div>
+				<div id="document" class="content $doc_active large-16 medium-16 small-16">
+					#parse("explore_document.vm")
+				</div>
+			</div>
+		</div>
+		<script>
+			Whitelab.explore.options = '$posValues';
+		</script>
+#parse("footer.vm")

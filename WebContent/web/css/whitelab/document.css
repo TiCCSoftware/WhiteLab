@@ -1,0 +1,215 @@
+#document .doc-pane {
+	display: none;
+}
+
+#document .doc-pane.active {
+	display: block;
+	min-height: 540px;
+}
+
+#docContentTabs {
+display: block;
+margin-top: 50px;
+margin-left: 0px;
+}
+
+#docContentTabs > li {
+	width: 20%;
+	display: inline-block;
+	font-size: small;
+	border: 1px solid #CCC;
+	border-bottom: 0;
+	-webkit-border-top-left-radius: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	padding: 8px;
+}
+
+#docContentTabs > li.active {
+	background-color: #CCC;
+	border: 1px solid #CCC;
+}
+
+#document .gradient {
+	display: block;
+	width: 100%;
+	height: 15px;
+	
+	/* IE10 Consumer Preview */ 
+background-image: -ms-linear-gradient(bottom, #FFFFFF 0%, #CCC 40%);
+
+/* Mozilla Firefox */ 
+background-image: -moz-linear-gradient(bottom, #FFFFFF 0%, #CCC 40%);
+
+/* Opera */ 
+background-image: -o-linear-gradient(bottom, #FFFFFF 0%, #CCC 40%);
+
+/* Webkit (Safari/Chrome 10) */ 
+background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(0.4, #CCC));
+
+/* Webkit (Chrome 11+) */ 
+background-image: -webkit-linear-gradient(bottom, #FFFFFF 0%, #CCC 40%);
+
+/* W3C Markup, IE10 Release Preview */ 
+background-image: linear-gradient(to top, #FFFFFF 0%, #CCC 40%);
+}
+
+.doc-pane {
+	width: 100%;
+	margin-top: -22px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border: 1px solid #CCC;
+	display: block;
+}
+
+#docContentTabs > li > a {
+	font-weight: bold;
+}
+
+#docContentTabs > li.active > a {
+	color: #fff;
+}
+
+#docCloudSettings {
+	height: 40px;
+	padding: 10px;
+	font-size: small;
+	border-bottom: 1px solid #ccc;
+}
+
+div.display {
+	text-align: center;
+}
+
+div.posrow > div.left {
+	text-align: right;
+	padding-right: 10px;
+}
+
+div.posrow > div.right {
+	border-left: 1px solid #ccc;
+	padding-left: 30px;
+}
+
+div.chart {
+	display: none;
+}
+
+div.poslink {
+	width: 100%;
+	text-align: right;
+}
+
+div.poslink > a {
+	color: #555;
+	font-size: small;
+	padding: 2px;
+	padding-left: 8px;
+	padding-right: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+div.poslink > a.active {
+	color: #fff;
+	background: #ccc;
+}
+
+div.chart.active {
+	display: block;
+	text-align: center;
+}
+
+div.chart.active > div {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.doc-pane > div.row.display {
+	border-bottom: 1px solid #ccc;
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+
+div.posrow {
+	margin-bottom: 10px;
+}
+
+div.nodata {
+	color: #ccc;
+	font-size: 50px;
+	height: 300px;
+	padding-top: 100px;
+}
+
+#pos_nav {
+	/* display: block; */
+	display:table;
+	border-spacing:10px;
+	list-style-type: none;
+    text-align: center;
+    margin-left: auto;
+	margin-right: auto;
+}
+
+#pos_nav li {
+	display: table-cell;
+    text-align: center;
+	height: 50px;
+	vertical-align: middle;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#pos_nav a {
+	display: inline-block;
+	width: 100%;
+	background-color: inherit;
+	color: inherit;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#pos_nav h3 {
+	color: inherit;
+	padding: 0;
+	margin: 0;
+}
+
+#pos_data .pos_tab {
+	display: none;
+}
+
+#pos_data .pos_tab.active {
+	display: block;
+}
+
+.pos_tab .right .toolbar, .pos_tab .right .chart {
+	display: none;
+}
+
+.pos_tab.active .right.active .toolbar, .pos_tab.active .right.active .chart {
+	display: block;
+}
+
+#document .charts-inline-block {
+	margin: 0;
+}
+
+#docStatsDisplay table {
+	width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#docStatsDisplay {
+	padding-top: 30px;
+	padding-bottom: 20px;
+}

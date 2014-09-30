@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Treemap</title>
+<link rel="stylesheet" href="../web/css/whitelab/treemap.css" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="../web/js/whitelab_util/treemap.js"></script>
+<script>
+	function init() {
+		window.parent.initTreemap(); return true;
+	};
+</script>
+</head>
+
+<body onload="init();">
+<div class="controls"><b>Schaal:</b><span class="space"></span><input type="radio" name="sizing" id="log" value="log" checked>log<span class="space"></span><input type="radio" name="sizing" id="normal" value="normal"> absoluut</div>
+<div id="display"></div>
+</body>
+</html>

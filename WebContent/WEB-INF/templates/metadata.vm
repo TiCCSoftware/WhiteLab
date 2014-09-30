@@ -1,0 +1,91 @@
+		#set($src='../web/img/plus.png')
+		#if($maintab == 'explore')
+			#set($src='../web/img/minus.png')
+		#end
+		<dl class="accordion large-16 medium-16 small-16" id="accordion" data-accordion>
+			<dd class="accordion-navigation large-16 medium-16 small-16">
+				<a href="#${maintab}-meta" class="large-16 medium-16 small-16 meta-top-plus" onclick="Whitelab.meta.switchState(this);"><img class="img-plus" src="${src}"><h6>Metadata filters</h6></a>
+				<div id="${maintab}-meta" class="content content-meta large-16 medium-16 small-16">
+					<div class="meta-header large-16 medium-16 small-16">
+						<p>$labels.getString("meta.header")</p>
+					</div>
+					<div class="row rules large-offset-1 medium-offset-1 small-offset-1">
+						$metaRule
+					</div>
+					<div class="meta-footer large-16 medium-16 small-16">
+						#if($showMetaOptions && $showMetaOptions == "yes")
+						<p>
+							<input type="checkbox" id="group-check"> $labels.getString("meta.group")<select id="group-select" class="meta-medium">
+								<option value="hits" selected="true">$labels.getString("meta.group.hits")</option>
+								<option value="documents">$labels.getString("meta.group.documents")</option>
+							</select>per<select id="groupBy-select" class="meta-medium" onchange="$('#group-check').prop('checked',true);">
+								<option value="" selected="true"></option>
+								<option class="noprefix" value="hit:word">hit $labels.getString("word")</option>
+								<option class="noprefix" value="wordleft:word">$labels.getString("word") $labels.getString("left")</option>
+								<option class="noprefix" value="wordright:word">$labels.getString("word") $labels.getString("right")</option>
+								<option class="noprefix" value="hit:lemma">hit $labels.getString("lemma")</option>
+								<option class="noprefix" value="wordleft:lemma">$labels.getString("lemma") $labels.getString("left")</option>
+								<option class="noprefix" value="wordright:lemma">$labels.getString("lemma") $labels.getString("right")</option>
+								<option class="noprefix" value="hit:pos">hit $labels.getString("pos")</option>
+								<option class="noprefix" value="wordleft:pos">$labels.getString("pos") $labels.getString("left")</option>
+								<option class="noprefix" value="wordright:pos">$labels.getString("pos") $labels.getString("right")</option>
+								#foreach($field in $filters)
+									#set($f = $filterIds.get($field))
+									$metaOptions.get($field)
+								#end
+							</select>
+						</p>
+						<p>$labels.getString("meta.within") <select id="search-within" class="meta-medium">
+								<option value="sentence">$labels.getString("meta.within.sentence")</option>
+								<option value="paragraph">$labels.getString("meta.within.paragraph")</option>
+								<option value="" selected="true">$labels.getString("meta.within.document")</option>
+							</select>
+						</p>
+						#end
+					</div>
+				</div>
+			</dd>
+		</dl>
+		<script>
+			Whitelab.meta.rule = '$metaRule';
+			
+			#[[
+			$(document).on("change", "select.metaLabel", function(e) {
+				e.preventDefault();
+				console.log("metaLabel changed");
+				
+				var val = $(this).val();
+				console.log("metaLabel value: "+val);
+				var chk = 0;
+				var inputParent = $(this).parent().parent().find(".metaInput").parent();
+				]]#
+				
+				#set($d = "'")
+				#foreach($sfield in $filters)
+					#set($f = $filterIds.get($sfield))
+					#set($b="if (val === 'field:")
+					#set($a="') {")
+					${b}${f}${a}
+					#[[
+						chk = 1;
+						$(inputParent).html(''+
+						]]# ${d}$metaSelect.get($f)${d} #[[
+						+'');
+					}
+					]]#
+				#end
+				#[[
+				if (chk == 0) {
+					$(inputParent).html('<input class="metaInput" type="text">');
+				}
+			});
+			
+			$(document).on("change", "select.metaInput", function(e) {
+				e.preventDefault();
+				if ($(this).val() === "other") {
+					var parent = $(this).parent();
+					$(parent).html("<input class=\"metaInput\" type=\"text\">");
+				}
+			});
+			]]#
+		</script>

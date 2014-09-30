@@ -1,0 +1,53 @@
+/* CSS Document */
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.node {
+  border: solid 1px white;
+  overflow: hidden;
+  position: absolute;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+}
+
+.text {
+	font: 12px sans-serif;
+	line-height: 12px;
+	margin: 5px;
+	font-weight: 700;
+}
+
+.info {
+	display: none;
+}
+
+.info.active {
+	display: block;
+	font-weight: normal;
+	margin: 5px;
+	margin-top: 10px;
+}
+
+.controls {
+	font-size: small;
+	color: #999;
+	font-style:italic;
+	margin-left: 10px;
+}
+
+.controls span.space {
+	display: inline-block;
+	min-width: 10px;
+}

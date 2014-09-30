@@ -1,0 +1,58 @@
+		<div class="footer">WhiteLab v0.4.2 &copy; <a href="http://www.tilburguniversity.edu">Tilburg University</a> 2014 - Development: <a href="http://www.taalmonsters.nl">De Taalmonsters</a> - Powered by: <a href="https://github.com/INL/BlackLab-server" target="_blank">BlackLab Server</a> &copy; <a href="http://www.inl.nl">INL</a> 2014</div>
+		<script>
+			Whitelab.baseUrl = '$labels.getString("webserviceUrl")';
+			
+			#if($lang)
+				Whitelab.language = "$lang";
+			#end
+		
+			$(document).foundation();
+			
+			$(function() {
+				var state = Whitelab.cookies.checkCookie('opensonar');
+				if (state !== undefined) {
+					$("div.cookies").removeClass("active");
+					$("nav.topbar").css({top : 0});
+				} else {
+					$("div.cookies").addClass("active");
+					$("nav.topbar").css({top : 50});
+				}
+				Whitelab.tab = "$maintab";
+				#if($maintab == "home")
+					Whitelab.home.setSizes();
+					$( window ).resize(function() {
+						Whitelab.home.setSizes();
+					});
+				#elseif($maintab == "explore")
+					Whitelab.explore.setSizes();
+					$( window ).resize(function() {
+						Whitelab.explore.setSizes();
+					});
+				#elseif($maintab == "search")
+					Whitelab.search.tab = "$tab";
+					Whitelab.search.setSizes();
+					$( window ).resize(function() {
+						Whitelab.search.setSizes();
+					});
+				#end
+			});
+
+			$(document).keypress(function(e) {
+			    if(e.which == 13 && Whitelab.tab === 'search' && (Whitelab.search.tab === 'simple' || Whitelab.search.tab === 'extended' || Whitelab.search.tab === 'advanced')) {
+			    	$( "#"+Whitelab.search.tab ).find(".search").trigger( "click" );
+			    }
+			});
+			
+			$(document).mouseup(function (e) {
+			    var container = $("#advanced ul.options");
+			
+			    if (!container.is(e.target) // if the target of the click isn't the container...
+			        && container.has(e.target).length === 0) // ... nor a descendant of the container
+			    {
+			        container.parent().removeClass("active");
+			    }
+			});
+			
+		</script>
+	</body>
+</html>

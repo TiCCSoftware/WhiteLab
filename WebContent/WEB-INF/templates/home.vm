@@ -1,0 +1,4 @@
+#set($homeUrl=$labels.getString("homeUrl"))
+#parse("header.vm")
+		<iframe id="homepage" src="$!homeUrl"></iframe>
+#parse("footer.vm")

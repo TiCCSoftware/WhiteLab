@@ -1,0 +1,123 @@
+#if($lang == "nl")
+	#set($nl="currentLang")
+	#set($en="")
+#else
+	#set($en="currentLang")
+	#set($nl="")
+#end
+#set($t = $labels.getString("title"))
+#set($d = $labels.getString("description"))
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=10">
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="expires" content="0" />
+        <meta http-equiv="pragma" content="no-cache" />
+		<meta charset="utf-8">
+		<meta name="description" content="$!d">
+		<meta name="viewport" content="width=device-width">
+		<meta property="og:image" content="../web/apple-touch-icon-144x144-precomposed.png" />
+		<meta property="og:description"content="$!d"/>
+		<title>$!t</title>
+		<link rel="icon" type="image/png" href="../web/favicon.png">
+		<link rel="apple-touch-icon" href="../web/apple-touch-icon.png">
+		<link rel="stylesheet" href="../web/css/foundation.min.css" type='text/css' />
+		<link rel="stylesheet" href="../web/css/whitelab.css" type='text/css' />
+		<link rel="stylesheet" href="../web/css/whitelab/document.css" type='text/css' />
+		<link rel="stylesheet" href="../web/css/whitelab/folia.css" type='text/css' />
+		<link rel="stylesheet" href="../web/css/introjs.css" type='text/css' />
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <script type="text/javascript">google.load("visualization", "1", {packages:["corechart"]});</script>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<script type="text/javascript" src="../web/js/modernizr.js"></script>
+		<script type="text/javascript" src="../web/js/foundation.min.js"></script>
+		<script type="text/javascript" src="../web/js/foundation.accordion.js"></script>
+		<script type="text/javascript" src="../web/js/cql.js"></script>
+		<script type="text/javascript" src="../web/js/ajax_retriever.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.meta.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.explore.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.explore.ngram.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.explore.statistics.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.search.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.search.advanced.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.search.document.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.search.extended.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.search.result.js"></script>
+		<script type="text/javascript" src="../web/js/whitelab.tour.js"></script>
+		<script type="text/javascript" src="../web/js/intro.js"></script>
+		<script type="text/javascript" src="../web/js/d3.layout.cloud.js"></script>
+		<script src="../web/js/whitelab_util/wordcloud.js"></script>
+		<script src="../web/js/whitelab_util/vocab.js"></script>
+		<script src="../web/js/whitelab_util/article.js"></script>
+		<script>
+			function initTreemap() {
+				console.log("Initializing treemap");
+				Whitelab.explore.treemap = document.getElementById('treemap-display').contentWindow;
+				Whitelab.explore.treemap.setLanguage('$lang');
+				$("#treemap input[value='$!field']").prop("checked",true);
+				Whitelab.explore.getTreemapData('$!field');
+			}
+		</script>
+	</head>
+	<body>
+		<!--[if lt IE 9]>
+		<br/><br/><br/>
+		<div class="alert alert-warning">
+		<h1>Error: Incompatible browser.</h1>
+		<p>You are using an <strong>outdated</strong> browser which cannot display this website correctly. Please use the latest version of <a href="http://www.mozilla.org/en-US/firefox/new/">Mozilla Firefox</a> or <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> instead.</p>
+		</div>
+		<![endif]-->
+		<div class="cookies">
+			<span class="info">$labels.getString("cookies.line1") <button onclick="Whitelab.cookies.accept();" class="tiny">OK</button></span>
+			<span class="info">$labels.getString("cookies.line2")</span>
+		</div>
+		<nav class="top-bar" data-topbar>
+			<section class="top-bar-section">
+				<div class="row">
+					<!-- Left Nav Section -->
+					<ul id="navLeft" class="left">
+						<li class="leftspaced langli">
+							<form method="get" action="" name="langform">
+								<a class="langlink" id="nl" onclick="Whitelab.switchLanguage('nl')"><img class="$nl" src="../web/img/lang/nl.png" /></a>
+								<a class="langlink" id="en" onclick="Whitelab.switchLanguage('en')"><img class="$en"  src="../web/img/lang/en.png" /></a>
+							</form>
+						</li>
+						<li class="leftspaced">
+							#if($maintab && ($maintab == "explore" or $maintab == "search"))
+								<a id="tour-icon" onclick="Whitelab.tour.start();"><img src="../web/img/info_icon.png"/></a>
+							#else
+								<div style="width: 30px;">&nbsp;</div>
+							#end
+						</li>
+						#set($home = $labels.getString("home"))
+						#if($maintab && $maintab == "home")
+							<li id="main-home" class="leftspaced active"><a onclick="Whitelab.switchTab('home')">$home</a></li>
+						#else
+							<li id="main-home" class="leftspaced"><a onclick="Whitelab.switchTab('home')">$home</a></li>
+						#end
+						#set($explore = $labels.getString("explore"))
+						#if($maintab && $maintab == "explore")
+							<li id="main-explore" class="active"><a onclick="Whitelab.switchTab('explore')">$explore</a></li>
+						#else
+							<li id="main-explore"><a onclick="Whitelab.switchTab('explore')">$explore</a></li>
+						#end
+						#set($search = $labels.getString("search"))
+						#if($maintab && $maintab == "search")
+							<li id="main-search" class="active"><a onclick="Whitelab.switchTab('search')">$search</a></li>
+						#else
+							<li id="main-search"><a onclick="Whitelab.switchTab('search')">$search</a></li>
+						#end
+					</ul>
+
+					<!-- Right Nav Section -->
+					<div id="nav-right" class="right">
+						<div>
+							<a href="#"><img id="navLogo" src="../web/img/logo.png" /></a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</nav>

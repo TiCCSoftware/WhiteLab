@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WhiteLab" version="3.0">
+  <servlet>
+    <servlet-name>whitelab</servlet-name>
+    <servlet-class>com.uvt.whitelab.WhiteLab</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>whitelab</servlet-name>
+    <url-pattern>/page/*</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>100</session-timeout>
+  </session-config>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>all</web-resource-name>
+      <url-pattern>/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>opensonar</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>BASIC</auth-method>
+  </login-config>
+  <security-role>
+    <role-name>opensonar</role-name>
+  </security-role>
+</web-app>

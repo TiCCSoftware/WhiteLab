@@ -1,0 +1,48 @@
+<div class="large-16 medium-16 small-16 result-pane">
+	<div class="gradient"></div>
+	<table id="stats-table">
+		<tr><th align="left">$labels.getString("explore.statistics.type") <select id="stats-groupSelect"><option value="word" selected="selected">$labels.getString("word")</option><option value="lemma">$labels.getString("lemma")</option><option value="pos">$labels.getString("pos")</option></select></th><td></td><td></td></tr>
+		<tr><td colspan="3" class="right-spaced"><button onclick="Whitelab.explore.statistics.clearData(); Whitelab.explore.statistics.execute('hits');" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.explore.statistics.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button></td></tr>
+	</table>
+</div>
+<div id="stats-info" class="info large-16 medium-16 small-16 hidden">
+	<div class="gradient"></div>
+	<div class="content">
+		<span><label for="#stats-filter">Filter</label><div id="stats-filter">-</div></span>
+		<span><label for="#stats-group">$labels.getString("explore.statistics.type")</label><div id="stats-group"></div></span>
+		<span><label for="#stats-count">$labels.getString("explore.statistics.count")</label><div id="stats-count"></div></span>
+		<span><label for="#stats-hits">$labels.getString("result.per_hit")</label><div id="stats-hits"></div></span>
+		<span><label for="#stats-docs">$labels.getString("result.per_doc")</label><div id="stats-docs"></div></span>
+	</div>
+</div>
+<div id="result_status" class="hidden"></div>
+<div id="result_statistics" class="hidden">
+<ul class="nav nav-tabs" id="contentTabs">
+	<li id="result_list_link" class="tab-link active">
+		<a onclick="Whitelab.explore.statistics.switchTab('result_list')">Frequentielijst</a>
+	</li>
+	<li id="result_doclist_link" class="tab-link">
+		<a onclick="Whitelab.explore.statistics.switchTab('result_doclist')">Documentlijst</a>
+	</li>
+	<li id="growth_link" class="tab-link">
+		<a onclick="Whitelab.explore.statistics.switchTab('growth')">Vocabulaire groei</a>
+	</li>
+	<li id="cloud_link" class="tab-link">
+		<a onclick="Whitelab.explore.statistics.switchTab('cloud')">Word cloud</a>
+	</li>
+</ul>
+<div id="result_list" class="result-pane tab-pane"></div>
+<div id="result_doclist" class="result-pane tab-pane hidden"></div>
+<div id="growth" class="result-pane tab-pane hidden">
+	<div class="gradient"></div>
+	<div id="vocabChartDisplay"></div>
+	<div class="row text-right" style="margin-top: 30px; margin-right: 14%;">
+		<div class="loading hidden"><img class="icon spinner" src="../web/img/spinner.gif"> LOADING</div>
+		<button class="more search small" onclick="Whitelab.explore.statistics.loadVocabGrowthData();">$labels.getString("explore.statistics.loadmore")</button>
+	</div>
+</div>
+<div id="cloud" class="result-pane tab-pane hidden">
+	<div class="gradient"></div>
+	<div id="cloudDisplay"></div>
+</div>
+</div>

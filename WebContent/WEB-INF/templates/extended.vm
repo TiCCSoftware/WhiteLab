@@ -1,0 +1,69 @@
+		<div class="large-8 large-offset-4 medium-8 medium-offset-4 small-8 small-offset-4">
+			#foreach($wordfield in $properties)
+				#set ($id = "extended_"+$wordfield.getSearchField())
+				#set ($fieldid = $wordfield.getSearchField() + "_text")
+				#set ($fieldfuzzid = $wordfield.getSearchField() + "_fuzzy")
+				#set ($fieldcaseid = $wordfield.getSearchField() + "_case")
+				#set ($vals = $wordfield.getValidValues())
+			
+				<div class="row searchrow large-16 medium-16 small-16" id="$id">
+					<div class="searchlabel large-4 medium-4 columns">
+						<h6>$labels.getString($wordfield.getName())</h6>
+					</div>
+					<div class="large-12 medium-12 columns">
+						<div class="row batchrow">
+							<div class="searchinput large-12 medium-12 columns">
+								<textarea class="batchlist"></textarea>
+								#if($wordfield.isSensitive())
+								<div class="collapse textchecks">
+									<label class="checkbox inline searchcheck">
+										<input class="wordcase" type="checkbox" />
+										Case&nbsp;sensitive
+									</label>
+								</div>
+								#end
+							</div>
+							<div class="large-4 medium-4 columns">
+								<button class="erase" alt="Wis woordenlijst" onclick="event.preventDefault(); Whitelab.search.extended.eraseBatchList(this);"></button>
+							</div>
+						</div>
+						<div class="row inputrow large-8 medium-8 active">
+							<div class="searchinput large-12 medium-12 columns">
+								#if ($vals.size() > 0)
+									<select data-target="#$wordfield.getSearchField()" id="$fieldid" name="$wordfield.getSearchField()">
+										<option value=""></option>
+										#foreach($pair in $wordfield.getValidValues())
+											#set($selected = '')
+											#if($value == $pair.getValue())
+												#set($selected = 'selected')
+											#end
+											<option value="$pair.getValue()" $!selected>$pair.getDescription()</option>
+										#end
+									</select>
+								#else
+									<input type="text" data-target="#$wordfield.getSearchField()" id="$fieldid" name="$wordfield.getSearchField()" data-toggle="collapse" value="" placeholder="$labels.getString($wordfield.getName())"/>
+								#end
+								<div class="collapse textchecks" id="$wordfield.getSearchField()">
+									#if($wordfield.isSensitive())
+										<label class="checkbox inline searchcheck">
+											<input type="checkbox" >
+											Case&nbsp;sensitive
+										</label>
+									#end
+								</div>
+							</div>
+							<div class="loadbutton large-4 medium-4 columns">
+								<div style="position:relative; height: 36px;">
+									<div class="batchWordListBtn"><button class="load" onclick="event.preventDefault();"></button></div>
+									<input class="loadlist" type="file" onchange="Whitelab.search.extended.loadBatchList(this);">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			#end
+			<div class="buttonrow large-14 medium-14 small-14">
+				<input class="splitcheck" type="checkbox"><span> Split batch queries</span></input><br />
+				<button onclick="Whitelab.search.execute()" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
+			</div>
+		</div>
