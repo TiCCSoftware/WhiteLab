@@ -288,6 +288,7 @@ public class QueryResponse extends BaseResponse {
 		transformer.addParameter("groupBy_name", groupBy_name);
 		groupBy_name = groupBy_name.replaceAll("field:", "");
 		transformer.addParameter("groupBy_name_clean", groupBy_name);
+		transformer.addParameter("sortBy", this.getParameter("sort", ""));
 
 		transformer.addParameter("collection_name", this.labels.getString("result.collection_name"));
 		transformer.addParameter("title_name", this.labels.getString("result.title_name"));
