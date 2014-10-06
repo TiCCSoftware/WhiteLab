@@ -160,17 +160,8 @@ Whitelab.search.result = {
 						qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
 						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
 						if (!sameType) {
-//							if (newType === "pos") {
-//								pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
-//							}
 							q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 						} else {
-//							var startPos = qq.indexOf(newType);
-//							var qqq = qq.substring(startPos);
-//							var startQuotePos = qqq.indexOf('"')[0] + startPos;
-//							var endQuotePos = qqq.indexOf('"')[1] + startPos;
-//							
-//							q = q+"["+qq.substring(0,startQuotePos)+pp+qq.substring(endQuotePos)+"]";
 							q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
 						}
 					}
@@ -335,51 +326,13 @@ Whitelab.search.result = {
 				qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
 				pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
 				if (!sameType) {
-//					if (newType === "pos") {
-//						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
-//					}
 					q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 				} else {
-//					var startPos = qq.indexOf(newType);
-//					var qqq = qq.substring(startPos);
-//					var startQuotePos = qqq.indexOf('"')[0] + startPos;
-//					var endQuotePos = qqq.indexOf('"')[1] + startPos;
-//					
-//					q = q+"["+qq.substring(0,startQuotePos)+pp+qq.substring(endQuotePos)+"]";
 					q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
 				}
 			}
-			//q = q.replace(/&/g,"%26");
 			Whitelab.debug("Combined query: "+q);
 			Whitelab.search.query = q;
-			
-//			var parts = groupId.split(" ");
-//			var q = "";
-//			var t = "word";
-//			if (g.indexOf(":lemma") > -1) {
-//				t = "lemma";
-//			} else if (g.indexOf(":pos") > -1) {
-//				t = "pos";
-//			}
-//			for (var p = 0; p < parts.length; p++) {
-//				Whitelab.debug("type: "+t);
-//				if (t === "pos") {
-//					var pp = parts[p].replace(/\(/g,"\\\(");
-//					pp = pp.replace(/\)/g,"\\\)");
-//					var qq = Whitelab.search.query;
-//					qq = qq.replace(/\(*\[/g,"");
-//					qq = qq.replace(/\]\)*/g,"");
-//					q = q+"["+qq+" & "+t+"=\""+pp+"\"]";
-//				} else if (t === "lemma") {
-//					var qq = Whitelab.search.query;
-//					qq = qq.replace(/\(*\[/g,"");
-//					qq = qq.replace(/\]\)*/g,"");
-//					q = q+"["+qq+" & "+t+"=\"(?-i)"+parts[p]+"\"]";
-//				} else {
-//					q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
-//				}
-//			}
-//			Whitelab.search.query = q;
 		} else if (g.indexOf("wordleft:") == 0) {
 			var parts = groupId.split(" ");
 			var q = "";
