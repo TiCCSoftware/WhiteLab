@@ -156,11 +156,13 @@ Whitelab.search.result = {
 						var sameType = false;
 						if (qq.indexOf(newType) > -1)
 							sameType = true;
-						
+
+						qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
+						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
 						if (!sameType) {
-							if (newType === "pos") {
-								pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
-							}
+//							if (newType === "pos") {
+//								pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
+//							}
 							q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 						} else {
 //							var startPos = qq.indexOf(newType);
@@ -172,6 +174,7 @@ Whitelab.search.result = {
 							q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
 						}
 					}
+					//q = q.replace(/&/g,"%26");
 					Whitelab.debug("Combined query: "+q);
 					query = q;
 				} else if (g.indexOf("wordleft:") == 0) {
@@ -328,11 +331,13 @@ Whitelab.search.result = {
 				var sameType = false;
 				if (qq.indexOf(newType) > -1)
 					sameType = true;
-				
+
+				qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
+				pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
 				if (!sameType) {
-					if (newType === "pos") {
-						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
-					}
+//					if (newType === "pos") {
+//						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
+//					}
 					q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 				} else {
 //					var startPos = qq.indexOf(newType);
@@ -344,6 +349,7 @@ Whitelab.search.result = {
 					q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
 				}
 			}
+			//q = q.replace(/&/g,"%26");
 			Whitelab.debug("Combined query: "+q);
 			Whitelab.search.query = q;
 			
