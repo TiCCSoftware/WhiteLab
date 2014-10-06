@@ -760,6 +760,10 @@ select.meta-medium {
 	padding-right: 0;
 }
 
+button.go {
+	width: 40px !important;
+}
+
 button.search > span, button.reset > span {
 	width: 100%;
 	margin-left: auto;
@@ -1326,18 +1330,15 @@ ul.dropdown-menu {
 
 .inline-concordance.text-right {
 	text-align: right;
-	width: 40%;
 }
 
 .inline-concordance.text-center {
 	text-align: center;
 	font-weight: bold;
-	width: 20%;
 }
 
 .inline-concordance.text-left {
 	text-align: left;
-	width: 40%;
 }
 
 .inline-concordance.doc-left {
