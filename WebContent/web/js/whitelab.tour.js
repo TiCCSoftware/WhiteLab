@@ -306,7 +306,7 @@ Whitelab.tour = {
 	                      		"<li>Simpel zoeken voor beginners</li>" +
 	                      		"<li>Uitgebreid zoeken voor gevorderde gebruikers</li>" +
 	                      		"<li>Geavanceerd zoeken voor ervaren gebruikers</li>" +
-	                      		"<li>Expert zoeken for experts</li>" +
+	                      		"<li>Expert zoeken voor experts</li>" +
 	                      		"</ul></p>",
 	                      position: "right"
 	                    },
@@ -346,7 +346,7 @@ Whitelab.tour = {
 	                    	// 7
 	                    	element: "#extended input.splitcheck",
 	                    	intro: "<p>Wanneer u een batch laadt uit een bestand, dan wordt automatisch dit vakje aangevinkt. Als het aangevinkt is, dan worden de zoekopdrachten in de batch ieder als aparte zoekopdracht uitgevoerd met de resultaten in afzonderlijke schermen.</p>" +
-	                    			"<p>Indien u de zoekopdrachten in de batch als &euml;&euml;n zoekopdracht uit wil voeren en de resultaten in &euml;&euml;n scherm gepresenteerd wil zien, zet u dan dit vakje uit.</p>",
+	                    			"<p>Indien u de zoekopdrachten in de batch als &eacute;&eacute;n zoekopdracht uit wil voeren en de resultaten in &eacute;&eacute;n scherm gepresenteerd wil zien, zet u dan dit vakje uit.</p>",
 	                    	position: "top"
 	                    },
 	                    {
@@ -374,20 +374,20 @@ Whitelab.tour = {
 	                    	element: "#advanced",
 	                    	intro: "<p>Evenals bij uitgebreid zoeken kunt u bij <b>geavanceerd</b> zoeken meerdere zoekopdrachten als een batch uitvoeren. Om dit te doen klikt u op de batch knop <img src='../web/img/load.png' style='width: 15px; height: 15px; border:1px solid #555;'/>" +
 	                    			" en selecteert u een bestand (.txt) van uw harde schijf met de termen of frases waar u naar wilt zoeken. Nadat het bestand geladen is wordt de inhoud weergegeven in het zoekveld en kunt u deze nog aanpassen indien nodig.</p>" +
-	                    			"<p>Let u alstublieft op dat, in tegenstelling tot de batch optie bij uitgebreid zoeken, een batch lijst hier slechts &euml;&euml;n term per regel mag bevatten.</p>",
+	                    			"<p>Let u alstublieft op dat, in tegenstelling tot de batch optie bij uitgebreid zoeken, een batch lijst hier slechts &eacute;&eacute;n term per regel mag bevatten.</p>",
 	                    	position: "top"
 	                    },
 	                    {
 	                    	// 12
 	                    	element: "#advanced input.splitcheck",
 	                    	intro: "<p>Wanneer u een batch laadt uit een bestand, dan wordt automatisch dit vakje aangevinkt. Als het aangevinkt is, dan worden de zoekopdrachten in de batch ieder als aparte zoekopdracht uitgevoerd met de resultaten in afzonderlijke schermen.</p>" +
-                			"<p>Indien u de zoekopdrachten in de batch als &euml;&euml;n zoekopdracht uit wil voeren en de resultaten in &euml;&euml;n scherm gepresenteerd wil zien, zet u dan dit vakje uit.</p>",
+                			"<p>Indien u de zoekopdrachten in de batch als &eacute;&eacute;n zoekopdracht uit wil voeren en de resultaten in &eacute;&eacute;n scherm gepresenteerd wil zien, zet u dan dit vakje uit.</p>",
 	                    	position: "top"
 	                    },
 	                    {
 	                    	// 13
 	                    	element: "#expert",
-	                    	intro: "<p>Bij <b>expert</b> zoeken kunt u een zoekopdracht invoeren uitgedrukt in de Corpus Query Language (CQL). Een good tutorial over CQL vindt u <a href='http://cwb.sourceforge.net/files/CQP_Tutorial/' target='_blank'>hier</a>.</p>",
+	                    	intro: "<p>Bij <b>expert</b> zoeken kunt u een zoekopdracht invoeren uitgedrukt in de Corpus Query Language (CQL). Een goede tutorial over CQL vindt u <a href='http://cwb.sourceforge.net/files/CQP_Tutorial/' target='_blank'>hier</a>.</p>",
 	                    	position: "top"
 	                    },
 	                    {
@@ -939,6 +939,10 @@ Whitelab.tour = {
 		        scrollTop: pos
 		    }, 200);
 		} else if (Whitelab.tab === "explore" && current > 13) {
+			$("body").animate({
+		        scrollTop: 0
+		    }, 200);
+		} else if (Whitelab.tab === "search" && current > 2 && current < 14) {
 			$("body").animate({
 		        scrollTop: 0
 		    }, 200);
