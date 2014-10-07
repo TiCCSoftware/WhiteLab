@@ -91,7 +91,7 @@
 													<xsl:value-of select="$query_id" />
 													<xsl:text>,{sort:''})</xsl:text>
 												</xsl:attribute>
-												Word
+												<xsl:value-of select="$word" />
 											</a>
 										</li>
 										<li>
@@ -117,7 +117,7 @@
 													<xsl:value-of select="$query_id" />
 													<xsl:text>,{sort:''})</xsl:text>
 												</xsl:attribute>
-												Lemma
+												<xsl:value-of select="$lemma" />
 											</a>
 										</li>
 										<li>
@@ -143,7 +143,7 @@
 													<xsl:value-of select="$query_id" />
 													<xsl:text>,{sort:''})</xsl:text>
 												</xsl:attribute>
-												P.o.S.
+												<xsl:value-of select="$pos" />
 											</a>
 										</li>
 									</ul>
@@ -204,7 +204,7 @@
 													<xsl:value-of select="$query_id" />
 													<xsl:text>,{sort:''})</xsl:text>
 												</xsl:attribute>
-												Word
+												<xsl:value-of select="$word" />
 											</a>
 										</li>
 										<li class="disabled">
@@ -230,7 +230,7 @@
 													<xsl:value-of select="$query_id" />
 													<xsl:text>,{sort:''})</xsl:text>
 												</xsl:attribute>
-												Lemma
+												<xsl:value-of select="$lemma" />
 											</a>
 										</li>
 										<li class="disabled">
@@ -256,7 +256,7 @@
 													<xsl:value-of select="$query_id" />
 													<xsl:text>,{sort:''})</xsl:text>
 												</xsl:attribute>
-												P.o.S.
+												<xsl:value-of select="$pos" />
 											</a>
 										</li>
 									</ul>
@@ -269,7 +269,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{sort:''})</xsl:text>
 									</xsl:attribute>
-									Lemma
+									<xsl:value-of select="$lemma" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -295,7 +295,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{sort:''})</xsl:text>
 									</xsl:attribute>
-									Part of speech
+									<xsl:value-of select="$pos" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -347,8 +347,16 @@
 							<td class="tbl_conc_left">...  <xsl:value-of select="left" /></td>
 							<td class="tbl_conc_hit"><xsl:value-of select="match" /></td>
 							<td><xsl:value-of select="right" /> ...</td>
-							<td class="tbl_lemma"><xsl:value-of select="match/w/@*[name()=$lemma_name]" /></td>
-							<td class="tbl_pos"><xsl:value-of select="match/w/@*[name()=$pos_name]" /></td>
+							<td class="tbl_lemma">
+							<xsl:for-each select="match/w">
+								<xsl:value-of select="@*[name()=$lemma_name]" /><xsl:text> </xsl:text>
+							</xsl:for-each>
+							</td>
+							<td class="tbl_pos">
+							<xsl:for-each select="match/w">
+								<xsl:value-of select="@*[name()=$pos_name]" /><xsl:text> </xsl:text>
+							</xsl:for-each>
+							</td>
 						</tr> 
 						<tr class="citationrow hidden">
 							<td colspan="5">
