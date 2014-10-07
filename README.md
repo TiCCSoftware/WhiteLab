@@ -18,7 +18,7 @@ The settings that need to be set in order for WhiteLab to function are:
 - documents.total: the total number of documents in the corpus, required to create the corpus tree map
 - homeUrl: full URL to the home page*
 
-* The home page within WhiteLab is currently included in the interface as an iframe, so it may be hosted on a different server than WhiteLab itself. This choice was made to enable less technically inclined project managers to maintain the information displayed on the home page without interference of system administrators.
+*The home page within WhiteLab is currently included in the interface as an iframe, so it may be hosted on a different server than WhiteLab itself. This choice was made to enable less technically inclined project managers to maintain the information displayed on the home page without interference of system administrators.
 
 Questions
 =========
