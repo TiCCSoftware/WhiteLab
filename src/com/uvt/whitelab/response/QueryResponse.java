@@ -8,7 +8,6 @@ package com.uvt.whitelab.response;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -253,24 +252,24 @@ public class QueryResponse extends BaseResponse {
 
 	private void setTransformerDisplayParameters() throws UnsupportedEncodingException {
 		transformer.clearParameters();
-		transformer.addParameter("urlparamwithoutstart", this.lastUrl + "?" + getParameterStringExcept(new String[] {"first"}));
-		transformer.addParameter("urlparamwithoutvieworgroup", this.lastUrl + "?" + getParameterStringExcept(new String[] {"view", "groupBy"}));
-		transformer.addParameter("urlparamwithoutsort", this.lastUrl + "?" + getParameterStringExcept(new String[] {"sortBy"}));
+		
 		if (this.params.containsKey("patt")) {
-			transformer.addParameter("urlparamquery", URLEncoder.encode((String) this.params.get("patt"), "UTF-8"));
 			transformer.addParameter("query", (String) this.params.get("patt"));
 		}
-		transformer.addParameter("baseurl", this.labels.getString("baseUrl"));
-		transformer.addParameter("webserviceurl", this.labels.getString("baseUrl") + "/" + this.labels.getString("corpus"));
-		transformer.addParameter("backendRequestUrl", this.lastUrl + "?" + getParameterStringExcept(new String[] {}));
 
 		transformer.addParameter("query_id",this.getParameter("id", "1"));
 		transformer.addParameter("per_hit",this.labels.getString("result.per_hit"));
 		transformer.addParameter("per_doc",this.labels.getString("result.per_doc"));
 		transformer.addParameter("grouped_per_hit",this.labels.getString("result.grouped_per_hit"));
 		transformer.addParameter("grouped_per_doc",this.labels.getString("result.grouped_per_doc"));
+		transformer.addParameter("grouped_header",this.labels.getString("result.grouped_header"));
 		transformer.addParameter("context_left",this.labels.getString("context") + " " + this.labels.getString("left"));
 		transformer.addParameter("context_right",this.labels.getString("context") + " " + this.labels.getString("right"));
+		transformer.addParameter("group",this.labels.getString("result.group"));
+		transformer.addParameter("hits",this.labels.getString("result.hits"));
+		transformer.addParameter("documents",this.labels.getString("result.documents"));
+		transformer.addParameter("detailed_conc",this.labels.getString("result.detailed_concordances"));
+		transformer.addParameter("load_more",this.labels.getString("result.loadmore"));
 		transformer.addParameter("word",this.labels.getString("word"));
 		transformer.addParameter("lemma",this.labels.getString("lemma"));
 		transformer.addParameter("pos",this.labels.getString("pos"));
@@ -281,21 +280,24 @@ public class QueryResponse extends BaseResponse {
 		transformer.addParameter("result_page",this.labels.getString("result.page"));
 		transformer.addParameter("result_go",this.labels.getString("result.go"));
 		transformer.addParameter("result_of",this.labels.getString("result.of"));
-		transformer.addParameter("by",this.labels.getString("result.by"));
-		transformer.addParameter("max", this.getParameter("number", "50"));
-		
-		String groupBy_name = this.getParameter("groupBy", "");
-		transformer.addParameter("groupBy_name", groupBy_name);
-		groupBy_name = groupBy_name.replaceAll("field:", "");
-		transformer.addParameter("groupBy_name_clean", groupBy_name);
-		transformer.addParameter("sortBy", this.getParameter("sort", ""));
-
-		transformer.addParameter("collection_name", this.labels.getString("result.collection_name"));
-		transformer.addParameter("title_name", this.labels.getString("result.title_name"));
-		transformer.addParameter("author_name", this.labels.getString("result.author_name"));
-		transformer.addParameter("date_name", this.labels.getString("result.date_name"));
-		transformer.addParameter("lemma_name", this.labels.getString("result.lemma_name"));
+		transformer.addParameter("result_by",this.labels.getString("result.by"));
+		transformer.addParameter("collection_name", this.labels.getString("document.meta.field.collection"));
+		transformer.addParameter("title_name", this.labels.getString("document.meta.field.title"));
+		transformer.addParameter("author_name", this.labels.getString("document.meta.field.author"));
+		transformer.addParameter("date_name", this.labels.getString("document.meta.field.date"));
 		transformer.addParameter("pos_name", this.labels.getString("result.pos_name"));
+		transformer.addParameter("document_id", this.labels.getString("document.meta.docid"));
+		transformer.addParameter("document_title", this.labels.getString("document.meta.doctitle"));
+		transformer.addParameter("document_author", this.labels.getString("document.meta.author"));
+		transformer.addParameter("collection", this.labels.getString("document.meta.collection"));
+		transformer.addParameter("token_count", this.labels.getString("document.meta.token_count"));
+		transformer.addParameter("view_doc", this.labels.getString("document.view"));
+		
+		String group_by_name = this.getParameter("group_by", "");
+		transformer.addParameter("group_by_name", group_by_name);
+		group_by_name = group_by_name.replaceAll("field:", "");
+		transformer.addParameter("group_by_name_clean", group_by_name);
+		transformer.addParameter("sort_by", this.getParameter("sort", ""));
 		
 		if (view == 8)
 			addGroupOptions(true);

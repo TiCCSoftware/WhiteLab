@@ -2,60 +2,27 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
-	<xsl:param name="sortBy" select="''"/>
+	<xsl:param name="sort_by" select="''"/>
 	<xsl:param name="options" select="''" />
-	<xsl:param name="query" select="'#'" />
-	<xsl:param name="by" select="'#'" />
-	
-	<xsl:param name="query_id" select="'#'" />
-	<xsl:param name="per_hit" select="'#'" />
-	<xsl:param name="per_doc" select="'#'" />
-	<xsl:param name="grouped_per_hit" select="'#'" />
-	<xsl:param name="grouped_per_doc" select="'#'" />
-	<xsl:param name="context_left" select="'#'" />
-	<xsl:param name="context_right" select="'#'" />
-	<xsl:param name="word" select="'#'" />
-	<xsl:param name="lemma" select="'#'" />
-	<xsl:param name="pos" select="'#'" />
+	<xsl:param name="query" select="''" />
+	<xsl:param name="query_id" select="''" />
+	<xsl:param name="per_hit" select="''" />
+	<xsl:param name="per_doc" select="''" />
+	<xsl:param name="grouped_per_hit" select="''" />
+	<xsl:param name="grouped_per_doc" select="''" />
+	<xsl:param name="group" select="''" />
+	<xsl:param name="documents" select="''" />
+	<xsl:param name="grouped_header" select="''" />
 	<xsl:param name="result_export" select="'#'" />
-	<xsl:param name="result_pagination_show" select="'#'" />
-	<xsl:param name="result_per_page" select="'#'" />
-	<xsl:param name="result_page" select="'#'" />
-	<xsl:param name="result_go" select="'#'" />
-	<xsl:param name="result_of" select="'#'" />
-	
-	<xsl:param name="resulttab_url" select="'#'" />
-	<xsl:param name="resultgroup_url" select="'#'" />
-	<xsl:param name="result_pagination_url" select="'#'" />
-	<xsl:param name="resultsort_url" select="'#'" />
-	<xsl:param name="concordance_url" select="'#'" />
-	<xsl:param name="max_url" select="'#'" />
-	
-	<xsl:param name="lang" select="'nl'" />
-	<xsl:param name="max" select="'50'" />
-	<xsl:param name="queryview" select="'16'" />
-
-	<xsl:param name="baseurl" select="'#'" />
-	<xsl:param name="resultkey" select="'#'" />
-	<xsl:param name="sessionid" select="'#'" />
-
-	<xsl:param name="author_name" select="'#'" />
-	<xsl:param name="collection_name" select="CollectionName" />
-	<xsl:param name="keywords" select="TextKeywords" />
-	<xsl:param name="pseudonym" select="Pseudonym" />
-	<xsl:param name="sex" select="Sex" />
-	<xsl:param name="age" select="Age" />
-	<xsl:param name="translated" select="Translated" />
-	<xsl:param name="translator" select="Translator" />
-	<xsl:param name="license" select="LicenseCode" />
-	<xsl:param name="source" select="SourceName" />
-	<xsl:param name="country" select="Country" />
-	<xsl:param name="published" select="Published" />
-	<xsl:param name="publisher" select="Publisher" />
-	<xsl:param name="date_name" select="'#'" />
-	<xsl:param name="source_name" select="'#'" />
-	<xsl:param name="groupBy_name" select="''" />
-	<xsl:param name="groupBy_name_clean" select="''" />
+	<xsl:param name="result_pagination_show" select="''" />
+	<xsl:param name="result_per_page" select="''" />
+	<xsl:param name="result_page" select="''" />
+	<xsl:param name="result_go" select="''" />
+	<xsl:param name="result_of" select="''" />
+	<xsl:param name="detailed_conc" select="''" />
+	<xsl:param name="load_more" select="''" />
+	<xsl:param name="group_by_name" select="''" />
+	<xsl:param name="group_by_name_clean" select="''" />
 	
 	<xsl:template match="empty">
 		<div class="large-16 medium-16 small-16">
@@ -68,10 +35,10 @@
 		<script>
 			$(document).ready(function() {
 				
-				$(document).find('#result_<xsl:value-of select="$query_id" /> .groupBySelect').append('<xsl:value-of select="$options" />');
-				Whitelab.search.groupBy = '<xsl:value-of select="$groupBy_name" />';
-				if (Whitelab.search.groupBy.length > 0) {
-					$(document).find('#result_<xsl:value-of select="$query_id" /> .groupBySelect').val(Whitelab.search.groupBy);
+				$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').append('<xsl:value-of select="$options" />');
+				Whitelab.search.group_by = '<xsl:value-of select="$group_by_name" />';
+				if (Whitelab.search.group_by.length > 0) {
+					$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').val(Whitelab.search.group_by);
 				}
 			});
 		</script>
@@ -111,14 +78,7 @@
 											<xsl:value-of select="$query_id" />
 											<xsl:text>,{sort:''})</xsl:text>
 										</xsl:attribute>
-										<xsl:choose>
-											<xsl:when test="$lang = 'en'">
-												Group
-											</xsl:when>
-											<xsl:otherwise>
-												Groep
-											</xsl:otherwise>
-										</xsl:choose>
+										<xsl:value-of select="$group" />
 									</a>
 									<a>
 										<xsl:attribute name="onclick">
@@ -144,14 +104,7 @@
 											<xsl:value-of select="$query_id" />
 											<xsl:text>,{sort:''})</xsl:text>
 										</xsl:attribute>
-										<xsl:choose>
-											<xsl:when test="$lang = 'en'">
-												Documents
-											</xsl:when>
-											<xsl:otherwise>
-												Documenten
-											</xsl:otherwise>
-										</xsl:choose>
+										<xsl:value-of select="$documents" />
 									</a>
 									<a>
 										<xsl:attribute name="onclick">
@@ -187,7 +140,7 @@
 											<xsl:attribute name="data-target"><xsl:value-of
 												select="'.'" /><xsl:value-of select="$rowId" /></xsl:attribute>
 											<xsl:attribute name="onclick"><xsl:value-of
-												select="'Whitelab.search.result.docProgress(this,'" /><xsl:value-of select="$apos" /><xsl:value-of select="$query" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$groupBy_name_clean" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
+												select="'Whitelab.search.result.docProgress(this,'" /><xsl:value-of select="$apos" /><xsl:value-of select="$query" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$group_by_name_clean" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
 												select="identityDisplay" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
 												select="size" /><xsl:value-of select="$apos" />,<xsl:value-of select="$query_id"/><xsl:value-of
 												select="');'" />
@@ -210,34 +163,20 @@
 												<button class="btn btn-link">
 													<xsl:attribute name="onclick"><xsl:value-of
 														select="'Whitelab.search.result.searchDocGroupContent('"/><xsl:value-of select="$query_id" />
-														<xsl:value-of select="','"/><xsl:value-of select="$apos" /><xsl:value-of select="$groupBy_name_clean" /><xsl:value-of select="$apos" /><xsl:value-of select="','" /><xsl:value-of select="$apos" /><xsl:value-of
+														<xsl:value-of select="','"/><xsl:value-of select="$apos" /><xsl:value-of select="$group_by_name_clean" /><xsl:value-of select="$apos" /><xsl:value-of select="','" /><xsl:value-of select="$apos" /><xsl:value-of
 														select="identityDisplay" /><xsl:value-of select="$apos" /><xsl:value-of
 														select="');'" /></xsl:attribute>
-													<xsl:choose>
-														<xsl:when test="$lang = 'en'">
-															&#171; View detailed documents in this group
-														</xsl:when>
-														<xsl:otherwise>
-															&#171; Toon gedetailleerde documenten in deze groep
-														</xsl:otherwise>
-													</xsl:choose>
+													<xsl:value-of select="$detailed_conc"/>
 												</button>
 												-
 												<button class="btn btn-link nolink">
 													<xsl:attribute name="onclick"><xsl:value-of
 														select="'Whitelab.search.result.getDocGroupContent('" /><xsl:value-of select="$apos" /><xsl:value-of select="'#'" /><xsl:value-of
-														select="$rowId" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$query" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$groupBy_name_clean" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
+														select="$rowId" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$query" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$group_by_name_clean" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
 														select="identityDisplay" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
 														select="size" /><xsl:value-of select="$apos" />,<xsl:value-of select="$query_id"/><xsl:value-of
 														select="');'" /></xsl:attribute>
-													<xsl:choose>
-														<xsl:when test="$lang = 'en'">
-															Load more documents...
-														</xsl:when>
-														<xsl:otherwise>
-															Laad meer documenten...
-														</xsl:otherwise>
-													</xsl:choose>
+													<xsl:value-of select="$load_more"/>
 												</button>
 												<div class="loading"><img src="../web/img/spinner.gif" /></div>
 											</div>
@@ -254,10 +193,10 @@
 		<script>
 			$(document).ready(function() {
 				
-				$(document).find('#result_<xsl:value-of select="$query_id" /> .groupBySelect').append('<xsl:value-of select="$options" />');
-				Whitelab.search.groupBy = '<xsl:value-of select="$groupBy_name" />';
-				if (Whitelab.search.groupBy.length > 0) {
-					$(document).find('#result_<xsl:value-of select="$query_id" /> .groupBySelect').val(Whitelab.search.groupBy);
+				$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').append('<xsl:value-of select="$options" />');
+				Whitelab.search.group_by = '<xsl:value-of select="$group_by_name" />';
+				if (Whitelab.search.group_by.length > 0) {
+					$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').val(Whitelab.search.group_by);
 				}
 			
 				$('.nolink').click(function(event) {
@@ -304,7 +243,7 @@
 					<xsl:attribute name="onclick">
 						<xsl:text>Whitelab.search.update(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,{groupBy: "", view : 8})</xsl:text>
+						<xsl:text>,{group_by: "", view : 8})</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$grouped_per_hit" />
 				</a>
@@ -319,25 +258,18 @@
 	
 	<xsl:template name="dropdown">
 		<div class="large-16 medium-16 small-16 row">
-			<select class="groupBySelect">
+			<select class="group_bySelect">
 				<xsl:attribute name="onchange">
 					<xsl:text>Whitelab.search.result.selectGrouping(</xsl:text>
 					<xsl:value-of select="$query_id" />
 					<xsl:text>,$(this).val(),16)</xsl:text>
 				</xsl:attribute>
 				<option value="">
-					<xsl:if test="'' = $groupBy_name">
+					<xsl:if test="'' = $group_by_name">
 						<xsl:attribute name="selected"><xsl:value-of
 							select="'true'" /></xsl:attribute>
 					</xsl:if>
-					<xsl:choose>
-						<xsl:when test="$lang = 'en'">
-							Group by...
-						</xsl:when>
-						<xsl:otherwise>
-							Groepeer per...
-						</xsl:otherwise>
-					</xsl:choose>
+					<xsl:value-of select="$grouped_header"/><xsl:text>...</xsl:text>
 				</option>
 			</select>
 		</div>
@@ -371,7 +303,7 @@
 					<xsl:attribute name="onchange">
 						<xsl:text>Whitelab.search.update(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,{number : $(this).val(), sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+						<xsl:text>,{number : $(this).val(), sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 					</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="$resultsPerPage = 200">
@@ -411,7 +343,7 @@
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.search.update(</xsl:text>
 										<xsl:value-of select="$query_id" />
-										<xsl:text>,{first:0, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>,{first:0, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;&lt;'" />
 								</a>
@@ -432,7 +364,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{first:</xsl:text>
 										<xsl:value-of select="($currentPage - 2) * $resultsPerPage" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;'" />
 								</a>
@@ -469,7 +401,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{first:</xsl:text>
 										<xsl:value-of select="($currentPage * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;'" />
 								</a>
@@ -490,7 +422,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{first:</xsl:text>
 										<xsl:value-of select="(($numberOfPages - 1) * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;&gt;'" />
 								</a>
@@ -512,7 +444,7 @@
 					<xsl:attribute name="onclick">
 						<xsl:text>Whitelab.search.result.goToPage(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,this,</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>,'</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>')</xsl:text>
+						<xsl:text>,this,</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>,'</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>')</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$result_go" />
 				</button>
@@ -542,7 +474,7 @@
 							<xsl:value-of select="$query_id" />
 							<xsl:text>,{first:</xsl:text>
 							<xsl:value-of select="($start - 1) * $perpage" />
-							<xsl:text>, number:</xsl:text><xsl:value-of select="$perpage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+							<xsl:text>, number:</xsl:text><xsl:value-of select="$perpage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 						</xsl:attribute>
 						<xsl:value-of select="$start" />
 					</a>

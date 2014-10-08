@@ -16,7 +16,7 @@ Whitelab.meta = {
 		Whitelab.meta.addRule();
 		$("#"+Whitelab.tab+"-meta #group-check").prop("checked",false);
 		$("#"+Whitelab.tab+"-meta #group-select").val("hits");
-		$("#"+Whitelab.tab+"-meta #groupBy-select").val("");
+		$("#"+Whitelab.tab+"-meta #group_by-select").val("");
 		$("#"+Whitelab.tab+"-meta #search-within").val("");
 	},
 	
@@ -44,8 +44,8 @@ Whitelab.meta = {
 				Whitelab.search.view = 2;
 			}
 			
-			if ($("#"+Whitelab.tab+"-meta #group-check").prop("checked") == true && Whitelab.search.groupBy.length > 0) {
-				Whitelab.search.groupBy = $("#"+Whitelab.tab+"-meta #groupBy-select").val();
+			if ($("#"+Whitelab.tab+"-meta #group-check").prop("checked") == true && Whitelab.search.group_by.length > 0) {
+				Whitelab.search.group_by = $("#"+Whitelab.tab+"-meta #group_by-select").val();
 				if (v === "hits") {
 					Whitelab.search.view = 8;
 				} else {

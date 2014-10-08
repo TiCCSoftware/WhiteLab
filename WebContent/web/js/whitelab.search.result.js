@@ -14,7 +14,7 @@ Whitelab.search.result = {
 			+"<td id=\"filter_"+id+"\">"+Whitelab.search.filterQuery+"</td>";
 		
 		if (Whitelab.search.view == 8 || Whitelab.search.view == 16) {
-			queryRow = queryRow+"<td id=\"group_"+id+"\">"+Whitelab.search.groupBy+"</td>";
+			queryRow = queryRow+"<td id=\"group_"+id+"\">"+Whitelab.search.group_by+"</td>";
 		} else {
 			queryRow = queryRow+"<td id=\"group_"+id+"\">-</td>";
 		}
@@ -79,7 +79,7 @@ Whitelab.search.result = {
 		
 		if ($("#group_"+id).html() !== "-") {
 			$("#group-check").prop("checked",true);
-			$("#groupBy-select").val($("#group_"+id).html());
+			$("#group_by-select").val($("#group_"+id).html());
 		}
 		
 		var view = $("#result_"+id+" input.current-view").val();
@@ -106,13 +106,13 @@ Whitelab.search.result = {
 		Whitelab.search.switchTab(origTab);
 	},
 	
-	getDocGroupContent : function(element,query,groupBy,groupid,max,queryid) {
-		Whitelab.debug("getDocGroupContent("+element+","+query+","+groupBy+","+groupid+","+max+","+queryid+")");
-		Whitelab.search.result.getGroupContent(element,query,groupBy,groupid,max,queryid,"doc");
+	getDocGroupContent : function(element,query,group_by,groupid,max,queryid) {
+		Whitelab.debug("getDocGroupContent("+element+","+query+","+group_by+","+groupid+","+max+","+queryid+")");
+		Whitelab.search.result.getGroupContent(element,query,group_by,groupid,max,queryid,"doc");
 		return false;
 	},
 	
-	getGroupContent : function(element,query,groupBy,groupid,max,queryid,type) {
+	getGroupContent : function(element,query,group_by,groupid,max,queryid,type) {
 		element = "#result_"+queryid+" "+element;
 		if (!$(element).find("div.loading").hasClass("active")) {
 			var start = $(element).parent().find("div.row-fluid").length;
@@ -128,7 +128,7 @@ Whitelab.search.result = {
 				
 				$(element).find("div.loading").addClass("active");
 				
-				var g = groupBy;
+				var g = group_by;
 				g = g.replace("field:","");
 				
 				Whitelab.search.filters = new Array();
@@ -152,6 +152,10 @@ Whitelab.search.result = {
 					}
 					for (var p = 0; p < groupParts.length; p++) {
 						var qq = queryParts[p];
+						if (qq.substr(0,1) === "(")
+							qq = qq.substr(1);
+						if (qq.substr(qq.length - 1) === ")")
+							qq = qq.substr(0,qq.length - 1);
 						var pp = groupParts[p];
 						var sameType = false;
 						if (qq.indexOf(newType) > -1)
@@ -231,9 +235,9 @@ Whitelab.search.result = {
 		return false;
 	},
 	
-	getHitGroupContent : function(element,query,groupBy,groupid,max,queryid) {
-		Whitelab.debug("getHitGroupContent("+element+","+query+","+groupBy+","+groupid+","+max+","+queryid+")");
-		Whitelab.search.result.getGroupContent(element,query,groupBy,groupid,max,queryid,"hit");
+	getHitGroupContent : function(element,query,group_by,groupid,max,queryid) {
+		Whitelab.debug("getHitGroupContent("+element+","+query+","+group_by+","+groupid+","+max+","+queryid+")");
+		Whitelab.search.result.getGroupContent(element,query,group_by,groupid,max,queryid,"hit");
 		return false;
 	},
 	
@@ -243,21 +247,21 @@ Whitelab.search.result = {
 		Whitelab.search.update(id, { first : first, number : number, sort : sort });
 	},
 	
-	docProgress : function(item,query,groupBy,groupid,max,queryid) {
+	docProgress : function(item,query,group_by,groupid,max,queryid) {
 		var target = $(item).attr("data-target");
 		Whitelab.debug("docProgress('"+target+"')");
 		if ($(target).hasClass("first") || $(target).find(".row-fluid").length == 0) {
-			Whitelab.search.result.getDocGroupContent('#'+target.substring(1),query,groupBy,groupid,max,queryid);
+			Whitelab.search.result.getDocGroupContent('#'+target.substring(1),query,group_by,groupid,max,queryid);
 			$(target).removeClass("first");
 		}
 		$(target).toggleClass("hide");
 	},
 	
-	hitProgress : function(item,query,groupBy,groupid,max,queryid) {
+	hitProgress : function(item,query,group_by,groupid,max,queryid) {
 		var target = $(item).attr("data-target");
 		Whitelab.debug("hitProgress('"+target+"')");
 		if ($(target).hasClass("first") || $(target).find(".row-fluid").length == 0) {
-			Whitelab.search.result.getHitGroupContent('#'+target.substring(1),query,groupBy,groupid,max,queryid);
+			Whitelab.search.result.getHitGroupContent('#'+target.substring(1),query,group_by,groupid,max,queryid);
 			$(target).removeClass("first");
 		}
 		$(target).toggleClass("hide");
@@ -277,24 +281,24 @@ Whitelab.search.result = {
 	},
 	
 	selectGrouping : function(id,grouping,v) {
-		if (Whitelab.search.groupBy !== grouping) {
-			Whitelab.search.update(id, { groupBy : grouping, view : v });
+		if (Whitelab.search.group_by !== grouping) {
+			Whitelab.search.update(id, { group_by : grouping, view : v });
 			$("#group_"+id).html(grouping);
 		}
 	},
 	
-	searchHitGroupContent : function(queryId,groupByClean,groupId) {
+	searchHitGroupContent : function(queryId,group_byClean,groupId) {
 
 		if (groupId.length == 0)
 			groupId = "unknown";
 		
-		Whitelab.debug("searchHitGroupContent("+queryId+",'"+groupByClean+"','"+groupId+"')");
+		Whitelab.debug("searchHitGroupContent("+queryId+",'"+group_byClean+"','"+groupId+"')");
 		Whitelab.search.view = 1;
-		Whitelab.search.groupBy = "";
+		Whitelab.search.group_by = "";
 		Whitelab.search.query = decodeURIComponent(Whitelab.search.query);
 		Whitelab.search.query = Whitelab.search.query.replace(/amp;/g,"");
 		
-		var g = groupByClean;
+		var g = group_byClean;
 		g = g.replace("field:","");
 		
 		Whitelab.search.filters = new Array();
@@ -318,6 +322,10 @@ Whitelab.search.result = {
 			}
 			for (var p = 0; p < groupParts.length; p++) {
 				var qq = queryParts[p];
+				if (qq.substr(0,1) === "(")
+					qq = qq.substr(1);
+				if (qq.substr(qq.length - 1) === ")")
+					qq = qq.substr(0,qq.length - 1);
 				var pp = groupParts[p];
 				var sameType = false;
 				if (qq.indexOf(newType) > -1)
@@ -385,16 +393,16 @@ Whitelab.search.result = {
 		Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
 	},
 	
-	searchDocGroupContent : function(queryId,groupByClean,groupId) {
+	searchDocGroupContent : function(queryId,group_byClean,groupId) {
 
 		if (groupId.length == 0)
 			groupId = "unknown";
 		
-		Whitelab.debug("searchDocGroupContent("+queryId+",'"+groupByClean+"','"+groupId+"')");
+		Whitelab.debug("searchDocGroupContent("+queryId+",'"+group_byClean+"','"+groupId+"')");
 		Whitelab.search.view = 2;
-		Whitelab.search.groupBy = "";
+		Whitelab.search.group_by = "";
 		
-		var g = groupByClean;
+		var g = group_byClean;
 		g = g.replace("field:","");
 		
 		Whitelab.search.filters = new Array();
@@ -450,9 +458,9 @@ Whitelab.search.result = {
 		f = f.replace(/field\:/g,"");
 		Whitelab.search.filterQuery = f;
 		Whitelab.search.filters = f.split("&");
-		Whitelab.search.groupBy = $("#group_"+id).html();
-		if (Whitelab.search.groupBy === "-")
-			Whitelab.search.groupBy = "";
+		Whitelab.search.group_by = $("#group_"+id).html();
+		if (Whitelab.search.group_by === "-")
+			Whitelab.search.group_by = "";
 	},
 	
 	toggleTitles : function() {

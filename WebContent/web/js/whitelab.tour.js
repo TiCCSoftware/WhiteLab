@@ -848,7 +848,7 @@ Whitelab.tour = {
 				$(document).find("a.meta-plus").first().click();
 				$(document).find(".metaLabel").last().val("field:Country").change();
 				$(document).find(".metaInput").last().val("NL");
-				$("#groupBy-select").val("field:CollectionName").change();
+				$("#group_by-select").val("field:CollectionName").change();
 			} else if (current == 3) {
 				$("#lemma_text").val("zijn");
 			} else if (current == 4) {
@@ -905,7 +905,7 @@ Whitelab.tour = {
 			} else if (current == 20 || current == 21) {
 				$("#contentTabs").find("li > a")[2].click();
 				if (current == 20) {
-					setTimeout(function(){$("div.grouped-results").last().find("select.groupBySelect").last().val("field:CollectionName").change();}, 500);
+					setTimeout(function(){$("div.grouped-results").last().find("select.group_bySelect").last().val("field:CollectionName").change();}, 500);
 				} else {
 					$("div.grouped-results").last().find("div.progress").first().click();
 				}

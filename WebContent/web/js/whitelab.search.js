@@ -5,7 +5,7 @@ Whitelab.search = {
 	query : "",
 	filterQuery : "",
 	within : "document",
-	groupBy : "",
+	group_by : "",
 	view : 1,
 	sort : "",
 	error : false,
@@ -75,9 +75,6 @@ Whitelab.search = {
 				var qq = Whitelab.search.query.split(";");
 				for (var q = 0; q < qq.length; q++) {
 					Whitelab.search.query = qq[q];
-//						while (Whitelab.search.query.indexOf('&') > -1) {
-//							Whitelab.search.query = Whitelab.search.query.replace("&","AND");
-//						}
 					Whitelab.search.queryCount++;
 					Whitelab.search.setSearchParams(null);
 					Whitelab.search.result.addQuery(Whitelab.search.queryCount,tab);
@@ -85,9 +82,6 @@ Whitelab.search = {
 					Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
 				}
 			} else {
-//					while (Whitelab.search.query.indexOf('&') > -1) {
-//						Whitelab.search.query = Whitelab.search.query.replace("&","AND");
-//					}
 				Whitelab.search.queryCount++;
 				Whitelab.search.setSearchParams(null);
 				Whitelab.search.result.addQuery(Whitelab.search.queryCount,tab);
@@ -98,34 +92,42 @@ Whitelab.search = {
 	},
 	
 	doExport : function(id) {
-		Whitelab.search.view = $("#result_"+id).find(".current-view").val();
-		Whitelab.search.query = $("#query_"+id).html();
-		Whitelab.search.query = Whitelab.search.query.replace(/amp;/g,"");
-		Whitelab.debug("export query: "+Whitelab.search.query);
-		Whitelab.search.groupBy = $("#group_"+id).html();
-		if (Whitelab.search.groupBy === "-")
-			Whitelab.search.groupBy = "";
-//			else if (Whitelab.search.groupBy.indexOf("hit") == -1 && Whitelab.search.groupBy.indexOf("left") == -1 && Whitelab.search.groupBy.indexOf("right") == -1)
-//				Whitelab.search.groupBy = "field:"+Whitelab.search.groupBy;
-		Whitelab.search.first = 0;
+		var n = 0;
 		if (Whitelab.search.view == 1 || Whitelab.search.view == 8)
-			Whitelab.search.number = $("#hits_"+id).html();
+			n = $("#hits_"+id).html();
 		else
-			Whitelab.search.number = $("#docs_"+id).html();
-		Whitelab.search.filters = new Array();
-		Whitelab.search.filterQuery = "";
-		if ($("#filter_"+id).html().length > 0) {
-			var f = $("#filter_"+id).html();
-			f = f.replace(/field\:/g,"");
-			Whitelab.search.filters.push(f);
-			Whitelab.search.filterQuery = f;
+			n = $("#docs_"+id).html();
+		
+		if ((Whitelab.search.view == 1 || Whitelab.search.view == 2) && n > Whitelab.exportLimit) {
+			ask = Whitelab.confirmExport();
+		} else {
+			ask = true;
 		}
-		Whitelab.search.setSearchParams(id);
 		
-		params = Whitelab.search.params.replace(/ /g,"%20");
-
-		window.location = "http://"+window.location.host+"/whitelab/page/export?id="+id+"&"+params;
-		
+		if (ask) {
+			Whitelab.search.view = $("#result_"+id).find(".current-view").val();
+			Whitelab.search.query = $("#query_"+id).html();
+			Whitelab.search.query = Whitelab.search.query.replace(/amp;/g,"");
+			Whitelab.debug("export query: "+Whitelab.search.query);
+			Whitelab.search.group_by = $("#group_"+id).html();
+			if (Whitelab.search.group_by === "-")
+				Whitelab.search.group_by = "";
+			Whitelab.search.first = 0;
+			Whitelab.search.number = n;
+			Whitelab.search.filters = new Array();
+			Whitelab.search.filterQuery = "";
+			if ($("#filter_"+id).html().length > 0) {
+				var f = $("#filter_"+id).html();
+				f = f.replace(/field\:/g,"");
+				Whitelab.search.filters.push(f);
+				Whitelab.search.filterQuery = f;
+			}
+			Whitelab.search.setSearchParams(id);
+			
+			params = Whitelab.search.params.replace(/ /g,"%20");
+	
+			window.location = "http://"+window.location.host+"/whitelab/page/export?id="+id+"&"+params;
+		}
 	},
 	
 	expert : {
@@ -173,7 +175,7 @@ Whitelab.search = {
 		Whitelab.search.query = "";
 		Whitelab.search.filterQuery = "";
 		Whitelab.search.within = "document";
-		Whitelab.search.groupBy = "";
+		Whitelab.search.group_by = "";
 		Whitelab.search.view = 1;
 		Whitelab.search.first = 0;
 		Whitelab.search.number = 50;
@@ -192,7 +194,7 @@ Whitelab.search = {
 		+ "&id=" + id
 		+ "&sort=" + Whitelab.search.sort
 		+ "&first=" + Whitelab.search.first
-		+ "&groupBy=" + Whitelab.search.groupBy
+		+ "&group_by=" + Whitelab.search.group_by
 		+ "&number=" + Whitelab.search.number;
 		
 		if (Whitelab.search.filterQuery.length > 0)
@@ -287,10 +289,10 @@ Whitelab.search = {
 		Whitelab.debug("update filter query: "+Whitelab.search.filterQuery);
 
 		Whitelab.search.within = $("#within_"+id).html();
-		Whitelab.search.groupBy = $("#group_"+id).html();
+		Whitelab.search.group_by = $("#group_"+id).html();
 		Whitelab.search.view = $("#result_"+id+" .current-view").val();
-		if (Whitelab.search.groupBy === "-")
-			Whitelab.search.groupBy = "";
+		if (Whitelab.search.group_by === "-")
+			Whitelab.search.group_by = "";
 		
 		var viewChanged = false;
 		
@@ -304,10 +306,10 @@ Whitelab.search = {
 			}
 		});
 		
-		if (viewChanged && Whitelab.search.view > 2 && Whitelab.search.groupBy.length == 0)
+		if (viewChanged && Whitelab.search.view > 2 && Whitelab.search.group_by.length == 0)
 			Whitelab.search.query = "";
 		else if (viewChanged && Whitelab.search.view <= 2) {
-			Whitelab.search.groupBy = "";
+			Whitelab.search.group_by = "";
 			$("#group_"+id).html("");
 		}
 		

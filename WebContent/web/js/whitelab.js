@@ -3,6 +3,14 @@ var Whitelab = {
 	language : null,
 	tab : null,
 	doDebug : true,
+	exportLimit : 50000,
+	
+	confirmExport : function() {
+		if (Whitelab.language === "en")
+			return confirm("Your query exceeds the maximum export size. Only the first "+Whitelab.exportLimit+" results will be exported.\n\nDo you want to continue?\n");
+		else
+			return confirm("Uw zoekopdracht overschrijdt de export limiet. Alleen de eerste "+Whitelab.exportLimit+" resultaten worden geëxporteerd.\n\nWilt u doorgaan?\n");
+	},
 	
 	cookies : {
 		accept : function() {

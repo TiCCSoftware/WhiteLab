@@ -3,7 +3,7 @@ Whitelab.explore.statistics = {
 	filterQuery : "",
 	first : 0,
 	number : 50,
-	groupBy : "word",
+	group_by : "word",
 	sort : "",
 	view : 12,
 	params : "",
@@ -123,19 +123,30 @@ Whitelab.explore.statistics = {
 	},
 	
 	doExport : function(type) {
+		Whitelab.explore.statistics.group_by = $("#stats-group").html();
+		Whitelab.explore.statistics.filterQuery = $("#stats-filter").html();
 		Whitelab.explore.statistics.first = 0;
 		if (type === "docs") {
 			Whitelab.explore.statistics.number = $("#stats-docs").html();
 			Whitelab.explore.statistics.view = 4;
 		} else {
-			Whitelab.explore.statistics.number = $("#stats-hits").html();
+			Whitelab.explore.statistics.number = $("#stats-count").html();
 			Whitelab.explore.statistics.view = 12;
 		}
-		Whitelab.explore.statistics.setSearchParams();
 		
-		var params = Whitelab.explore.statistics.params.replace(/ /g,"%20");
-
-		window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+		var ask = false;
+		if (Whitelab.explore.statistics.number > Whitelab.exportLimit) {
+			ask = Whitelab.confirmExport();
+		} else {
+			ask = true;
+		}
+		
+		if (ask) {
+			Whitelab.explore.statistics.setSearchParams();
+			var params = Whitelab.explore.statistics.params.replace(/ /g,"%20");
+			Whitelab.debug("http://"+window.location.host+"/whitelab/page/export?"+params);
+			window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+		}
 	},
 	
 	execute : function(type) {
@@ -152,12 +163,12 @@ Whitelab.explore.statistics = {
 			
 			if (type === "docs") {
 				Whitelab.explore.statistics.view = 4;
-				Whitelab.explore.statistics.groupBy = "";
+				Whitelab.explore.statistics.group_by = "";
 			} else {
 				if (!Whitelab.explore.statistics.detailsSet) {
-					Whitelab.explore.statistics.groupBy = $('select#stats-groupSelect').val();
+					Whitelab.explore.statistics.group_by = $('select#stats-groupSelect').val();
 				} else {
-					Whitelab.explore.statistics.groupBy = $("#stats-group").html();
+					Whitelab.explore.statistics.group_by = $("#stats-group").html();
 				}
 			}
 			
@@ -269,7 +280,7 @@ Whitelab.explore.statistics = {
 	setDefaults : function() {
 		Whitelab.explore.statistics.first = 0;
 		Whitelab.explore.statistics.number = 50;
-		Whitelab.explore.statistics.groupBy = "word";
+		Whitelab.explore.statistics.group_by = "word";
 		Whitelab.explore.statistics.sort = "";
 		Whitelab.explore.statistics.view = 12;
 		Whitelab.explore.statistics.params = "";
@@ -278,11 +289,11 @@ Whitelab.explore.statistics = {
 	setQueryDetails : function() {
 		Whitelab.debug("Whitelab.explore.statistics.setQueryDetails");
 		if (!Whitelab.explore.statistics.detailsSet) {
-			Whitelab.debug("setQueryDetails groupBy: "+Whitelab.explore.statistics.groupBy);
+			Whitelab.debug("setQueryDetails group_by: "+Whitelab.explore.statistics.group_by);
 			$("#stats div.info").removeClass("hidden");
 			if (Whitelab.explore.statistics.filterQuery.length > 0)
 				$("#stats-filter").html(Whitelab.explore.statistics.filterQuery);
-			$("#stats-group").html(Whitelab.explore.statistics.groupBy);
+			$("#stats-group").html(Whitelab.explore.statistics.group_by);
 			Whitelab.explore.statistics.detailsSet = true;
 		}
 	},
@@ -295,7 +306,7 @@ Whitelab.explore.statistics = {
 		+ "&number=" + Whitelab.explore.statistics.number;
 		
 		if (Whitelab.explore.statistics.view == 12)
-			Whitelab.explore.statistics.params = Whitelab.explore.statistics.params + "&groupBy=hit:" + Whitelab.explore.statistics.groupBy;
+			Whitelab.explore.statistics.params = Whitelab.explore.statistics.params + "&group_by=hit:" + Whitelab.explore.statistics.group_by;
 		
 		if (Whitelab.explore.statistics.filterQuery.length > 0)
 			Whitelab.explore.statistics.params = Whitelab.explore.statistics.params + "&" + Whitelab.explore.statistics.filterQuery;
@@ -333,7 +344,7 @@ Whitelab.explore.statistics = {
 		
 		Whitelab.debug("update statistics filter query: "+Whitelab.explore.statistics.filterQuery);
 		
-		Whitelab.explore.statistics.groupBy = $("#stats-group").html();
+		Whitelab.explore.statistics.group_by = $("#stats-group").html();
 		
 		$.each(params, function(k, v) {
 			if (Whitelab.explore.statistics.hasOwnProperty(k)) {

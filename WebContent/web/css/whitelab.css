@@ -1235,6 +1235,14 @@ img.icon.spinner {
 	font-size: small;
 }
 
+.tbl_docid {
+	min-width: 175px;
+}
+
+.tbl_show {
+	min-width: 90px;
+}
+
 .tbl_conc_left {
 	text-align: right;
 }
@@ -1392,7 +1400,7 @@ div > table {
 	width: 100%;
 }
 
-#results .groupBySelect {
+#results .group_bySelect {
 	margin: 20px;
 	width: 250px;
 }

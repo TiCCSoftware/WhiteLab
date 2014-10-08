@@ -38,7 +38,7 @@
 	<div id="vocabChartDisplay"></div>
 	<div class="row text-right" style="margin-top: 30px; margin-right: 14%;">
 		<div class="loading hidden"><img class="icon spinner" src="../web/img/spinner.gif"> LOADING</div>
-		<button class="more search small" onclick="Whitelab.explore.statistics.loadVocabGrowthData();">$labels.getString("explore.statistics.loadmore")</button>
+		<button class="more search small" onclick="Whitelab.explore.statistics.loadVocabGrowthData();">$labels.getString("result.loadmore")</button>
 	</div>
 </div>
 <div id="cloud" class="result-pane tab-pane hidden">

@@ -3,7 +3,7 @@ Whitelab.explore.ngram = {
 	filterQuery : "",
 	first : 0,
 	number : 50,
-	groupBy : "word",
+	group_by : "word",
 	sort : "",
 	view : 10,
 	params : "",
@@ -37,19 +37,27 @@ Whitelab.explore.ngram = {
 	
 	doExport : function() {
 		Whitelab.explore.ngram.first = 0;
-		Whitelab.explore.ngram.number = $("#ngram-hits").html();
+		Whitelab.explore.ngram.number = $("#ngram-count").html();
 		Whitelab.explore.ngram.setSearchParams();
 		
-		var params = Whitelab.explore.ngram.params.replace(/ /g,"%20");
-
-		window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+		var ask = false;
+		if (Whitelab.explore.statistics.number > Whitelab.exportLimit) {
+			ask = Whitelab.confirmExport();
+		} else {
+			ask = true;
+		}
+		
+		if (ask) {
+			var params = Whitelab.explore.ngram.params.replace(/ /g,"%20");
+			window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+		}
 	},
 	
 	execute : function() {
 		Whitelab.explore.ngram.setDefaults();
 		Whitelab.explore.ngram.query = Whitelab.explore.ngram.parseQuery();
-		Whitelab.explore.ngram.groupBy = $("#ngram-groupSelect").val();
-		Whitelab.debug("Whitelab.explore.ngram.groupBy: "+Whitelab.explore.ngram.groupBy);
+		Whitelab.explore.ngram.group_by = $("#ngram-groupSelect").val();
+		Whitelab.debug("Whitelab.explore.ngram.group_by: "+Whitelab.explore.ngram.group_by);
 		if (Whitelab.hasOwnProperty("meta"))
 			Whitelab.explore.ngram.filterQuery = Whitelab.meta.parseQuery();
 		Whitelab.explore.ngram.setQueryDetails();
@@ -108,7 +116,7 @@ Whitelab.explore.ngram = {
 		Whitelab.explore.ngram.filterQuery = "";
 		Whitelab.explore.ngram.first = 0;
 		Whitelab.explore.ngram.number = 50;
-		Whitelab.explore.ngram.groupBy = "word";
+		Whitelab.explore.ngram.group_by = "word";
 		Whitelab.explore.ngram.sort = "";
 		Whitelab.explore.ngram.view = 10;
 		Whitelab.explore.ngram.params = "";
@@ -149,7 +157,7 @@ Whitelab.explore.ngram = {
 		if (Whitelab.explore.ngram.filterQuery.length > 0)
 			$("#ngram-filter").html(Whitelab.explore.ngram.filterQuery);
 		$("#ngram-size").html(Whitelab.explore.ngram.size);
-		$("#ngram-group").html(Whitelab.explore.ngram.groupBy);
+		$("#ngram-group").html(Whitelab.explore.ngram.group_by);
 	},
 	
 	setSearchParams : function() {
@@ -157,7 +165,7 @@ Whitelab.explore.ngram = {
 		+ "&view=" + Whitelab.explore.ngram.view
 		+ "&sort=" + Whitelab.explore.ngram.sort
 		+ "&first=" + Whitelab.explore.ngram.first
-		+ "&groupBy=hit:" + Whitelab.explore.ngram.groupBy
+		+ "&group_by=hit:" + Whitelab.explore.ngram.group_by
 		+ "&number=" + Whitelab.explore.ngram.number;
 		
 		if (Whitelab.explore.ngram.filterQuery.length > 0)
@@ -174,7 +182,7 @@ Whitelab.explore.ngram = {
 		
 		Whitelab.debug("update ngram filter query: "+Whitelab.explore.ngram.filterQuery);
 		
-		Whitelab.explore.ngram.groupBy = $("#ngram-group").html();
+		Whitelab.explore.ngram.group_by = $("#ngram-group").html();
 		
 		$.each(params, function(k, v) {
 			if (Whitelab.explore.ngram.hasOwnProperty(k)) {

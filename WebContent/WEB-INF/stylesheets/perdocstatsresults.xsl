@@ -3,35 +3,21 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
-	<xsl:param name="query" select="'#'" />
-	<xsl:param name="query_id" select="'#'" />
-	<xsl:param name="per_hit" select="'#'" />
-	<xsl:param name="per_doc" select="'#'" />
-	<xsl:param name="grouped_per_hit" select="'#'" />
-	<xsl:param name="grouped_per_doc" select="'#'" />
-	<xsl:param name="context_left" select="'#'" />
-	<xsl:param name="context_right" select="'#'" />
-	<xsl:param name="word" select="'#'" />
-	<xsl:param name="lemma" select="'#'" />
-	<xsl:param name="pos" select="'#'" />
-	<xsl:param name="result_export" select="'#'" />
-	<xsl:param name="result_pagination_show" select="'#'" />
-	<xsl:param name="result_per_page" select="'#'" />
-	<xsl:param name="result_page" select="'#'" />
-	<xsl:param name="result_go" select="'#'" />
-	<xsl:param name="result_of" select="'#'" />
-	<xsl:param name="by" select="'#'" />
-	<xsl:param name="title_name" select="'#'" />
-	<xsl:param name="author_name" select="'#'" />
-	<xsl:param name="date_name" select="'#'" />
-	<xsl:param name="collection_name" select="'#'" />
-	<xsl:param name="pos_name" select="'#'" />
-	<xsl:param name="lemma_name" select="'#'" />
-	<xsl:param name="max" select="'50'" />
-	
-	<xsl:param name="lang" select="'nl'" />
-	<xsl:param name="resultkey" select="'#'" />
-	<xsl:param name="sessionid" select="'#'" />
+	<xsl:param name="result_export" select="''" />
+	<xsl:param name="result_pagination_show" select="''" />
+	<xsl:param name="result_per_page" select="''" />
+	<xsl:param name="result_page" select="''" />
+	<xsl:param name="result_go" select="''" />
+	<xsl:param name="result_of" select="''" />
+	<xsl:param name="title_name" select="''" />
+	<xsl:param name="author_name" select="''" />
+	<xsl:param name="collection_name" select="''" />
+	<xsl:param name="document_id" select="''" />
+	<xsl:param name="document_title" select="''" />
+	<xsl:param name="document_author" select="''" />
+	<xsl:param name="collection" select="''" />
+	<xsl:param name="token_count" select="''" />
+	<xsl:param name="view_doc" select="''" />
 
 	<xsl:template match="error">
 		<h1>Error</h1>
@@ -57,27 +43,20 @@
 				<table class="documents">
 					<thead>
 						<tr class="tbl_head">
-							<th>
+							<th class="tbl_docid">
 								<a>
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.explore.statistics.update('docs',{sort:''})</xsl:text>
 									</xsl:attribute>
-									Document ID
+									<xsl:value-of select="$document_id" />
 								</a>
 							</th>
-							<th class="tbl_doct">
+							<th class="tbl_doctitle">
 								<a>
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.explore.statistics.update('docs',{sort:''})</xsl:text>
 									</xsl:attribute>
-									<xsl:choose>
-										<xsl:when test="$lang = 'en'">
-											Document title
-										</xsl:when>
-										<xsl:otherwise>
-											Document titel
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:value-of select="$document_title" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -96,19 +75,12 @@
 									&#9660;
 								</a>
 							</th>
-							<th class="tbl_doct">
+							<th class="tbl_author">
 								<a>
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.explore.statistics.update('docs',{sort:''})</xsl:text>
 									</xsl:attribute>
-									<xsl:choose>
-										<xsl:when test="$lang = 'en'">
-											Author
-										</xsl:when>
-										<xsl:otherwise>
-											Auteur
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:value-of select="$document_author" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -132,14 +104,7 @@
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.explore.statistics.update('docs',{sort:''})</xsl:text>
 									</xsl:attribute>
-									<xsl:choose>
-										<xsl:when test="$lang = 'en'">
-											Collection
-										</xsl:when>
-										<xsl:otherwise>
-											Collectie
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:value-of select="$collection" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -163,7 +128,7 @@
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.explore.statistics.update('docs',{sort:''})</xsl:text>
 									</xsl:attribute>
-									Tokens
+									<xsl:value-of select="$token_count" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -178,7 +143,7 @@
 									&#9660;
 								</a>
 							</th>
-							<th class="tbl_hits centered"></th>
+							<th class="tbl_show centered"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -200,14 +165,7 @@
 											<xsl:value-of select="docPid" />
 											<xsl:text>')</xsl:text>
 										</xsl:attribute>
-										<xsl:choose>
-											<xsl:when test="$lang = 'en'">
-												View document
-											</xsl:when>
-											<xsl:otherwise>
-												Toon document
-											</xsl:otherwise>
-										</xsl:choose>
+										<xsl:value-of select="$view_doc" />
 									</a>
 								</td>
 							</tr>

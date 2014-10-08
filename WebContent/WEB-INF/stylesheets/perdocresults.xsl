@@ -3,36 +3,26 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
-	<xsl:param name="sortBy" select="''"/>
-	<xsl:param name="query" select="'#'" />
-	<xsl:param name="query_id" select="'#'" />
-	<xsl:param name="per_hit" select="'#'" />
-	<xsl:param name="per_doc" select="'#'" />
-	<xsl:param name="grouped_per_hit" select="'#'" />
-	<xsl:param name="grouped_per_doc" select="'#'" />
-	<xsl:param name="context_left" select="'#'" />
-	<xsl:param name="context_right" select="'#'" />
-	<xsl:param name="word" select="'#'" />
-	<xsl:param name="lemma" select="'#'" />
-	<xsl:param name="pos" select="'#'" />
-	<xsl:param name="result_export" select="'#'" />
-	<xsl:param name="result_pagination_show" select="'#'" />
-	<xsl:param name="result_per_page" select="'#'" />
-	<xsl:param name="result_page" select="'#'" />
-	<xsl:param name="result_go" select="'#'" />
-	<xsl:param name="result_of" select="'#'" />
-	<xsl:param name="by" select="'#'" />
-	<xsl:param name="title_name" select="'#'" />
-	<xsl:param name="author_name" select="'#'" />
-	<xsl:param name="date_name" select="'#'" />
-	<xsl:param name="collection_name" select="'#'" />
-	<xsl:param name="pos_name" select="'#'" />
-	<xsl:param name="lemma_name" select="'#'" />
-	<xsl:param name="max" select="'50'" />
-	
-	<xsl:param name="lang" select="'nl'" />
-	<xsl:param name="resultkey" select="'#'" />
-	<xsl:param name="sessionid" select="'#'" />
+	<xsl:param name="sort_by" select="''"/>
+	<xsl:param name="query" select="''" />
+	<xsl:param name="query_id" select="''" />
+	<xsl:param name="per_hit" select="''" />
+	<xsl:param name="per_doc" select="''" />
+	<xsl:param name="grouped_per_hit" select="''" />
+	<xsl:param name="grouped_per_doc" select="''" />
+	<xsl:param name="result_export" select="''" />
+	<xsl:param name="result_pagination_show" select="''" />
+	<xsl:param name="result_per_page" select="''" />
+	<xsl:param name="result_page" select="''" />
+	<xsl:param name="result_go" select="''" />
+	<xsl:param name="result_of" select="''" />
+	<xsl:param name="result_by" select="''" />
+	<xsl:param name="title_name" select="''" />
+	<xsl:param name="author_name" select="''" />
+	<xsl:param name="collection_name" select="''" />
+	<xsl:param name="document_title" select="''" />
+	<xsl:param name="collection" select="''" />
+	<xsl:param name="view_doc" select="''" />
 
 	<xsl:template match="error">
 		<h1>Error</h1>
@@ -66,14 +56,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{sort:''})</xsl:text>
 									</xsl:attribute>
-									<xsl:choose>
-										<xsl:when test="$lang = 'en'">
-											Document title
-										</xsl:when>
-										<xsl:otherwise>
-											Document titel
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:value-of select="$document_title" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -103,14 +86,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{sort:''})</xsl:text>
 									</xsl:attribute>
-									<xsl:choose>
-										<xsl:when test="$lang = 'en'">
-											Collection
-										</xsl:when>
-										<xsl:otherwise>
-											Collectie
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:value-of select="$collection" />
 								</a>
 								<a>
 									<xsl:attribute name="onclick">
@@ -178,7 +154,7 @@
 											<xsl:text>')</xsl:text>
 										</xsl:attribute>
 										<b><xsl:value-of select="docPid" /></b>:&#160;<xsl:value-of select="$docTitle" />&#160;&#160;
-										<i><xsl:value-of select="$by" /></i>&#160;&#160;
+										<i><xsl:value-of select="$result_by" /></i>&#160;&#160;
 										<xsl:value-of select="$docAuthor" />
 									</a>
 									<br />
@@ -195,14 +171,7 @@
 											<xsl:value-of select="$query" />
 											<xsl:text>')</xsl:text>
 										</xsl:attribute>
-										<xsl:choose>
-											<xsl:when test="$lang = 'en'">
-												View document
-											</xsl:when>
-											<xsl:otherwise>
-												Toon document
-											</xsl:otherwise>
-										</xsl:choose>
+										<xsl:value-of select="$view_doc" />
 									</a>
 								</td>
 								<td class="centered">
@@ -251,7 +220,7 @@
 					<xsl:attribute name="onclick">
 						<xsl:text>Whitelab.search.update(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,{groupBy: "", view : 8})</xsl:text>
+						<xsl:text>,{group_by: "", view : 8})</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$grouped_per_hit" />
 				</a>
@@ -261,7 +230,7 @@
 					<xsl:attribute name="onclick">
 						<xsl:text>Whitelab.search.update(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,{groupBy: "", view : 16})</xsl:text>
+						<xsl:text>,{group_by: "", view : 16})</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$grouped_per_doc" />
 				</a>
@@ -296,7 +265,7 @@
 					<xsl:attribute name="onchange">
 						<xsl:text>Whitelab.search.update(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,{number : $(this).val(), sort : </xsl:text><xsl:value-of select="$sortBy" /><xsl:text>})</xsl:text>
+						<xsl:text>,{number : $(this).val(), sort : </xsl:text><xsl:value-of select="$sort_by" /><xsl:text>})</xsl:text>
 					</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="$resultsPerPage = 200">
@@ -336,7 +305,7 @@
 									<xsl:attribute name="onclick">
 										<xsl:text>Whitelab.search.update(</xsl:text>
 										<xsl:value-of select="$query_id" />
-										<xsl:text>,{first:0, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>,{first:0, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 										<xsl:value-of select="'&lt;&lt;'" />
 									</a>
@@ -357,7 +326,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{first:</xsl:text>
 										<xsl:value-of select="($currentPage - 2) * $resultsPerPage" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;'" />
 								</a>
@@ -394,7 +363,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{first:</xsl:text>
 										<xsl:value-of select="($currentPage * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;'" />
 								</a>
@@ -415,7 +384,7 @@
 										<xsl:value-of select="$query_id" />
 										<xsl:text>,{first:</xsl:text>
 										<xsl:value-of select="(($numberOfPages - 1) * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;&gt;'" />
 								</a>
@@ -437,7 +406,7 @@
 					<xsl:attribute name="onclick">
 						<xsl:text>Whitelab.search.result.goToPage(</xsl:text>
 						<xsl:value-of select="$query_id" />
-						<xsl:text>,this,</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>,'</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>')</xsl:text>
+						<xsl:text>,this,</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>,'</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>')</xsl:text>
 					</xsl:attribute>
 				<xsl:value-of select="$result_go" />
 				</button>
@@ -467,7 +436,7 @@
 							<xsl:value-of select="$query_id" />
 							<xsl:text>,{first:</xsl:text>
 							<xsl:value-of select="($start - 1) * $perpage" />
-							<xsl:text>, number:</xsl:text><xsl:value-of select="$perpage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sortBy" /><xsl:text>'})</xsl:text>
+							<xsl:text>, number:</xsl:text><xsl:value-of select="$perpage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
 						</xsl:attribute>
 						<xsl:value-of select="$start" />
 					</a>

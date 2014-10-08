@@ -18,7 +18,7 @@
 							<input type="checkbox" id="group-check"> $labels.getString("meta.group")<select id="group-select" class="meta-medium">
 								<option value="hits" selected="true">$labels.getString("meta.group.hits")</option>
 								<option value="documents">$labels.getString("meta.group.documents")</option>
-							</select>per<select id="groupBy-select" class="meta-medium" onchange="$('#group-check').prop('checked',true);">
+							</select>per<select id="group_by-select" class="meta-medium" onchange="$('#group-check').prop('checked',true);">
 								<option value="" selected="true"></option>
 								<option class="noprefix" value="hit:word">hit $labels.getString("word")</option>
 								<option class="noprefix" value="wordleft:word">$labels.getString("word") $labels.getString("left")</option>

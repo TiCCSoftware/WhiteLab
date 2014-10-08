@@ -221,9 +221,9 @@ public class DocumentResponse extends BaseResponse {
 		String query = this.getParameter("query", "");
 		transformer.addParameter("query", query);
 		if (query.length() == 0)
-			transformer.addParameter("whitelabPage", "explore");
+			transformer.addParameter("whitelab_page", "explore");
 		else
-			transformer.addParameter("whitelabPage", "search");
+			transformer.addParameter("whitelab_page", "search");
 		transformer.addParameter("doc_id", docPid);
 		transformer.addParameter("lang", this.lang);
 		

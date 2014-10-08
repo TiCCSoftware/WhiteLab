@@ -53,7 +53,6 @@ public abstract class BaseResponse {
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
 	protected WhiteLab servlet;
-	private List<String> requiredParameters;
 	private VelocityContext context = new VelocityContext();
 	protected ResourceBundle labels;
 	protected Locale locale;
@@ -64,7 +63,6 @@ public abstract class BaseResponse {
 	protected long startTime = new Date().getTime();
 
 	protected BaseResponse() {
-		requiredParameters = new ArrayList<String>();
 	}
 	
 	public WhiteLab getServlet() {
@@ -108,13 +106,12 @@ public abstract class BaseResponse {
 
 				params.put("patt", query);
 				
-				String groupBy = this.getParameter("groupBy", "");
+				String groupBy = this.getParameter("group_by", "");
 				if (groupBy.length() > 0)
 					params.put("group", URLDecoder.decode(groupBy, "UTF-8"));
 				
 				String sort = this.getParameter("sort", "");
 				if (sort.length() > 0) {
-					this.servlet.log("SORTING BY "+sort);
 					params.put("sort", URLDecoder.decode(sort, "UTF-8"));
 				}
 				
@@ -241,18 +238,6 @@ public abstract class BaseResponse {
 		return parameters;
 	}
 
-//	private static Document convertStringToDocument(String xmlStr) {
-//        try {  
-//        	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
-//            DocumentBuilder builder = factory.newDocumentBuilder();  
-//            Document doc = builder.parse( new InputSource( new StringReader( xmlStr ) ) ); 
-//            return doc;
-//        } catch (Exception e) {  
-//            e.printStackTrace();  
-//        } 
-//        return null;
-//    }
-
 	/**
 	 * Display a specific template, with specific mime type
 	 *
@@ -318,56 +303,17 @@ public abstract class BaseResponse {
 		this.getContext().put("lang", this.lang);
 		this.getContext().put("labels", this.labels);
 		
-		// if we have enough parameters to complete this request...
-		if (sufficientParameters()) {
-			logRequest();
-			
-			try {
-				this.params = getQueryParameters();
-				if (this.params.keySet().size() > 0)
-					this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
-			
-			completeRequest();
-		} else {
-			// insufficient parameters supplied, return error
-			this.getContext().put("error", "Insufficient parameters");
-			this.displayHtmlTemplate(this.servlet.getTemplate("error"));
+		logRequest();
+		
+		try {
+			this.params = getQueryParameters();
+			if (this.params.keySet().size() > 0)
+				this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
 		}
-	}
-
-	/**
-	 * Add a required parameter to the list
-	 * @param param
-	 */
-	protected void addRequiredParameter(String param) {
-		requiredParameters.add(param);
-	}
-
-	/**
-	 * Check if all parameters necessary to complete a search request exist
-	 * @return true/false
-	 */
-	private boolean sufficientParameters() {
-		// for each parameter in the list
-		for(String p : requiredParameters) {
-			// if it is missing, return false
-			if(request.getParameter(p) == null) {
-				System.out.println("Missing parameter: "+p);
-				return false;
-			}
-
-			// if, after trimming, it is empty, return false
-			if(request.getParameter(p).trim().length() < 1) {
-				System.out.println("Missing parameter: "+p);
-				return false;
-			}
-		}
-
-		// everything is accounted for, return true!
-		return true;
+		
+		completeRequest();
 	}
 
 	/**
