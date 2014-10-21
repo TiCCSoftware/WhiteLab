@@ -25,9 +25,9 @@
 			<!-- Classpath for compilation -->
 			<classpath>
 				<pathelement path="${java.class.path}/"/>
-				<pathelement path="${lib}/servlet-api.jar" />
-				<pathelement path="${lib}/jsp-api.jar" />
-				<pathelement path="${lib}/jasper.jar" />
+				<pathelement path="${tomcatlib}/servlet-api.jar" />
+				<pathelement path="${tomcatlib}/jsp-api.jar" />
+				<pathelement path="${tomcatlib}/jasper.jar" />
 				<pathelement path="${lib}/commons-collections-3.2.jar" />
 				<pathelement path="${lib}/commons-configuration-1.9.jar" />
 				<pathelement path="${lib}/commons-lang-2.2.jar" />
