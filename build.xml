@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE project>
+<project name="whitelab" default="dist" basedir=".">
+	<!-- Project info -->
+	<property name="project.name" value="whitelab" />
+	<property name="project.version" value="1.0" />
+
+	<!-- Directories -->
+	<property name="src" value="src" />
+	<property name="build" value="antbuild" />
+	<property name="dist" value="dist" />
+	<property name="tomcatlib" value="/usr/local/apache-tomcat-7.0.52/lib/" />
+	<property name="lib" value="lib" />
+	
+	<!-- Initialise the build -->
+	<target name="init">
+		<echo message="----- Building ${project.name} -----" />
+		<tstamp />
+		<mkdir dir="${build}/WEB-INF/classes" />
+	</target>
+	
+	<!-- Compile the sources -->
+	<target name="compile" depends="init">
+		<javac includeantruntime="false" encoding="utf-8" debug="true" debuglevel="lines,vars,source" srcdir="${src}" destdir="${build}/WEB-INF/classes">
+			<!-- Classpath for compilation -->
+			<classpath>
+				<pathelement path="${java.class.path}/"/>
+				<pathelement path="${lib}/servlet-api.jar" />
+				<pathelement path="${lib}/jsp-api.jar" />
+				<pathelement path="${lib}/jasper.jar" />
+				<pathelement path="${lib}/commons-collections-3.2.jar" />
+				<pathelement path="${lib}/commons-configuration-1.9.jar" />
+				<pathelement path="${lib}/commons-lang-2.2.jar" />
+				<pathelement path="${lib}/commons-lang3-3.1.jar" />
+				<pathelement path="${lib}/commons-logging-1.1.jar" />
+				<pathelement path="${lib}/InlJavaLib-0.7.jar" />
+				<pathelement path="${lib}/org.json-20120521.jar" />
+				<pathelement path="${lib}/velocity-1.7.jar" />
+				<pathelement path="${lib}/velocity-tools-view-2.0.jar" />
+				<pathelement path="${lib}/vtd-xml.jar" />
+			</classpath>
+		</javac>
+		
+		<!-- Remove old libraries from build dir -->
+		<delete dir="${build}/WEB-INF/lib" />
+	
+		<!-- Copy resources to build dir -->
+		<copy todir="${build}/WEB-INF/classes">
+			<fileset dir="${src}" includes="*.properties" />
+		</copy>
+		<copy todir="${build}/WEB-INF">
+			<fileset dir="." includes="lib/**" />
+		</copy>
+		<copy todir="${build}">
+			<fileset dir="WebContent" includes="META-INF/*" />
+			<fileset dir="WebContent" includes="web/**" />
+			<fileset dir="WebContent" excludes="WEB-INF/web.xml" includes="WEB-INF/**" />
+		</copy>
+		
+	</target>
+	
+    <!-- Build .war file from the build directory -->
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}" />
+        <war manifest="WebContent/META-INF/MANIFEST.MF" warfile="${dist}/${project.name}.war" webxml="WebContent/WEB-INF/web.xml" basedir="${build}" />
+    </target>
+	
+    <!-- Delete all generated files -->
+    <target name="clean">
+        <delete dir="${build}" />
+        <delete dir="${dist}" />
+    </target>
+	
+</project>
