@@ -6,13 +6,7 @@
  */
 package com.uvt.whitelab.response;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -26,7 +20,6 @@ import com.uvt.whitelab.util.XslTransformer;
 
 public class ExportResponse extends BaseResponse {
 
-	private static final int BUFSIZE = 4096;
 	private String corpus;
 	private String trail = "/hits";
 	private Integer view = 1;
@@ -35,8 +28,6 @@ public class ExportResponse extends BaseResponse {
 
 	@Override
 	protected void completeRequest() {
-		
-		deleteOldFiles();
 		
 		corpus = this.labels.getString("corpus");
 		
@@ -49,14 +40,11 @@ public class ExportResponse extends BaseResponse {
 			if (view == 2 || view == 4 || view == 16)
 				trail = "/docs";
 			
-			String fileName = new BigInteger(130, random).toString(32);
-			String filePath = this.servlet.getRealPath()+"WEB-INF/tmp/"+corpus+"-"+fileName+".tsv";
+			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
 			
 			String result = this.jobToTSV();
-			this.saveDataToFile(result,filePath);
 			
-			
-			sendFileResponse(filePath);
+			sendFileResponse(result, fileName);
 			
 		} else {
 			Map<String,Object> output = new HashMap<String,Object>();
@@ -69,7 +57,7 @@ public class ExportResponse extends BaseResponse {
 	}
 
 	public String jobToTSV() {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
 			int n = (int) this.params.get("number");
 			if (n > 50000)
@@ -82,7 +70,7 @@ public class ExportResponse extends BaseResponse {
 					String resp = getBlackLabResponse(corpus, trail, this.params);
 					String stylesheet = this.getExportStylesheet(view);
 					this.setTransformerDisplayParameters(f == 0,n);
-					result = result+transformer.transform(resp, stylesheet);
+					result.append(transformer.transform(resp, stylesheet));
 				} catch (IOException | TransformerException e) {
 					e.printStackTrace();
 				}
@@ -92,15 +80,15 @@ public class ExportResponse extends BaseResponse {
 				String resp = getBlackLabResponse(corpus, trail, this.params);
 				String stylesheet = this.getExportStylesheet(view);
 				this.setTransformerDisplayParameters(true,(int) this.params.get("number"));
-				result = transformer.transform(resp, stylesheet);
+				result.append(transformer.transform(resp, stylesheet));
 			} catch (IOException | TransformerException e) {
 				e.printStackTrace();
 			}
 		}
-		return result;
+		return result.toString();
 	}
 
-	private void setTransformerDisplayParameters(boolean includeHeader, int n) throws UnsupportedEncodingException {
+	private void setTransformerDisplayParameters(boolean includeHeader, int n) {
 		this.servlet.log("setTransformerDisplayParameters");
 		transformer.clearParameters();
 		transformer.addParameter("include_header", String.valueOf(includeHeader));
@@ -145,67 +133,22 @@ public class ExportResponse extends BaseResponse {
 		return null;
 	}
 
-	private String saveDataToFile(String data, String filePath) {
-		try {
-			PrintWriter out = new PrintWriter(filePath);
-			out.println(data);
-			out.close();
-			return filePath;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private void sendFileResponse(String filePath) {
-		File file = new File(filePath);
-        int length   = 0;
+	private void sendFileResponse(String contents, String fileName) {
+        // Set HTTP headers
+		response.setContentType("application/octet-stream");
+        response.setContentLength(contents.length());
+        response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
+        
         ServletOutputStream outStream = null;
 		try {
 			outStream = response.getOutputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		response.setContentType("application/octet-stream");
-        response.setContentLength((int)file.length());
-        String fileName = (new File(filePath)).getName();
-        
-        // sets HTTP header
-        response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
-        
-		try {
-	        byte[] byteBuffer = new byte[BUFSIZE];
-			DataInputStream in = new DataInputStream(new FileInputStream(file));
-			// reads the file's bytes and writes them to the response stream
-	        while ((in != null) && ((length = in.read(byteBuffer)) != -1))
-	        {
-	            outStream.write(byteBuffer,0,length);
-	        }
-	        
-	        in.close();
-	        outStream.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void deleteOldFiles() {
-
-		File directory = new File(this.servlet.getRealPath()+"WEB-INF/tmp/");
-		if(directory.exists()){
-
-			File[] listFiles = directory.listFiles();			 
-			long purgeTime = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000);
-			for(File listFile : listFiles) {
-				if(listFile.lastModified() < purgeTime) {
-					if(!listFile.delete()) {
-						System.err.println("Unable to delete file: " + listFile);
-					}
-				}
+			try {
+				outStream.write(contents.getBytes("utf-8"));
+			} finally {
+		        outStream.close();
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

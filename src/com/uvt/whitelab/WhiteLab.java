@@ -223,12 +223,14 @@ public class WhiteLab extends HttpServlet {
         return null;
     }
 
+	@Override
 	public void log(String msg) {
 		this.logger.info(msg);
 	}
 
 	/**
 	 * Start the templating engine
+	 * @param argConfig the configuration object
 	 * @throws Exception
 	 */
 	private void startVelocity(ServletConfig argConfig) throws Exception {

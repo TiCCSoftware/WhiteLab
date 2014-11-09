@@ -7,7 +7,6 @@
 package com.uvt.whitelab.response;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -242,15 +241,13 @@ public class QueryResponse extends BaseResponse {
 		try {
 			setTransformerDisplayParameters();
 			return transformer.transform(response, stylesheet);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 		return "";
 	}
 
-	private void setTransformerDisplayParameters() throws UnsupportedEncodingException {
+	private void setTransformerDisplayParameters() {
 		transformer.clearParameters();
 		
 		if (this.params.containsKey("patt")) {

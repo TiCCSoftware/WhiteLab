@@ -51,7 +51,7 @@ public class QueryServiceHandler {
 
 		// if not, send a request to the webserver
 		URL webserviceRequest = new URL(requestUrl);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(webserviceRequest.openStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(webserviceRequest.openStream(), "utf-8"));
 
 		// make url parameter string
 		StringBuilder builder = new StringBuilder();

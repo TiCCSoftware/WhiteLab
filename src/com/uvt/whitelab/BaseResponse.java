@@ -94,7 +94,7 @@ public abstract class BaseResponse {
 		context = new VelocityContext();
 	}
 
-	protected Map<String, Object> getQueryParameters() throws UnsupportedEncodingException {
+	protected Map<String, Object> getQueryParameters() {
 		Map<String, Object> params = new HashMap<String,Object>();
 		String query = this.getParameter("query", "");
 		query = query.replaceAll("&", "%26");
@@ -305,13 +305,9 @@ public abstract class BaseResponse {
 		
 		logRequest();
 		
-		try {
-			this.params = getQueryParameters();
-			if (this.params.keySet().size() > 0)
-				this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
+		this.params = getQueryParameters();
+		if (this.params.keySet().size() > 0)
+			this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
 		
 		completeRequest();
 	}
