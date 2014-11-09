@@ -162,7 +162,7 @@ Whitelab.search.result = {
 							sameType = true;
 
 						qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
-						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
+						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\./g,"\\\.");
 						if (!sameType) {
 							q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 						} else {
@@ -332,7 +332,7 @@ Whitelab.search.result = {
 					sameType = true;
 
 				qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
-				pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)");
+				pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\./g,"\\\.");
 				if (!sameType) {
 					q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 				} else {
