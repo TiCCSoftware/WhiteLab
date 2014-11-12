@@ -144,8 +144,8 @@ Whitelab.explore.statistics = {
 		if (ask) {
 			Whitelab.explore.statistics.setSearchParams();
 			var params = Whitelab.explore.statistics.params.replace(/ /g,"%20");
-			Whitelab.debug("http://"+window.location.host+"/whitelab/page/export?"+params);
-			window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+			Whitelab.debug(WHITELAB_BASE_URL + "/page/export?"+params);
+			window.location = WHITELAB_BASE_URL + "/page/export?"+params;
 		}
 	},
 	
@@ -249,9 +249,9 @@ Whitelab.explore.statistics = {
 	},
 	
 	loadVocabGrowthDataForDoc : function(docPid) {
-		console.log("http://"+window.location.host+"/whitelab/page/document?docpid="+docPid+"&growth=bare");
+		console.log(WHITELAB_BASE_URL + "/page/document?docpid="+docPid+"&growth=bare");
 		$.ajax({
-		  url: "http://"+window.location.host+"/whitelab/page/document?docpid="+docPid+"&growth=bare",
+		  url: WHITELAB_BASE_URL + "/page/document?docpid="+docPid+"&growth=bare",
 		  dataType: "json",
 		  type: "GET",
 	      contentType: 'application/json; charset=utf-8',

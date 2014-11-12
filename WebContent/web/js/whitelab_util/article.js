@@ -29,7 +29,7 @@ $(document).on("click", "#text_tab .word", function(e){
 	$(this).find(".hoverdiv").toggleClass("clicked");
 });
 
-var base_url = "/whitelab/page/";
+var base_url = WHITELAB_ROOT_PATH + "/page/";
 
 function getData(query, params, callback, target) {
 	var url = base_url + query;

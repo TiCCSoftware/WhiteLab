@@ -6,7 +6,6 @@
  */
 package com.uvt.whitelab;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
@@ -71,7 +70,6 @@ public class WhiteLab extends HttpServlet {
 
 	private final String VELOCITY_PROPERTIES = "/WEB-INF/config/velocity.properties";
 	private String realPath = "";
-	private String name = "";
 	private VelocityContext context;
 	private Map<String, Template> templates = new HashMap<String, Template>();
 	private Map<String, BaseResponse> responses = new HashMap<String, BaseResponse>();
@@ -81,6 +79,7 @@ public class WhiteLab extends HttpServlet {
 	
 	private List<MetadataField> filterFields = null;
 	private LinkedList<FieldDescriptor> searchFields = null;
+	private String contextRoot;
 
 	/**
 	 *
@@ -109,23 +108,26 @@ public class WhiteLab extends HttpServlet {
 
 		try {
 			startVelocity(cfg);
+			
+			// Find extracted WAR path
 			realPath = cfg.getServletContext().getRealPath("/");
-			// get the name of the folder that contains our deployed war file
-			name = new File(realPath).getName();
+			
+			// Find our context root
+			contextRoot = cfg.getServletContext().getContextPath();
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 		// initialise responses
-		responses.put("/" + name + "/page/explore", new ExploreResponse());
-		responses.put("/" + name + "/page/treemap", new TreemapResponse());
-		responses.put("/" + name + "/page/search", new SearchResponse());
-		responses.put("/" + name + "/page/query", new QueryResponse());
-		responses.put("/" + name + "/page/document", new DocumentResponse());
-		responses.put("/" + name + "/page/export", new ExportResponse());
-		responses.put("/" + name + "/page/home", new HomeResponse());
-		responses.put("/" + name + "/page/error", new ErrorResponse());
+		responses.put(contextRoot + "/page/explore", new ExploreResponse());
+		responses.put(contextRoot + "/page/treemap", new TreemapResponse());
+		responses.put(contextRoot + "/page/search", new SearchResponse());
+		responses.put(contextRoot + "/page/query", new QueryResponse());
+		responses.put(contextRoot + "/page/document", new DocumentResponse());
+		responses.put(contextRoot + "/page/export", new ExportResponse());
+		responses.put(contextRoot + "/page/home", new HomeResponse());
+		responses.put(contextRoot + "/page/error", new ErrorResponse());
 		responses.put("home", new HomeResponse());
 		responses.put("error", new ErrorResponse());
 		

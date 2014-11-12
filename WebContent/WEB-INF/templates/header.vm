@@ -34,6 +34,7 @@
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 		<script type="text/javascript" src="../web/js/foundation.min.js"></script>
 		<script type="text/javascript" src="../web/js/foundation.accordion.js"></script>
+		<script type="text/javascript" src="../web/js/defines.js"></script>
 		<script type="text/javascript" src="../web/js/cql.js"></script>
 		<script type="text/javascript" src="../web/js/ajax_retriever.js"></script>
 		<script type="text/javascript" src="../web/js/whitelab.js"></script>

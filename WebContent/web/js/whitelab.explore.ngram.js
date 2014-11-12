@@ -49,7 +49,7 @@ Whitelab.explore.ngram = {
 		
 		if (ask) {
 			var params = Whitelab.explore.ngram.params.replace(/ /g,"%20");
-			window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+			window.location = WHITELAB_BASE_URL + "/page/export?"+params;
 		}
 	},
 	
