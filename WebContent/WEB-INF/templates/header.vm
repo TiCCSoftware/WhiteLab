@@ -27,11 +27,11 @@
 		<link rel="stylesheet" href="../web/css/whitelab/document.css" type='text/css' />
 		<link rel="stylesheet" href="../web/css/whitelab/folia.css" type='text/css' />
 		<link rel="stylesheet" href="../web/css/introjs.css" type='text/css' />
-		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript" src="//www.google.com/jsapi"></script>
 	    <script type="text/javascript">google.load("visualization", "1", {packages:["corechart"]});</script>
-		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-		<script type="text/javascript" src="../web/js/modernizr.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 		<script type="text/javascript" src="../web/js/foundation.min.js"></script>
 		<script type="text/javascript" src="../web/js/foundation.accordion.js"></script>
 		<script type="text/javascript" src="../web/js/cql.js"></script>
