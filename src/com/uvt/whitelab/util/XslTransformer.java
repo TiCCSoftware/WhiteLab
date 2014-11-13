@@ -111,7 +111,10 @@ public class XslTransformer {
 	}
 	
 	public Integer getAvgParagraphSize(String source) {
-		int avgParagraphSize = (int)(Math.ceil(getWordCount(source) / getParCount(source)));
+		Integer parCount = getParCount(source);
+		int avgParagraphSize = 0;
+		if (parCount > 0)
+			avgParagraphSize = (int)(Math.ceil(getWordCount(source) / parCount));
 		return avgParagraphSize;
 	}
 	

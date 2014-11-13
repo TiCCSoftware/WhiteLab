@@ -1,9 +1,8 @@
 // AJAX-related functions
 
-// Constructor: takes the base URL and the operation we want to carry out
-function AjaxRetriever(webservice, webcall) {
-	this.webservice = webservice;
-	this.webcall = webcall;
+// Constructor: takes the URL for the webservice (without parameters)
+function AjaxRetriever(webserviceUrl) {
+	this.webserviceUrl = webserviceUrl;
 }
 
 // Perform AJAX call, transform response XML to HTML and add to the page
@@ -14,7 +13,7 @@ AjaxRetriever.prototype.putAjaxResponse = function(element_id, parameters, appen
 	$.ajax({
         type: "GET",
         dataType: "xml",
-        url: this.webservice + this.webcall, 
+        url: this.webserviceUrl, 
         data: parameters, 
         cache: false
     }).done(function(data) {

@@ -140,7 +140,7 @@ public class WhiteLab extends HttpServlet {
 	
 	private void loadFields() {
 		ResourceBundle labels = ResourceBundle.getBundle("WhitelabBundle", new Locale("nl"));
-		String resp = getBlackLabResponse(labels.getString("baseUrl")+"/"+labels.getString("corpus"));
+		String resp = getBlackLabResponse(labels.getString("blsUrlInternal") + "/" + labels.getString("corpus"));
 		Document xml = convertStringToDocument(resp);
 		
 		filterFields = new ArrayList<MetadataField>();

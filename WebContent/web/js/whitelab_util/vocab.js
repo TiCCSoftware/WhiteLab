@@ -33,7 +33,7 @@ $(document).on("click","div.poslink > a", function(e) {
 
 function drawToolbar(container,url) {
 	var components = [
-		{type: 'csv', datasource: "http://"+window.location.host + url+"&format=csv"}
+		{type: 'csv', datasource: url + "&format=csv"}
     ];
     google.visualization.drawToolbar(container, components);
 };

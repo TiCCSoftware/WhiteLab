@@ -220,9 +220,9 @@ Whitelab.search.result = {
 				var filter = Whitelab.search.filterQuery;
 				filter = filter.replace(/field\:/g,"").replace(/=/g,":");
 				
-				Whitelab.debug("http://"+window.location.host+"/blacklab-server"+'/opensonar/'+type+'s?filter=('+filter+')&patt='+query);
+				Whitelab.debug(Whitelab.blsUrl + type + "s?filter = (" + filter + ")&patt=" + query);
 	
-				var retriever = new AjaxRetriever("http://"+window.location.host+"/blacklab-server", '/opensonar/'+type+'s');
+				var retriever = new AjaxRetriever(Whitelab.blsUrl + type + "s");
 				retriever.putAjaxResponse(element, {
 					patt: query,
 					filter: filter,
@@ -427,7 +427,7 @@ Whitelab.search.result = {
 		Whitelab.debug("showCitation("+element+","+docPid+","+start+","+end+")");
 		if ($(element).parent().parent().hasClass("hidden")) {
 			$(element).parent().parent().removeClass("hidden");
-			var retriever = new AjaxRetriever('/blacklab-server/opensonar/','docs/' + docPid + '/snippet');
+			var retriever = new AjaxRetriever(Whitelab.blsUrl + "docs/" + docPid + "/snippet");
 			var i = 49 - (end - start);
 			var param = {
 			    outputformat: "xml",
