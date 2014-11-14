@@ -38,6 +38,8 @@ public class WhitelabDocument {
 	private String xml = "";
 	@SuppressWarnings("unused")
 	private String metaXml = "";
+	public int start = -1;
+	public int end = -1;
 
 	private Map<String,Map<String,Integer>> lemmasByPos = new HashMap<String,Map<String,Integer>>();
 	private Map<String,Map<Integer,List<String>>> posBins = new HashMap<String,Map<Integer,List<String>>>();
