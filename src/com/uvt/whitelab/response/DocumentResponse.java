@@ -25,6 +25,7 @@ public class DocumentResponse extends BaseResponse {
 	private String subType = null;
 	private Integer max = -1;
 	private String format = "json";
+	private WhitelabDocument document = null;
 
 	@Override
 	protected void completeRequest() {
@@ -32,14 +33,15 @@ public class DocumentResponse extends BaseResponse {
 		if (queryType == null)
 			this.setQueryType();
 		
-		WhitelabDocument document = this.loadDocumentById(this.getParameter("docpid", ""));
+		if (this.document == null)
+			this.document = this.loadDocumentById(this.getParameter("docpid", ""));
 		
-		if (document == null) {
+		if (this.document == null) {
 			Map<String,Object> outparams = new HashMap<String,Object>();
 			outparams.put("error", "Document not found.");
 			sendResponse(outparams);
 		} else {
-			processDocument(document);
+			processDocument(this.document);
 		}
 	}
 	
@@ -162,6 +164,7 @@ public class DocumentResponse extends BaseResponse {
 		WhitelabDocument document = null;
 		int start = this.getParameter("start", -1);
 		int end = this.getParameter("end", -1);
+		
 		if (start > -1 && end == -1)
 			end = start + 499;
 		
@@ -177,7 +180,7 @@ public class DocumentResponse extends BaseResponse {
 				this.servlet.addDocument(document,this.lang);
 			}
 			
-			if (document.getContent().length() == 0) {
+			if (document.getContent().length() == 0 || start != document.start) {
 
 				if (this.getParameter("type", "").equals("explore") && this.params.containsKey("patt"))
 					this.params.remove("patt");
@@ -191,6 +194,8 @@ public class DocumentResponse extends BaseResponse {
 					String htmlResult = transformer.transformArticle(response, documentStylesheet, start, end);
 					document.setContent(htmlResult);
 					document.setXml(response);
+					document.start = start;
+					document.end = end;
 				} catch (IOException | TransformerException e) {
 					e.printStackTrace();
 				}
