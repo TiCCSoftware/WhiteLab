@@ -60,6 +60,11 @@ Whitelab.explore.ngram = {
 		Whitelab.debug("Whitelab.explore.ngram.group_by: "+Whitelab.explore.ngram.group_by);
 		if (Whitelab.hasOwnProperty("meta"))
 			Whitelab.explore.ngram.filterQuery = Whitelab.meta.parseQuery();
+		if (Whitelab.search.within != null && Whitelab.search.within == "paragraph") {
+			Whitelab.explore.ngram.query += " within (<p/>|<event/>)";
+		} else if (Whitelab.search.within != null && Whitelab.search.within == "sentence") {
+			Whitelab.explore.ngram.query += " within <s/>";
+		}
 		Whitelab.explore.ngram.setQueryDetails();
 		Whitelab.explore.ngram.setSearchParams();
 		$("#result_ngram").html("<span class=\"loading\"><img class=\"icon spinner\" src=\"../web/img/spinner.gif\"> LOADING</span>");

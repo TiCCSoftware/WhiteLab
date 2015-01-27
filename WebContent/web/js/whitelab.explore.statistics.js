@@ -155,6 +155,11 @@ Whitelab.explore.statistics = {
 
 		if (Whitelab.hasOwnProperty("meta") && !Whitelab.explore.statistics.detailsSet)
 			Whitelab.explore.statistics.filterQuery = Whitelab.meta.parseQuery();
+		if (Whitelab.search.within != null && Whitelab.search.within == "paragraph") {
+			Whitelab.explore.statistics.query += " within (<p/>|<event/>)";
+		} else if (Whitelab.search.within != null && Whitelab.search.within == "sentence") {
+			Whitelab.explore.statistics.query += " within <s/>";
+		}
 
 		if (Whitelab.explore.statistics.filterQuery.length == 0) {
 			if (!Whitelab.hasOwnProperty("tour") || Whitelab.tour.page == null)
