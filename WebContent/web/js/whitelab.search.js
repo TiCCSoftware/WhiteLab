@@ -107,6 +107,12 @@ Whitelab.search = {
 		if (ask) {
 			Whitelab.search.view = $("#result_"+id).find(".current-view").val();
 			Whitelab.search.query = $("#query_"+id).html();
+			Whitelab.search.within = $("#within_"+id).html();
+            if (Whitelab.search.within === "paragraph") {
+                Whitelab.search.query += " within (<p/>|<event/>)";
+            } else if (Whitelab.search.within === "sentence") {
+                Whitelab.search.query += " within <s/>";
+            }
 			Whitelab.search.query = Whitelab.search.query.replace(/amp;/g,"");
 			Whitelab.debug("export query: "+Whitelab.search.query);
 			Whitelab.search.group_by = $("#group_"+id).html();
@@ -188,8 +194,7 @@ Whitelab.search = {
 			id = Whitelab.search.queryCount;
 		}
 		
-		Whitelab.search.params = "query=" + encodeURIComponent(Whitelab.search.query) 
-		+ "&within=" + Whitelab.search.within
+		Whitelab.search.params = "query=" + encodeURIComponent(Whitelab.search.query)
 		+ "&view=" + Whitelab.search.view 
 		+ "&id=" + id
 		+ "&sort=" + Whitelab.search.sort
@@ -289,6 +294,11 @@ Whitelab.search = {
 		Whitelab.debug("update filter query: "+Whitelab.search.filterQuery);
 
 		Whitelab.search.within = $("#within_"+id).html();
+		if (Whitelab.search.within === "paragraph") {
+			Whitelab.search.query += " within (<p/>|<event/>)";
+		} else if (Whitelab.search.within === "sentence") {
+			Whitelab.search.query += " within <s/>";
+		}
 		Whitelab.search.group_by = $("#group_"+id).html();
 		Whitelab.search.view = $("#result_"+id+" .current-view").val();
 		if (Whitelab.search.group_by === "-")

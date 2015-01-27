@@ -7,6 +7,15 @@ Whitelab.search.result = {
 		if (i > -1)
 			q = q.substring(0,i);
 		
+		if (i > -1) {
+            if (q.indexOf("<s/>") > -1) {
+                Whitelab.search.within = "sentence";
+            } else if (q.indexOf("<p/>") > -1) {
+                 Whitelab.search.within = "paragraph";
+            }
+            q = q.substring(0,i);
+         }
+		
 		var queryRow = "<tr onclick=\"Whitelab.search.result.switchToQuery("+id+")\" id=\"row_"+id+"\" class=\"query-row\">"
 			+"<td>"+id+"</td>"
 			+"<td id=\"query_"+id+"\">"+q+"</td>"
