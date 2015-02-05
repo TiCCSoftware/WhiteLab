@@ -141,7 +141,7 @@ public class MetadataField {
 	}
 	
 	protected String getBlackLabResponse(String corpus, String trail) {
-		String url = this.labels.getString("baseUrl")+"/"+corpus+trail;
+		String url = this.labels.getString("blsUrlInternal") + "/" + corpus + trail;
 		
 		QueryServiceHandler webservice = new QueryServiceHandler(url, 1);
 		try {

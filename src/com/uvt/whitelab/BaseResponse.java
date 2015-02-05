@@ -202,7 +202,7 @@ public abstract class BaseResponse {
 	}
 	
 	protected String getBlackLabResponse(String corpus, String trail, Map<String,Object> params) {
-		String url = this.labels.getString("baseUrl")+"/"+corpus+trail;
+		String url = this.labels.getString("blsUrlInternal")+ "/" + corpus + trail;
 		this.lastUrl = url;
 		String parameters = getParameterStringExcept(new String[]{});
 		

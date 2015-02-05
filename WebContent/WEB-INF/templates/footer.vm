@@ -1,6 +1,7 @@
 		<div class="footer">WhiteLab v0.4.2 &copy; <a href="http://www.tilburguniversity.edu">Tilburg University</a> 2014 - Development: <a href="http://www.taalmonsters.nl">De Taalmonsters</a> - Powered by: <a href="https://github.com/INL/BlackLab-server" target="_blank">BlackLab Server</a> &copy; <a href="http://www.inl.nl">INL</a> 2014</div>
 		<script>
-			Whitelab.baseUrl = '$labels.getString("webserviceUrl")';
+			Whitelab.baseUrl = location.pathname.replace(/^\/([^\/]+)\/.*$/, "/$1/page/");
+			Whitelab.blsUrl = '$labels.getString("blsUrlExternal")/opensonar/';
 			
 			#if($lang)
 				Whitelab.language = "$lang";

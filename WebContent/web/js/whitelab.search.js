@@ -132,7 +132,7 @@ Whitelab.search = {
 			
 			params = Whitelab.search.params.replace(/ /g,"%20");
 	
-			window.location = "http://"+window.location.host+"/whitelab/page/export?id="+id+"&"+params;
+			window.location = Whitelab.baseUrl + "export?id="+id+"&"+params;
 		}
 	},
 	

@@ -151,8 +151,20 @@ Whitelab.search.result = {
 				
 				if (g.indexOf("hit:") == 0) {
 					var groupParts = groupid.split(" ");
-					var queryParts = Whitelab.search.query.substring(1,Whitelab.search.query.length - 1).split('][');
-					var q = "";
+
+					/*
+					// If there's any tokens without square brackets, convert them to
+					// square bracket form:
+					var queryTmp = Whitelab.search.query.replace(/(^|[\]\"])\s*(\"\w+\")/g, "[word=$2]");
+					
+					// Now, split on ] to get the separate tokens.
+					var queryParts = queryTmp.split(/]|$/);
+					queryParts.splice(queryParts.length - 1); // remove empty last part
+					
+					//OLD: var queryParts = queryTmp.trim().substring(1,Whitelab.search.query.length - 1).split(/]\s*\[/);
+					*/
+					
+					var q = "(" + query + ") & (";
 					var newType = "word";
 					if (g.indexOf(":lemma") > -1) {
 						newType = "lemma";
@@ -160,24 +172,32 @@ Whitelab.search.result = {
 						newType = "pos";
 					}
 					for (var p = 0; p < groupParts.length; p++) {
+						/*
 						var qq = queryParts[p];
 						if (qq.substr(0,1) === "(")
 							qq = qq.substr(1);
 						if (qq.substr(qq.length - 1) === ")")
 							qq = qq.substr(0,qq.length - 1);
+						*/
 						var pp = groupParts[p];
+						/*
 						var sameType = false;
 						if (qq.indexOf(newType) > -1)
-							sameType = true;
+							sameType = true;*/
 
-						qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
+						//qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
 						pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\./g,"\\\.");
+						
+						/*
 						if (!sameType) {
 							q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 						} else {
 							q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
-						}
+						}*/
+						
+						q += "[" + newType + "=\"(?-i)" + pp + "\"]";
 					}
+					q += ")";
 					//q = q.replace(/&/g,"%26");
 					Whitelab.debug("Combined query: "+q);
 					query = q;
@@ -229,9 +249,9 @@ Whitelab.search.result = {
 				var filter = Whitelab.search.filterQuery;
 				filter = filter.replace(/field\:/g,"").replace(/=/g,":");
 				
-				Whitelab.debug("http://"+window.location.host+"/blacklab-server"+'/opensonar/'+type+'s?filter=('+filter+')&patt='+query);
+				Whitelab.debug(Whitelab.blsUrl + type + "s?filter = (" + filter + ")&patt=" + query);
 	
-				var retriever = new AjaxRetriever("http://"+window.location.host+"/blacklab-server", '/opensonar/'+type+'s');
+				var retriever = new AjaxRetriever(Whitelab.blsUrl + type + "s");
 				retriever.putAjaxResponse(element, {
 					patt: query,
 					filter: filter,
@@ -319,10 +339,26 @@ Whitelab.search.result = {
 			}
 		}
 		
+		
+		// @@@@ TODO: whole block of code copy/pasted from above!!
+		// (almost... groupid/groupId, query/Whitelab.search.query, etc.)
+		
 		if (g.indexOf("hit:") == 0) {
 			var groupParts = groupId.split(" ");
-			var queryParts = Whitelab.search.query.substring(1,Whitelab.search.query.length - 1).split('][');
-			var q = "";
+
+			/*
+			// If there's any tokens without square brackets, convert them to
+			// square bracket form:
+			var queryTmp = Whitelab.search.query.replace(/(^|[\]\"])\s*(\"\w+\")/g, "[word=$2]");
+			
+			// Now, split on ] to get the separate tokens.
+			var queryParts = queryTmp.split(/]|$/);
+			queryParts.splice(queryParts.length - 1); // remove empty last part
+			
+			//OLD: var queryParts = queryTmp.trim().substring(1,Whitelab.search.query.length - 1).split(/]\s*\[/);
+			*/
+			
+			var q = "(" + Whitelab.search.query + ") & (";
 			var newType = "word";
 			if (g.indexOf(":lemma") > -1) {
 				newType = "lemma";
@@ -330,24 +366,33 @@ Whitelab.search.result = {
 				newType = "pos";
 			}
 			for (var p = 0; p < groupParts.length; p++) {
+				/*
 				var qq = queryParts[p];
 				if (qq.substr(0,1) === "(")
 					qq = qq.substr(1);
 				if (qq.substr(qq.length - 1) === ")")
 					qq = qq.substr(0,qq.length - 1);
+				*/
 				var pp = groupParts[p];
+				/*
 				var sameType = false;
 				if (qq.indexOf(newType) > -1)
-					sameType = true;
+					sameType = true;*/
 
-				qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
+				//qq = qq.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\\\(\?i\\\)/g,"(?i)").replace(/\\\(\?\-i\\\)/g,"(?-i)");
 				pp = pp.replace(/\(/g,"\\\(").replace(/\)/g,"\\\)").replace(/\./g,"\\\.");
+				
+				/*
 				if (!sameType) {
 					q = q+"["+qq+"&"+newType+"=\"(?-i)"+pp+"\"]";
 				} else {
 					q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
-				}
+				}*/
+				
+				q += "[" + newType + "=\"(?-i)" + pp + "\"]";
 			}
+			q += ")";
+			//q = q.replace(/&/g,"%26");
 			Whitelab.debug("Combined query: "+q);
 			Whitelab.search.query = q;
 		} else if (g.indexOf("wordleft:") == 0) {
@@ -436,7 +481,7 @@ Whitelab.search.result = {
 		Whitelab.debug("showCitation("+element+","+docPid+","+start+","+end+")");
 		if ($(element).parent().parent().hasClass("hidden")) {
 			$(element).parent().parent().removeClass("hidden");
-			var retriever = new AjaxRetriever('/blacklab-server/opensonar/','docs/' + docPid + '/snippet');
+			var retriever = new AjaxRetriever(Whitelab.blsUrl + "docs/" + docPid + "/snippet");
 			var i = 49 - (end - start);
 			var param = {
 			    outputformat: "xml",

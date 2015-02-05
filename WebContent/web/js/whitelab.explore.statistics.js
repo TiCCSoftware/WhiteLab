@@ -144,8 +144,8 @@ Whitelab.explore.statistics = {
 		if (ask) {
 			Whitelab.explore.statistics.setSearchParams();
 			var params = Whitelab.explore.statistics.params.replace(/ /g,"%20");
-			Whitelab.debug("http://"+window.location.host+"/whitelab/page/export?"+params);
-			window.location = "http://"+window.location.host+"/whitelab/page/export?"+params;
+			Whitelab.debug(Whitelab.baseUrl + "export?"+params);
+			window.location = Whitelab.baseUrl + "export?"+params;
 		}
 	},
 	
@@ -246,17 +246,17 @@ Whitelab.explore.statistics = {
 		Whitelab.explore.statistics.vocabDocOffset++;
 		if (Whitelab.explore.statistics.vocabDocOffset < Whitelab.explore.statistics.docCount) {
 			$("#growth div.loading").removeClass("hidden");
-			console.log("http://"+window.location.host+"/blacklab-server/opensonar/docs?"+Whitelab.explore.statistics.getVocabParams(Whitelab.explore.statistics.vocabDocOffset,1));
-			$.get("http://"+window.location.host+"/blacklab-server/opensonar/docs?"+Whitelab.explore.statistics.getVocabParams(Whitelab.explore.statistics.vocabDocOffset,1), function(data,status) {
+			console.log(Whitelab.blsUrl + "docs?"+Whitelab.explore.statistics.getVocabParams(Whitelab.explore.statistics.vocabDocOffset,1));
+			$.get(Whitelab.blsUrl + "docs?"+Whitelab.explore.statistics.getVocabParams(Whitelab.explore.statistics.vocabDocOffset,1), function(data,status) {
 				Whitelab.explore.statistics.loadVocabGrowthDataForDoc(data.docs[0].docPid);
 			});
 		}
 	},
 	
 	loadVocabGrowthDataForDoc : function(docPid) {
-		console.log("http://"+window.location.host+"/whitelab/page/document?docpid="+docPid+"&growth=bare");
+		console.log(Whitelab.baseUrl + "document?docpid="+docPid+"&growth=bare");
 		$.ajax({
-		  url: "http://"+window.location.host+"/whitelab/page/document?docpid="+docPid+"&growth=bare",
+		  url: Whitelab.baseUrl + "document?docpid="+docPid+"&growth=bare",
 		  dataType: "json",
 		  type: "GET",
 	      contentType: 'application/json; charset=utf-8',

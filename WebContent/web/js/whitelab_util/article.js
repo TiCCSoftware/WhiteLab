@@ -29,10 +29,8 @@ $(document).on("click", "#text_tab .word", function(e){
 	$(this).find(".hoverdiv").toggleClass("clicked");
 });
 
-var base_url = "/whitelab/page/";
-
 function getData(query, params, callback, target) {
-	var url = base_url + query;
+	var url = Whitelab.baseUrl + query;
 //	console.log(url);
 	
 	var xhr = createCORSRequest('POST', url);
@@ -54,7 +52,7 @@ function getData(query, params, callback, target) {
 }
 
 function getPosData(query, params, callback, target, pos, color) {
-	var url = base_url + query;
+	var url = Whitelab.baseUrl + query;
 //	console.log(url);
 	
 	var xhr = createCORSRequest('POST', url);

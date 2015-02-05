@@ -1,10 +1,37 @@
 // AJAX-related functions
 
-// Constructor: takes the base URL and the operation we want to carry out
-function AjaxRetriever(webservice, webcall) {
-	this.webservice = webservice;
-	this.webcall = webcall;
+// Constructor: takes the URL for the webservice (without parameters)
+function AjaxRetriever(webserviceUrl) {
+	this.webserviceUrl = webserviceUrl;
 }
+
+// If an AJAX call failed (didn't return 200 OK, 201 created, etc.), show it on
+// the page.
+function showAjaxFail(jqXHR, textStatus, element) {
+	$("#results .fa-spinner").hide(); // hide the waiting animation
+    $('#waitDisplay').hide(); // make sure the (sometimes) accompanying text is hidden too 
+
+	var message = "";
+	if (jqXHR.status != 0 || jqXHR.statusText != "error") {
+		message = jqXHR.status + " " + jqXHR.statusText;
+	}
+	if (textStatus != "error") {
+		if (message.length > 0)
+			message += "; ";
+		message += textStatus;
+	}
+	if (message.length == 0) {
+		message = "unknown error, possibly Same Origin Policy violation";
+	}
+	var msg = "Unexpected response: " + message;
+	if (element) {
+		var html = "<div class='error'>" + msg + "</div>";
+		$(element).html(html);
+	} else {
+		alert(msg);
+	}
+	DEBUG.log(msg);
+};
 
 // Perform AJAX call, transform response XML to HTML and add to the page
 AjaxRetriever.prototype.putAjaxResponse = function(element_id, parameters, append, xslSheet) {
@@ -14,19 +41,19 @@ AjaxRetriever.prototype.putAjaxResponse = function(element_id, parameters, appen
 	$.ajax({
         type: "GET",
         dataType: "xml",
-        url: this.webservice + this.webcall, 
+        url: this.webserviceUrl, 
         data: parameters, 
         cache: false
     }).done(function(data) {
-    	var errorElements = $(data).find("error");
-    	if (errorElements.length > 0) {
-    		var message = errorElements.find("message").text();
-    		alert("ERROR: " + message);
-    		return;
-    	}    	
 		myself.addResponseToElement(data, element_id, append, xslSheet);
 	}).fail(function(jqXHR, textStatus) {
-        alert("AJAX request failed (cross-origin error?); textStatus = " + textStatus);
+		var message = textStatus;
+		var data = jqXHR.responseXML;
+		var errorElements = data ? $(data).find("error") : null; 
+		if (errorElements && errorElements.length > 0) {
+    		message = errorElements.find("message").text();
+		}
+		showAjaxFail(jqXHR, message);
 	});
 };
 

@@ -1,8 +1,10 @@
 var Whitelab = {
 	baseUrl : null,
+	blsUrl : null,
 	language : null,
 	tab : null,
 	doDebug : true,
+	doDebugXhrResponse : false, // log full XHR responses? (long)
 	exportLimit : 50000,
 	
 	confirmExport : function() {
@@ -49,23 +51,30 @@ var Whitelab = {
 	},
 	
 	debug : function(msg) {
-		if (Whitelab.doDebug)
+		if (Whitelab.doDebug) {
 			console.log(msg);
+		}
+	},
+	
+	debugXhrResponse : function(msg) {
+		if (Whitelab.doDebug && Whitelab.doDebugXhrResponse) {
+			console.log(msg);
+		}
 	},
 	
 	getBlacklabData : function(type, params, callback, target) {
-		var xhr = Whitelab.createRequest('GET', "http://"+window.location.host+"/blacklab-server"+'/opensonar/'+type);
+		var xhr = Whitelab.createRequest('GET', Whitelab.blsUrl + type);
 		if (!xhr) {
 			return;
 		}
 		
 		if (params != null && params.indexOf("outputformat=") == -1) {
-			params = params+"&outputformat=json";
+			params = params + "&outputformat=json";
 		} else if (params == null || params.length == 0) {
 			params = "outputformat=json";
 		}
 
-		Whitelab.debug("http://"+window.location.host+"/blacklab-server"+'/opensonar/'+type+"?"+params);
+		Whitelab.debug(Whitelab.blsUrl + type + "?" + params);
 		
 		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
 		
@@ -73,10 +82,10 @@ var Whitelab = {
 //			if (/^[\],:{}\s]*$/.test(xhr.responseText.replace(/\\["\\\/bfnrtu]/g, '@').
 //					replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
 //					replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-				Whitelab.debug(xhr.responseText);
+				Whitelab.debugXhrResponse(xhr.responseText);
 				var resp = JSON.parse(xhr.responseText);
-				Whitelab.debug("response:");
-				Whitelab.debug(resp);
+				Whitelab.debugXhrResponse("response:");
+				Whitelab.debugXhrResponse(resp);
 				callback(resp,target);
 //			} else {
 //				Whitelab.debug("invalid JSON");
@@ -109,8 +118,8 @@ var Whitelab = {
 					replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
 					replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 				var resp = JSON.parse(xhr.responseText);
-				Whitelab.debug("response:");
-				Whitelab.debug(resp);
+				Whitelab.debugXhrResponse("response:");
+				Whitelab.debugXhrResponse(resp);
 				callback(resp,target,update);
 			} else {
 				$("#status_"+target).html("ERROR");
