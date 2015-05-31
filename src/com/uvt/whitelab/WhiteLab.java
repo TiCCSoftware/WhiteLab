@@ -52,12 +52,20 @@ import org.xml.sax.InputSource;
 
 import com.uvt.whitelab.response.DocumentResponse;
 import com.uvt.whitelab.response.ErrorResponse;
-import com.uvt.whitelab.response.ExploreResponse;
 import com.uvt.whitelab.response.ExportResponse;
 import com.uvt.whitelab.response.HomeResponse;
 import com.uvt.whitelab.response.QueryResponse;
-import com.uvt.whitelab.response.SearchResponse;
 import com.uvt.whitelab.response.TreemapResponse;
+import com.uvt.whitelab.response.explore.CorpusResponse;
+import com.uvt.whitelab.response.explore.ExploreDocumentResponse;
+import com.uvt.whitelab.response.explore.NgramsResponse;
+import com.uvt.whitelab.response.explore.StatisticsResponse;
+import com.uvt.whitelab.response.search.AdvancedResponse;
+import com.uvt.whitelab.response.search.ExpertResponse;
+import com.uvt.whitelab.response.search.ExtendedResponse;
+import com.uvt.whitelab.response.search.ResultResponse;
+import com.uvt.whitelab.response.search.SearchDocumentResponse;
+import com.uvt.whitelab.response.search.SimpleResponse;
 import com.uvt.whitelab.util.FieldDescriptor;
 import com.uvt.whitelab.util.MetadataField;
 import com.uvt.whitelab.util.QueryServiceHandler;
@@ -120,16 +128,32 @@ public class WhiteLab extends HttpServlet {
 		}
 
 		// initialise responses
-		responses.put(contextRoot + "/page/explore", new ExploreResponse());
+//		responses.put(contextRoot + "/explore", new ExploreResponse());
 		responses.put(contextRoot + "/page/treemap", new TreemapResponse());
-		responses.put(contextRoot + "/page/search", new SearchResponse());
-		responses.put(contextRoot + "/page/query", new QueryResponse());
+//		responses.put(contextRoot + "/search", new SearchResponse());
 		responses.put(contextRoot + "/page/document", new DocumentResponse());
 		responses.put(contextRoot + "/page/export", new ExportResponse());
 		responses.put(contextRoot + "/page/home", new HomeResponse());
 		responses.put(contextRoot + "/page/error", new ErrorResponse());
 		responses.put("home", new HomeResponse());
 		responses.put("error", new ErrorResponse());
+
+		// initialise Explore responses
+//		responses.put(contextRoot + "/explore", new CorpusResponse());
+		responses.put(contextRoot + "/explore/corpus", new CorpusResponse());
+		responses.put(contextRoot + "/explore/statistics", new StatisticsResponse());
+		responses.put(contextRoot + "/explore/ngrams", new NgramsResponse());
+		responses.put(contextRoot + "/explore/document", new ExploreDocumentResponse());
+		
+		// initialise Search response
+//		responses.put(contextRoot + "/search", new SimpleResponse());
+		responses.put(contextRoot + "/search/simple", new SimpleResponse());
+		responses.put(contextRoot + "/search/extended", new ExtendedResponse());
+		responses.put(contextRoot + "/search/advanced", new AdvancedResponse());
+		responses.put(contextRoot + "/search/expert", new ExpertResponse());
+		responses.put(contextRoot + "/search/results", new ResultResponse());
+		responses.put(contextRoot + "/search/document", new SearchDocumentResponse());
+		responses.put(contextRoot + "/search/query", new QueryResponse());
 		
 		try {
 			log("Done initializing Whitelab, Memory usage: "+getCurrentMemUsage());

@@ -93,22 +93,22 @@
 							#end
 						</li>
 						#set($home = $labels.getString("home"))
-						#if($maintab && $maintab == "home")
-							<li id="main-home" class="leftspaced active"><a onclick="Whitelab.switchTab('home')">$home</a></li>
+						#if(!$maintab || $maintab == "home")
+							<li id="main-home" class="leftspaced active"><a href="#" onclick="event.preventDefault();">$home</a></li>
 						#else
-							<li id="main-home" class="leftspaced"><a onclick="Whitelab.switchTab('home')">$home</a></li>
+							<li id="main-home" class="leftspaced"><a href="/whitelab/page/home">$home</a></li>
 						#end
 						#set($explore = $labels.getString("explore"))
 						#if($maintab && $maintab == "explore")
-							<li id="main-explore" class="active"><a onclick="Whitelab.switchTab('explore')">$explore</a></li>
+							<li id="main-explore" class="active"><a href="#" onclick="event.preventDefault();">$explore</a></li>
 						#else
-							<li id="main-explore"><a onclick="Whitelab.switchTab('explore')">$explore</a></li>
+							<li id="main-explore"><a href="/whitelab/explore/corpus">$explore</a></li>
 						#end
 						#set($search = $labels.getString("search"))
 						#if($maintab && $maintab == "search")
-							<li id="main-search" class="active"><a onclick="Whitelab.switchTab('search')">$search</a></li>
+							<li id="main-search" class="active"><a href="#" onclick="event.preventDefault();">$search</a></li>
 						#else
-							<li id="main-search"><a onclick="Whitelab.switchTab('search')">$search</a></li>
+							<li id="main-search"><a href="/whitelab/search/simple">$search</a></li>
 						#end
 					</ul>
 

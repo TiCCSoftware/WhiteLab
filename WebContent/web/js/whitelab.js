@@ -147,15 +147,15 @@ var Whitelab = {
 	    }
 	},
 	
-	switchTab : function(target) {
-		if (target !== Whitelab.tab) {
-			if (Whitelab.language != null) {
-				window.location = window.location.protocol+target+"?lang="+Whitelab.language;
-			} else {
-				window.location = window.location.protocol+target;
-			}
-		}
-	},
+//	switchTab : function(target) {
+//		if (target !== Whitelab.tab) {
+//			if (Whitelab.language != null) {
+//				window.location = window.location.protocol+target+"?lang="+Whitelab.language;
+//			} else {
+//				window.location = window.location.protocol+target;
+//			}
+//		}
+//	},
 	
 	switchLanguage : function(lang) {
 		Whitelab.language = lang;

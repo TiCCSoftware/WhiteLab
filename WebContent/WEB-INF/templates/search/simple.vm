@@ -1,0 +1,69 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="simple")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	<div id="metadata" hidden>
+	</div>
+	<div id="simple" class="large-16 medium-16 small-16 content active">
+		<div class="large-8 large-offset-4 medium-10 medium-offset-3 small-12 small-offset-2">
+			<form id="simple-search-form" action="/whitelab/search/results" method="GET">
+				<div id="simple-input">
+					<input type="text" class="biginput" placeholder="$labels.getString("simple.placeholder")" />
+				</div>
+				<div id="simple-buttons">
+					<button onclick="validateForm();" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.search.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button>
+				</div>
+				<input type="hidden" name="view" value="1" />
+				<input type="hidden" name="query" id="query" value="" />
+				<input type="hidden" name="from" value="1" />
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	error = false;
+
+	$(function() {
+	    $('#simple-search-form').submit(function() {
+	        validateForm();
+	    });
+	});
+	
+	function validateForm() {
+		var q = $('#simple-input > input').val();
+        var cql = queryToCql(q);
+        console.log(cql);
+        if (error) {
+			alert("Invalid query");
+			return false;
+		} else {
+	        $('#query').val(cql);
+	        return false; // return false to cancel form action
+	    }
+	}
+	
+	function queryToCql(q) {
+		var terms = q.split(" ");
+		cql = "";
+		for (var i = 0; i < terms.length; i++) {
+			if (terms[i].length > 0) {
+				var sub = terms[i].substring(0,2);
+				if (sub === '[]') {
+					if (terms[i].indexOf('{,') > -1) {
+						terms[i] = terms[i].replace('{,','{0,');
+					}
+					cql = cql + terms[i];
+				} else {
+					cql = cql + "[word=\""+terms[i]+"\"]";
+				}
+			}
+		}
+		if (cql.length == 0 || q === '[]') {
+			error = true;
+		}
+		return cql;
+	}
+</script>
+#parse("footer.vm")

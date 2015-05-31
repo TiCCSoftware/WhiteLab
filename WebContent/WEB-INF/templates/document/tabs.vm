@@ -1,0 +1,38 @@
+<ul class="nav nav-tabs" id="docContentTabs">
+	#if(!$doctab || $doctab == "text")
+		<li id="text_link" class="doc_link active disabled">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.text").capitalize()</a>
+		</li>
+	#else
+		<li id="text_link" class="doc_link">
+			<a href="/whitelab/$maintab/document?tab=text">$labels.getString("document.tab.text").capitalize()</a>
+		</li>
+	#end
+	#if($doctab == "metadata")
+		<li id="meta_link" class="doc_link active disabled">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.metadata").capitalize()</a>
+		</li>
+	#else
+		<li id="text_link" class="doc_link">
+			<a href="/whitelab/$maintab/document?tab=metadata">$labels.getString("document.tab.metadata").capitalize()</a>
+		</li>
+	#end
+	#if($doctab == "statistics")
+		<li id="stats_link" class="doc_link active disabled">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.statistics").capitalize()</a>
+		</li>
+	#else
+		<li id="text_link" class="doc_link">
+			<a href="/whitelab/$maintab/document?tab=statistics">$labels.getString("document.tab.statistics").capitalize()</a>
+		</li>
+	#end
+	#if($doctab == "wordcloud")
+		<li id="cloud_link" class="doc_link">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.cloud").capitalize()</a>
+		</li>
+	#else
+		<li id="text_link" class="doc_link">
+			<a href="/whitelab/$maintab/document?tab=wordcloud">$labels.getString("document.tab.cloud").capitalize()</a>
+		</li>
+	#end
+</ul>

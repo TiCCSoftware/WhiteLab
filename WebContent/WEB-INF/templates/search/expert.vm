@@ -1,0 +1,23 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="expert")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	<div id="metadata">
+		#parse("metadata.vm")
+	</div>
+	<div id="expert" class="large-16 medium-16 small-16 content active">
+		<div class="large-8 medium-8 small-8 large-offset-1 medium-offset-1 small-offset-1 columns">
+			<h4>Corpus Query Language: <a class="info_icon" onclick="Whitelab.search.expert.toggleInfoBox()"><img src="../web/img/info_icon.png" /></a></h4>
+			<textarea id="querybox" name="querybox" rows="7"></textarea>
+			<div class="buttonrow large-16 medium-16 small-16">
+				<button onclick="Whitelab.search.execute()" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
+			</div>
+		</div>
+		<div class="large-6 medium-6 small-6 columns">
+			$cqlinfo
+		</div>
+	</div>
+</div>
+#parse("footer.vm")

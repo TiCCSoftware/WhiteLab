@@ -1,0 +1,9 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="document")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	#parse("document/display.vm")
+</div>
+#parse("footer.vm")

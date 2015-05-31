@@ -1,0 +1,74 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="advanced")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	<div id="metadata">
+		#parse("metadata.vm")
+	</div>
+	<div id="advanced" class="large-16 medium-16 small-16 content active">
+		<div class="buttonrow-left large-16 medium-16 small-16">
+			<input class="splitcheck" type="checkbox"><span> Split batch queries</span></input><br />
+			<button onclick="Whitelab.search.execute()" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
+		</div>
+		<div id="construct-canvas" class="large-16 medium-16 small-16">
+			$column
+			<div class="plus-column large-1 medium-1 small-1 columns">
+				<a onclick="Whitelab.search.advanced.addColumn()" class="add-column"><img src="../web/img/plus.png" ></a>
+			</div>
+			<div class="large-1 medium-1 small-1 columns">
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	Whitelab.search.advanced.components.column = '$column';
+	Whitelab.search.advanced.components.and = '$and';
+	Whitelab.search.advanced.components.or = '$or';
+	
+	$("#construct-canvas").on("click","a.repeat",function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().parent().parent().find("div.repeat").first().toggleClass("active");
+	});
+	
+	$("#construct-canvas").on("click","a.startsen",function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().parent().parent().find("span.startsen").toggleClass("active");
+	});
+	
+	$("#construct-canvas").on("click","a.endsen",function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().parent().parent().find("span.endsen").toggleClass("active");
+	});
+	
+	$("#construct-canvas").on("click","span.startsen > a",function(e) {
+		e.preventDefault();
+		$(this).parent().parent().find("span.startsen").toggleClass("active");
+	});
+	
+	$("#construct-canvas").on("click","span.endsen > a",function(e) {
+		e.preventDefault();
+		$(this).parent().parent().find("span.endsen").toggleClass("active");
+	});
+	
+	$("#construct-canvas").on("click","div.settings > a",function(e) {
+		e.preventDefault();
+		$(this).parent().toggleClass("active");
+	});
+	
+	$("#construct-canvas").on("change","input.from",function(e) {
+		var to = $(this).parent().find("input.to").val();
+		if ($(this).val() > to) {
+			$(this).parent().find("input.to").val($(this).val());
+		}
+	});
+	
+	$("#construct-canvas").on("change","input.to",function(e) {
+		var from = $(this).parent().find("input.from").val();
+		if ($(this).val() < from) {
+			$(this).parent().find("input.from").val($(this).val());
+		}
+	});
+</script>
+#parse("footer.vm")

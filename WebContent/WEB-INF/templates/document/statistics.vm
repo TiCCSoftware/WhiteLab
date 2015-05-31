@@ -1,0 +1,13 @@
+<div id="stats_tab" class="doc-pane tab-pane">
+	<div class="gradient"></div>
+	<div id="docStatsDisplay" class="display row"></div>
+	<div id="docGrowthDisplay" class="display row"></div>
+	<div class="display row">
+		<div id="docTokenPosPieDisplay" class="columns large-8"></div>
+		<div id="docLemmaPosPieDisplay" class="columns large-8"></div>
+	</div>
+	<div id="docPosDisplay" class="row">
+		<ul id="pos_nav"></ul>
+		<div id="pos_data"></div>
+	</div>
+</div>
