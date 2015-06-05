@@ -11,7 +11,7 @@
     <url-pattern>/search/*</url-pattern>
   </servlet-mapping>
   <session-config>
-    <session-timeout>100</session-timeout>
+    <tracking-mode>COOKIE</tracking-mode>
   </session-config>
   <!--
   <security-constraint>

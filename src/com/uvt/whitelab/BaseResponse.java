@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -33,6 +34,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
@@ -41,7 +43,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.uvt.whitelab.util.MetadataField;
+import com.uvt.whitelab.util.Query;
 import com.uvt.whitelab.util.QueryServiceHandler;
+import com.uvt.whitelab.util.SessionManager;
 
 /**
  *
@@ -57,8 +61,10 @@ public abstract class BaseResponse {
 	protected ResourceBundle labels;
 	protected Locale locale;
 	protected String lastUrl = null;
-	protected Map<String,Object> params;
+//	protected Map<String,Object> params;
 	protected String lang;
+	protected HttpSession session;
+	protected Query query;
 	
 	protected long startTime = new Date().getTime();
 
@@ -79,6 +85,7 @@ public abstract class BaseResponse {
 		request = argRequest;
 		response = argResponse;
 		servlet = argServlet;
+		session = validateSession();
 	}
 
 	/**
@@ -93,60 +100,159 @@ public abstract class BaseResponse {
 	protected void clearContext() {
 		context = new VelocityContext();
 	}
-
-	protected Map<String, Object> getQueryParameters() {
-		Map<String, Object> params = new HashMap<String,Object>();
-		String query = this.getParameter("query", "");
-		query = query.replaceAll("&", "%26");
+	
+	protected void initQuery() {
+		query = null;
+		String id = this.getParameter("id", "");
+		String patt = this.getParameter("query", "").replaceAll("&", "%26");
+		int view = this.getParameter("view", 0);
+		int from = this.getParameter("from", 0);
 		
-		int view = this.getParameter("view", 1);
+		if (id.length() > 0) {
+			query = SessionManager.getQuery(session, id);
+			if (query == null)
+				id = "";
+			else {
+				if (patt.length() > 0 && !patt.equals(query.getPatternWithin())) {
+					query.setPattern(patt);
+					query.resetStatus();
+				}
+				if (view != query.getView())
+					query.setView(view);
+				if (from != query.getFrom())
+					query.setFrom(from);
+			}
+		}
 		
-		if (query.length() > 0) {
+		if (id.length() == 0 && patt.length() > 0) {
+			id = UUID.randomUUID().toString();
+			query = new Query(id,patt,view,from);
+			SessionManager.addQuery(session, query);
+		}
+		
+		if (query != null) {
+			SessionManager.setCurrentQuery(session, query.getId());
+			int c = 0;
 			try {
-
-				params.put("patt", query);
-				
-				String groupBy = this.getParameter("group_by", "");
-				if (groupBy.length() > 0)
-					params.put("group", URLDecoder.decode(groupBy, "UTF-8"));
+				String groupBy = this.getParameter("group", "");
+				if (!groupBy.equals(query.getGroup())) {
+					query.setGroup(URLDecoder.decode(groupBy, "UTF-8"));
+					c++;
+				}
 				
 				String sort = this.getParameter("sort", "");
-				if (sort.length() > 0) {
-					params.put("sort", URLDecoder.decode(sort, "UTF-8"));
+				if (!sort.equals(query.getSort())) {
+					query.setSort(URLDecoder.decode(sort, "UTF-8"));
+					c++;
 				}
 				
 				Integer start = this.getParameter("start", -1);
-				if (start > -1)
-					params.put("start", start);
-				
-				Integer end = this.getParameter("end", -1);
-				if (end > -1)
-					params.put("end", end);
-				
-				Integer first = this.getParameter("first", 0);
-				if (first > 0)
-					params.put("first", first);
-				
-				Integer number = this.getParameter("number", 50);
-				String docPid = this.getParameter("docpid", "");
-				if (docPid.length() == 0)
-					params.put("number", number);
-				
-				String filter = getFilterString();
-				if (filter.length() > 0) {
-					params.put("filter", filter);
+				if (start != query.getStart()) {
+					query.setStart(start);
+					c++;
 				}
 				
-				if (view == 12)
-					params.put("wordsaroundhit", 0);
+				Integer end = this.getParameter("end", -1);
+				if (end != query.getEnd()) {
+					query.setEnd(end);
+					c++;
+				}
+				
+				Integer first = this.getParameter("first", 0);
+				if (first != query.getFirst()) {
+					query.setFirst(first);
+					c++;
+				}
+				
+				Integer number = this.getParameter("number", 50);
+				if (number != query.getNumber()) {
+					query.setNumber(number);
+					c++;
+				}
+				
+				String docPid = this.getParameter("docpid", "");
+				if (!docPid.equals(query.getDocPid())) {
+					query.setDocPid(docPid);
+					c++;
+				}
+				
+				String filter = getFilterString();
+				if (!filter.equals(query.getFilter())) {
+					query.setFilter(filter);
+					c++;
+				}
+				
+				if (view == 12 && query.getWordsAroundHit() != 0) {
+					query.setWordsAroundHit(0);
+					c++;
+				} else if (query.getWordsAroundHit() != -1) {
+					query.setWordsAroundHit(-1);
+					c++;
+				}
+				
+				if (c > 0) {
+					query.resetStatus();
+				}
 				
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		return params;
 	}
+
+//	protected Map<String, Object> getQueryParameters() {
+//		Map<String, Object> params = new HashMap<String,Object>();
+//		String query = this.getParameter("query", "");
+//		query = query.replaceAll("&", "%26");
+//		
+//		int view = this.getParameter("view", 1);
+//		
+//		if (query.length() > 0) {
+//			try {
+//
+//				params.put("patt", query);
+//				
+//				String groupBy = this.getParameter("group_by", "");
+//				if (groupBy.length() > 0)
+//					params.put("group", URLDecoder.decode(groupBy, "UTF-8"));
+//				
+//				String sort = this.getParameter("sort", "");
+//				if (sort.length() > 0) {
+//					params.put("sort", URLDecoder.decode(sort, "UTF-8"));
+//				}
+//				
+//				Integer start = this.getParameter("start", -1);
+//				if (start > -1)
+//					params.put("start", start);
+//				
+//				Integer end = this.getParameter("end", -1);
+//				if (end > -1)
+//					params.put("end", end);
+//				
+//				Integer first = this.getParameter("first", 0);
+//				if (first > 0)
+//					params.put("first", first);
+//				
+//				Integer number = this.getParameter("number", 50);
+//				String docPid = this.getParameter("docpid", "");
+//				if (docPid.length() == 0)
+//					params.put("number", number);
+//				
+//				String filter = getFilterString();
+//				if (filter.length() > 0) {
+//					params.put("filter", filter);
+//				}
+//				
+//				if (view == 12)
+//					params.put("wordsaroundhit", 0);
+//				
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//		return params;
+//	}
 	
 	private String getFilterString() {
 		Map<String,Map<String,List<String>>> filters = new HashMap<String,Map<String,List<String>>>();
@@ -200,16 +306,15 @@ public abstract class BaseResponse {
 		}
 		return filter;
 	}
-	
+
+	// TODO refactor: put in QueryServiceHandler
 	protected String getBlackLabResponse(String corpus, String trail, Map<String,Object> params) {
-		String url = this.labels.getString("blsUrlInternal")+ "/" + corpus + trail;
-		this.lastUrl = url;
-		String parameters = getParameterStringExcept(new String[]{});
-		
-		if (parameters.length() > 0) {
-			url = url + "?" + parameters;
-		}
-		
+		String url = getBlackLabURL(corpus,trail,params);
+		return getBlackLabResponse(url);
+	}
+
+	// TODO refactor: put in QueryServiceHandler
+	protected String getBlackLabResponse(String url) {
 		QueryServiceHandler webservice = new QueryServiceHandler(url, 1);
 		try {
 			String response = webservice.makeRequest(new HashMap<String, String[]>());
@@ -219,11 +324,25 @@ public abstract class BaseResponse {
 		}
 		return null;
 	}
- 
+
+	// TODO refactor: put in QueryServiceHandler
+	protected String getBlackLabURL(String corpus, String trail, Map<String,Object> params) {
+		String url = this.labels.getString("blsUrlInternal")+ "/" + corpus + trail;
+		this.lastUrl = url;
+		String parameters = getParameterStringExcept(new String[]{});
+		
+		if (parameters.length() > 0) {
+			url = url + "?" + parameters;
+		}
+		return url;
+	}
+
+	// TODO refactor: put in QueryServiceHandler
 	protected String getParameterStringExcept(String[] except) {
 		String parameters = "";
 		
-		if (params != null && params.keySet().size() > 0) {
+		if (query != null) {
+			Map<String,Object> params = query.getParameters();
 			for (String key : params.keySet()) {
 				if (!Arrays.asList(except).contains(key)) {
 					if (parameters.length() > 0)
@@ -237,6 +356,24 @@ public abstract class BaseResponse {
 		parameters = parameters.replaceAll(" ", "%20");
 		return parameters;
 	}
+
+//	protected String getParameterStringExcept(String[] except) {
+//		String parameters = "";
+//		
+//		if (params != null && params.keySet().size() > 0) {
+//			for (String key : params.keySet()) {
+//				if (!Arrays.asList(except).contains(key)) {
+//					if (parameters.length() > 0)
+//						parameters = parameters + "&" + key + "=" + params.get(key);
+//					else
+//						parameters = key + "=" +params.get(key);
+//				}
+//			}
+//		}
+//		
+//		parameters = parameters.replaceAll(" ", "%20");
+//		return parameters;
+//	}
 
 	/**
 	 * Display a specific template, with specific mime type
@@ -303,11 +440,13 @@ public abstract class BaseResponse {
 		this.getContext().put("lang", this.lang);
 		this.getContext().put("labels", this.labels);
 		
+		this.initQuery();
+		
 		logRequest();
 		
-		this.params = getQueryParameters();
-		if (this.params.keySet().size() > 0)
-			this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
+//		this.params = getQueryParameters();
+//		if (this.params.keySet().size() > 0)
+//			this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
 		
 		completeRequest();
 	}
@@ -531,6 +670,12 @@ public abstract class BaseResponse {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected HttpSession validateSession() {
+		HttpSession sesh = request.getSession();
+		sesh.setMaxInactiveInterval(30*60);
+		return sesh;
 	}
 
 	/**

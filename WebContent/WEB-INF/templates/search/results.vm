@@ -22,12 +22,30 @@
 					</tr>
 				</thead>
 				<tbody>
+					#set($i = 0)
+					#foreach($query in $queries)
+						#set($i = $i + 1)
+						<td>$i</td>
+						<td>SessionManager.getQueryPattern($query)</td>
+						<td>SessionManager.getQueryWithin($query)</td>
+						<td>$query.get("filter")</td>
+						<td>$query.get("group")</td>
+						<td>$query.get("status")</td>
+						<td>$query.get("hits")</td>
+						<td>$query.get("docs")</td>
+						<td>
+							<button onclick="Whitelab.search.result.editQuery(1,'simple')" class="edit">EDIT</button>
+							<button onclick="Whitelab.search.result.removeQuery(1)" class="remove">X</button>
+						</td>
+					#end
 				</tbody>
 			</table>
 		</div>
 		<div><h4>$labels.getString("result.results"):</h4></div>
 		<div id="results" class="large-16 medium-16 small-16">
-			
+			#if($result)
+				$result
+			#end
 		</div>
 	</div>
 </div>

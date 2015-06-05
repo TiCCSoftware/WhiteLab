@@ -223,6 +223,7 @@ public class WhiteLab extends HttpServlet {
 		return searchFields;
 	}
 	
+	// TODO refactor: put in QueryServiceHandler
 	protected String getBlackLabResponse(String url) {
 		log("URL: "+url);
 		
@@ -335,7 +336,7 @@ public class WhiteLab extends HttpServlet {
 			br = responses.get(request.getRequestURI()).duplicate();
 		} else {
 			// if there is no corresponding response object
-			// display an error
+			// redirect to home
 			br = responses.get("home");
 		}
 		
@@ -379,7 +380,7 @@ public class WhiteLab extends HttpServlet {
 		Object attrValue = connection.getAttribute(oi.getObjectName(), "HeapMemoryUsage");
 		if( !( attrValue instanceof CompositeData ) ) {
 		    System.out.println( "attribute value is instanceof [" + attrValue.getClass().getName() +
-		            ", exitting -- must be CompositeData." );
+		            ", exiting -- must be CompositeData." );
 		    return "";
 		}
 		// replace "used" with "max" to get max
