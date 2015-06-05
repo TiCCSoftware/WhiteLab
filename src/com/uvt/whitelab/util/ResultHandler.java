@@ -1,5 +1,7 @@
 package com.uvt.whitelab.util;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,23 +68,43 @@ public class ResultHandler {
 	private String getStylesheet(Integer view, boolean check) throws IOException {
 		String stylesheet = "";
 		if (view == 1) {
-			return "perhitresults.xsl";
+			return loadStylesheet("perhitresults.xsl");
 		} else if (view == 2) {
-			return "perdocresults.xsl";
+			return loadStylesheet("perdocresults.xsl");
 		} else if (view == 4) {
-			return "perdocstatsresults.xsl";
+			return loadStylesheet("perdocstatsresults.xsl");
 		} else if (view == 8) {
-			return "groupperhitresults.xsl";
+			return loadStylesheet("groupperhitresults.xsl");
 		} else if (view == 10) {
-			return "groupperhitngramresults.xsl";
+			return loadStylesheet("groupperhitngramresults.xsl");
 		} else if (view == 12 && !check) {
-			return "groupperhitstatsresults.xsl";
+			return loadStylesheet("groupperhitstatsresults.xsl");
 		} else if (view == 12 && check) {
-			return "wordcloudnopos.xsl";
+			return loadStylesheet("wordcloudnopos.xsl");
 		} else if (view == 16) {
-			return "groupperdocresults.xsl";
+			return loadStylesheet("groupperdocresults.xsl");
 		}
 		return stylesheet;
+	}
+
+	private String loadStylesheet(String name) throws IOException {
+		// clear string builder
+		StringBuilder builder = new StringBuilder();
+		builder.delete(0, builder.length());
+
+		BufferedReader br = new BufferedReader(new FileReader(this.servlet.getRealPath() + "WEB-INF/stylesheets/" + name ));
+
+		String line;
+		
+		this.servlet.log("Loading stylesheet: "+name);
+
+		// read the response from the webservice
+		while( (line = br.readLine()) != null )
+			builder.append(line);
+
+		br.close();
+
+		return builder.toString();
 	}
 
 	private void setTransformerDisplayParameters(Integer view,ResourceBundle labels) {

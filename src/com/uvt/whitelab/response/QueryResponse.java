@@ -53,8 +53,9 @@ public class QueryResponse extends BaseResponse {
 			e1.printStackTrace();
 		}
 		String v = this.getParameter("view", "");
+		Map<String,Object> params = query.getParameters();
 		
-		if (this.params.keySet().size() > 0 || v.length() > 0) {
+		if (params.keySet().size() > 0 || v.length() > 0) {
 			view = this.getParameter("view", 1);
 			this.servlet.log("VIEW: "+v+" "+view);
 			
@@ -62,12 +63,12 @@ public class QueryResponse extends BaseResponse {
 			if (view == 2 || view == 4 || view == 16)
 				trail = "/docs";
 			
-			if (view >= 8 && !this.params.containsKey("group")) {
+			if (view >= 8 && !params.containsKey("group")) {
 				
 				String html = "<p>ERROR: Could not parse XML result.</p>";
 				try {
 					String stylesheet = getStylesheet(view,true);
-					html = parseResult("<?xml version=\"1.0\" encoding=\"UTF-8\"?><empty></empty>",stylesheet);
+					html = parseResult("<?xml version=\"1.0\" encoding=\"UTF-8\"?><empty></empty>",stylesheet,params);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -88,7 +89,7 @@ public class QueryResponse extends BaseResponse {
 				
 			} else {
 			
-				String resp = getBlackLabResponse(corpus, trail, this.params);
+				String resp = getBlackLabResponse(corpus, trail, params);
 				String counting = isStillCounting(resp);
 				Integer hits = getHitsFromXML(resp);
 				Integer docs = getDocsFromXML(resp);
@@ -107,10 +108,10 @@ public class QueryResponse extends BaseResponse {
 					String html = "<p>ERROR: Could not parse XML result.</p>";
 					try {
 						String stylesheet = getStylesheet(view,false);
-						html = parseResult(resp,stylesheet);
-						if (view == 12 && !this.params.containsKey("first")) {
+						html = parseResult(resp,stylesheet,params);
+						if (view == 12 && !params.containsKey("first")) {
 							String wordcloudStylesheet = getStylesheet(view,true);
-							String str = parseResult(resp,wordcloudStylesheet);
+							String str = parseResult(resp,wordcloudStylesheet,params);
 							JSONArray cloud = new JSONArray(str);
 							cloud = cleanCloudLemmas(cloud);
 							output.put("cloud", cloud);
@@ -237,9 +238,9 @@ public class QueryResponse extends BaseResponse {
 		return stylesheet;
 	}
 
-	private String parseResult(String response,String stylesheet) {
+	private String parseResult(String response,String stylesheet,Map<String,Object> params) {
 		try {
-			setTransformerDisplayParameters();
+			setTransformerDisplayParameters(params);
 			return transformer.transform(response, stylesheet);
 		} catch (TransformerException e) {
 			e.printStackTrace();
@@ -247,11 +248,11 @@ public class QueryResponse extends BaseResponse {
 		return "";
 	}
 
-	private void setTransformerDisplayParameters() {
+	private void setTransformerDisplayParameters(Map<String,Object> params) {
 		transformer.clearParameters();
 		
-		if (this.params.containsKey("patt")) {
-			transformer.addParameter("query", (String) this.params.get("patt"));
+		if (params.containsKey("patt")) {
+			transformer.addParameter("query", (String) params.get("patt"));
 		}
 
 		transformer.addParameter("query_id",this.getParameter("id", "1"));

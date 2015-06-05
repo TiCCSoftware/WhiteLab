@@ -181,13 +181,14 @@ public class DocumentResponse extends BaseResponse {
 			}
 			
 			if (document.getContent().length() == 0 || start != document.start) {
-
-				if (this.getParameter("type", "").equals("explore") && this.params.containsKey("patt"))
-					this.params.remove("patt");
+				Map<String,Object> params = query.getParameters();
+				
+				if (this.getParameter("type", "").equals("explore") && params.containsKey("patt"))
+					params.remove("patt");
 			
 				setTransformerDisplayParameters(docPid);
 
-				String response = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid+"/contents", this.params);
+				String response = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid+"/contents", params);
 
 				try {
 					String documentStylesheet = loadStylesheet("article_folia.xsl");
@@ -201,7 +202,7 @@ public class DocumentResponse extends BaseResponse {
 				}
 				
 				if (document.getMetadata().length() == 0) {
-					String meta = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid, this.params);
+					String meta = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid, params);
 					this.servlet.log("Meta response: \n"+meta);
 					try {
 						String metadataStylesheet = loadStylesheet("article_metadata.xsl");

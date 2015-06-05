@@ -1,5 +1,7 @@
 package com.uvt.whitelab.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ public class Query {
 	private String docPid = "";
 	private int start = -1;
 	private int end = -1;
+	private String result = "";
 	
 	public Query (String i, String p, int v, int f) {
 		id = i;
@@ -39,8 +42,10 @@ public class Query {
 		if (p.contains("within")) {
 			pattern = p.split(" within")[0];
 			setWithin("within"+p.split(" within")[1]);
-		} else
+		} else {
 			pattern = p;
+			within = "";
+		}
 	}
 	
 	public String getPattern() {
@@ -59,6 +64,15 @@ public class Query {
 		return within;
 	}
 	
+	public String getWithinString() {
+		if (within.contains("<s>")) {
+			return "sentence";
+		} else if (within.contains("<p>")) {
+			return "paragraph";
+		}
+		return "document";
+	}
+	
 	public void setView(int v) {
 		view = v;
 	}
@@ -73,6 +87,29 @@ public class Query {
 	
 	public int getFrom() {
 		return from;
+	}
+	
+	public String getFromString(String namespace) {
+		if (namespace.equals("search")) {
+			if (from == 1)
+				return "simple";
+			else if (from == 2)
+				return "extended";
+			else if (from == 3)
+				return "advanced";
+			else
+				return "expert";
+		} else if (namespace.equals("explore")) {
+			if (from == 5)
+				return "corpus";
+			else if (from == 6)
+				return "statistics";
+			else if (from == 7)
+				return "ngrams";
+			else if (from == 8)
+				return "document";
+		}
+		return "";
 	}
 	
 	public void setGroup(String g) {
@@ -189,10 +226,19 @@ public class Query {
 		return wordsAroundHit;
 	}
 	
+	public void setResult(String r) {
+		result = r;
+	}
+	
+	public String getResult() {
+		return result;
+	}
+	
 	public void resetStatus() {
 		setStatus(0);
 		setHits(0);
 		setDocs(0);
+		setResult("");
 	}
 
 	public Map<String, Object> getParameters() {
@@ -216,6 +262,37 @@ public class Query {
 			params.put("filter", filter);
 		
 		return params;
+	}
+	
+	public String getUrl(String page, String suffix) {
+		String url = "/whitelab/"+page+"?";
+		url = url+"id="+getId();
+		try {
+			url = url+"&query="+URLEncoder.encode(getPatternWithin(), "UTF-8");
+			if (page.contains("/results") && view > 0)
+				url = url+"&view="+view;
+//			if (from > 0)
+//				url = url+"&from="+from;
+			if (filter.length() > 0)
+				url = url+"&filter="+URLEncoder.encode(filter, "UTF-8");
+			if (group.length() > 0)
+				url = url+"&group="+URLEncoder.encode(group, "UTF-8");
+			if (sort.length() > 0)
+				url = url+"&sort="+URLEncoder.encode(sort, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		if (first > 0)
+			url = url+"&first="+first;
+		if (docPid.length() == 0 && number > 50)
+			url = url+"&number="+number;
+		if (start > -1)
+			url = url+"&start="+start;
+		if (end > -1)
+			url = url+"&end="+end;
+		if (suffix != null)
+			url = url + suffix;
+		return url;
 	}
 	
 }

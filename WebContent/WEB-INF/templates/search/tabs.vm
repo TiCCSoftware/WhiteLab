@@ -7,39 +7,41 @@
 <div class="row" id="subnav">
 	<dl id="search-nav" class="sub-nav">
 	#if($tab == "simple")
-		<dd id="simple_link" class="active"><a href="#" onclick="event.preventDefault();">$simple</a></dd>
+		<dd id="simple_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$simple</a></dd>
 	#else
-		<dd id="simple_link"><a href="/whitelab/search/simple">$simple</a></dd>
+		<dd id="simple_link"><a class="tablink" href="/whitelab/search/simple">$simple</a></dd>
 	#end
 	#if($tab == "extended")
-		<dd id="extended_link" class="active"><a href="#" onclick="event.preventDefault();">$extended</a></dd>
+		<dd id="extended_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$extended</a></dd>
 	#else
-		<dd id="extended_link"><a href="/whitelab/search/extended">$extended</a></dd>
+		<dd id="extended_link"><a class="tablink" href="/whitelab/search/extended">$extended</a></dd>
 	#end
 	#if($tab == "advanced")
-		<dd id="advanced_link" class="active"><a href="#" onclick="event.preventDefault();">$advanced</a></dd>
+		<dd id="advanced_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$advanced</a></dd>
 	#else
-		<dd id="advanced_link"><a href="/whitelab/search/advanced">$advanced</a></dd>
+		<dd id="advanced_link"><a class="tablink" href="/whitelab/search/advanced">$advanced</a></dd>
 	#end
 	#if($tab == "expert")
-		<dd id="expert_link" class="active"><a href="#" onclick="event.preventDefault();">$expert</a></dd>
+		<dd id="expert_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$expert</a></dd>
 	#else
-		<dd id="expert_link"><a href="/whitelab/search/expert">$expert</a></dd>
+		<dd id="expert_link"><a class="tablink" href="/whitelab/search/expert">$expert</a></dd>
 	#end
-	#if($tab == "result" || $tab == "document")
+	#if($tab == "results" || $tab == "document" || $queryCount > 0)
 		<dd id="link-spacer">||</dd>
 	#else
 		<dd id="link-spacer" class="hide">||</dd>
 	#end
 	#if($tab == "results")
-		<dd id="result_link" class="sub-sub-nav active">|| <a href="#" onclick="event.preventDefault();">$result</a></dd>
+		<dd id="result_link" class="sub-sub-nav active"><a class="tablink" href="#" onclick="event.preventDefault();">$result</a></dd>
+	#elseif($queryCount > 0)
+		<dd id="result_link" class="sub-sub-nav"><a class="tablink" href="/whitelab/search/results">$result</a></dd>
 	#else
-		<dd id="result_link" class="sub-sub-nav hide"><a href="/whitelab/search/results">$result</a></dd>
+		<dd id="result_link" class="sub-sub-nav hide"><a class="tablink" href="/whitelab/search/results">$result</a></dd>
 	#end
 	#if($tab =="document")
-		<dd id="document_link" class="sub-sub-nav active"><a href="#" onclick="event.preventDefault();">$document</a></dd>
+		<dd id="document_link" class="sub-sub-nav active"><a class="tablink" href="#" onclick="event.preventDefault();">$document</a></dd>
 	#else
-		<dd id="document_link" class="sub-sub-nav hide"><a href="/whitelab/search/document">$document</a></dd>
+		<dd id="document_link" class="sub-sub-nav hide"><a class="tablink" href="/whitelab/search/document">$document</a></dd>
 	#end
 	</dl>
 </div>

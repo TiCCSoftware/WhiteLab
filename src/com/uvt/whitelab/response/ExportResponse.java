@@ -30,8 +30,9 @@ public class ExportResponse extends BaseResponse {
 	protected void completeRequest() {
 		
 		corpus = this.labels.getString("corpus");
+		Map<String,Object> params = query.getParameters();
 		
-		if (this.params.keySet().size() > 0 && params.containsKey("patt")) {
+		if (params.keySet().size() > 0 && params.containsKey("patt")) {
 			
 			view = this.getParameter("view", 1);
 			int number = this.getParameter("number", 1);
@@ -42,7 +43,7 @@ public class ExportResponse extends BaseResponse {
 			
 			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
 			
-			String result = this.jobToTSV();
+			String result = this.jobToTSV(params);
 			
 			sendFileResponse(result, fileName);
 			
@@ -56,18 +57,18 @@ public class ExportResponse extends BaseResponse {
 		}
 	}
 
-	public String jobToTSV() {
+	public String jobToTSV(Map<String,Object> params) {
 		StringBuilder result = new StringBuilder();
 		if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
-			int n = (int) this.params.get("number");
+			int n = (int) params.get("number");
 			if (n > 50000)
 				n = 50000;
-			this.params.put("number", 2500);
+			params.put("number", 2500);
 			
 			for (int f = 0; f < n; f = f + 2500) {
-				this.params.put("first", f);
+				params.put("first", f);
 				try {
-					String resp = getBlackLabResponse(corpus, trail, this.params);
+					String resp = getBlackLabResponse(corpus, trail, params);
 					String stylesheet = this.getExportStylesheet(view);
 					this.setTransformerDisplayParameters(f == 0,n);
 					result.append(transformer.transform(resp, stylesheet));
@@ -77,9 +78,9 @@ public class ExportResponse extends BaseResponse {
 			}
 		} else {
 			try {
-				String resp = getBlackLabResponse(corpus, trail, this.params);
+				String resp = getBlackLabResponse(corpus, trail, params);
 				String stylesheet = this.getExportStylesheet(view);
-				this.setTransformerDisplayParameters(true,(int) this.params.get("number"));
+				this.setTransformerDisplayParameters(true,(int) params.get("number"));
 				result.append(transformer.transform(resp, stylesheet));
 			} catch (IOException | TransformerException e) {
 				e.printStackTrace();

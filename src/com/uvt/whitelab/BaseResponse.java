@@ -65,6 +65,7 @@ public abstract class BaseResponse {
 	protected String lang;
 	protected HttpSession session;
 	protected Query query;
+	protected int queryCount = 0;
 	
 	protected long startTime = new Date().getTime();
 
@@ -442,6 +443,8 @@ public abstract class BaseResponse {
 		
 		this.initQuery();
 		
+		this.updateQueryCount();
+		
 		logRequest();
 		
 //		this.params = getQueryParameters();
@@ -449,6 +452,11 @@ public abstract class BaseResponse {
 //			this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
 		
 		completeRequest();
+	}
+	
+	protected void updateQueryCount() {
+		queryCount = SessionManager.getQueryCount(session);
+		this.getContext().put("queryCount", queryCount);
 	}
 
 	/**
