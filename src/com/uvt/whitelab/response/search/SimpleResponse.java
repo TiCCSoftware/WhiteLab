@@ -6,6 +6,8 @@ public class SimpleResponse extends BaseResponse {
 
 	@Override
 	protected void completeRequest() {
+		if (query != null)
+			this.getContext().put("query", query);
 		this.displayHtmlTemplate(this.servlet.getTemplate("search/simple"));
 	}
 

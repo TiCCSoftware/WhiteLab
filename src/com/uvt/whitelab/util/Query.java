@@ -1,9 +1,17 @@
 package com.uvt.whitelab.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.uvt.whitelab.BaseResponse;
 
 public class Query {
 
@@ -26,6 +34,8 @@ public class Query {
 	private int start = -1;
 	private int end = -1;
 	private String result = "";
+	private Map<String,Map<String,List<String>>> filters;
+//	private List<String> filterStrings;
 	
 	public Query (String i, String p, int v, int f) {
 		id = i;
@@ -34,6 +44,57 @@ public class Query {
 		from = f;
 	}
 	
+	public Query(BaseResponse baseResponse) {
+		try {
+			id = UUID.randomUUID().toString();
+			view = baseResponse.getParameter("view", 0);
+			from = baseResponse.getParameter("from", 0);
+			group = URLDecoder.decode(baseResponse.getParameter("group", ""), "UTF-8");
+			sort = URLDecoder.decode(baseResponse.getParameter("sort", ""), "UTF-8");
+			start = baseResponse.getParameter("start", -1);
+			end = baseResponse.getParameter("end", -1);
+			first = baseResponse.getParameter("first", 0);
+			number = baseResponse.getParameter("number", 50);
+			if (view == 12)
+				wordsAroundHit = 0;
+			else
+				wordsAroundHit = -1;
+			setPattern(baseResponse.getParameter("query", "").replaceAll("&", "%26"));
+			generateFilterStringFromInput(baseResponse,true);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Query updateQuery(BaseResponse br) {
+		try {
+			int v = br.getParameter("view", 0);
+			int f = br.getParameter("from", 0);
+			String g = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
+			String s = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
+			int st = br.getParameter("start", -1);
+			int en = br.getParameter("end", -1);
+			int fi = br.getParameter("first", 0);
+			int n = br.getParameter("number", 0);
+			String d = br.getParameter("docpid", "");
+			
+			if (v != view || f != from || !g.equals(group) || !s.equals(sort) || st != start || en != end || fi != first || n != number || !d.equals(docPid) ||
+					(v == 12 && wordsAroundHit != 0)) {
+				Query query = new Query(br);
+				return query;
+			}
+			
+			String ff = generateFilterStringFromInput(br,false);
+			if (!ff.equals(filter)) {
+				Query query = new Query(br);
+				return query;
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return this;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -48,12 +109,37 @@ public class Query {
 		}
 	}
 	
+	public String getSimplePattern() {
+		String patt = pattern.replaceAll("\"", "QT\"QT");
+		String[] parts = patt.split("QT");
+		if (parts.length == 1)
+			return patt;
+		else {
+			List<String> keep = new ArrayList<String>();
+			boolean inside = false;
+			for (int i = 0; i < parts.length; i++) {
+				if (parts[i].equals("\"")) {
+					if (inside)
+						inside = false;
+					else
+						inside = true;
+				} else if (inside) {
+					String str = parts[i].replace("(?i)", "");
+					keep.add(str);
+				}
+			}
+			return StringUtils.join(keep.toArray()," ");
+		}
+	}
+	
 	public String getPattern() {
 		return pattern;
 	}
 	
 	public String getPatternWithin() {
-		return pattern+" "+within;
+		if (within.length() > 0)
+			return pattern+" "+within;
+		return pattern;
 	}
 	
 	public void setWithin(String w) {
@@ -134,6 +220,10 @@ public class Query {
 	
 	public String getFilter() {
 		return filter;
+	}
+	
+	public Map<String,Map<String,List<String>>> getFilters() {
+		return filters;
 	}
 	
 	public void setHits(int h) {
@@ -234,12 +324,13 @@ public class Query {
 		return result;
 	}
 	
-	public void resetStatus() {
-		setStatus(0);
-		setHits(0);
-		setDocs(0);
-		setResult("");
-	}
+//	public void resetStatus(String msg) {
+//		System.out.println("resetStatus('"+msg+"')");
+//		setStatus(0);
+//		setHits(0);
+//		setDocs(0);
+//		setResult("");
+//	}
 
 	public Map<String, Object> getParameters() {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -274,7 +365,7 @@ public class Query {
 //			if (from > 0)
 //				url = url+"&from="+from;
 			if (filter.length() > 0)
-				url = url+"&filter="+URLEncoder.encode(filter, "UTF-8");
+				url = url+"&filter="+URLEncoder.encode(getFilterUrlParameters(), "UTF-8");
 			if (group.length() > 0)
 				url = url+"&group="+URLEncoder.encode(group, "UTF-8");
 			if (sort.length() > 0)
@@ -293,6 +384,77 @@ public class Query {
 		if (suffix != null)
 			url = url + suffix;
 		return url;
+	}
+	
+	public String getFilterUrlParameters() {
+		List<String> params = new ArrayList<String>();
+		for (String f : filters.keySet()) {
+			for (String v : filters.get(f).get("is"))
+				params.add(f+"="+v);
+			for (String v : filters.get(f).get("isnot"))
+				params.add(f+"=-"+v);
+		}
+		return StringUtils.join(params.toArray(),"&");
+	}
+
+	public String generateFilterStringFromInput(BaseResponse baseResponse,boolean update) {
+		Map<String,Map<String,List<String>>> filters_ = new HashMap<String,Map<String,List<String>>>();
+		
+		for (MetadataField dataField : baseResponse.getServlet().getMetadataFields()) {
+			String[] filterValues = baseResponse.getParameterValues(dataField.getName(), null);
+			if (filterValues != null && filterValues.length > 0) {
+				Map<String,List<String>> vals = new HashMap<String,List<String>>();
+				List<String> is = new ArrayList<String>();
+				List<String> isnot = new ArrayList<String>();
+				vals.put("is", is);
+				vals.put("isnot", isnot);
+				
+				for (int i = 0; i < filterValues.length; i++) {
+					String filterValue = "";
+					try {
+						filterValue = URLDecoder.decode(filterValues[i], "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					
+					if (filterValue.startsWith("-") || filterValue.startsWith("\"-")) {
+						filterValue = filterValue.replaceFirst("-", "");
+						vals.get("isnot").add(filterValue);
+					} else {
+						vals.get("is").add(filterValue);
+					}
+				}
+				
+				if (vals.get("isnot").size() > 0 && vals.get("is").size() == 0) {
+					for (String filterValue : dataField.getValues()) {
+						filterValue = "\""+filterValue+"\"";
+						if (!vals.get("isnot").contains(filterValue) && !vals.get("is").contains(filterValue))
+							vals.get("is").add(filterValue);
+					}
+				} else {
+					vals.remove("isnot");
+				}
+				
+				filters_.put(dataField.getName(), vals);
+			}
+		}
+
+		List<String> filterStrings_ = new ArrayList<String>();
+		String filter_ = "";
+		if (filters_.keySet().size() > 0) {
+			for (String field : filters_.keySet()) {
+				filterStrings_.add(field+":("+StringUtils.join(filters_.get(field).get("is").toArray(), " OR ").replaceAll("&", "%26")+")");
+			}
+			filter_ = "("+StringUtils.join(filterStrings_.toArray()," AND ")+")";
+		}
+		
+		if (update) {
+			filters = filters_;
+//			filterStrings = filterStrings_;
+			filter = filter_;
+		}
+		
+		return filter_;
 	}
 	
 }

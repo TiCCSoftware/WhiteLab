@@ -32,7 +32,7 @@
 				<td>$q.getDocs()</td>
 				<td>
 					#set($fromString=$q.getFromString("search"))
-					#set($editUrl=$q.getUrl("search/$fromString","&edit=true"))
+					#set($editUrl=$q.getUrl("search/$fromString",""))
 					#set($deleteUrl=$q.getUrl("search/results","&delete=true"))
 					<button onclick="document.location.href='$editUrl'" class="edit">EDIT</button>
 					<button onclick="document.location.href='$deleteUrl'" class="remove">X</button>

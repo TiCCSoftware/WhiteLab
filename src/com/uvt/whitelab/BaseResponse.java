@@ -12,20 +12,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.UUID;
+//import java.util.TreeSet;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -36,13 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.uvt.whitelab.util.MetadataField;
+//import com.uvt.whitelab.util.MetadataField;
 import com.uvt.whitelab.util.Query;
 import com.uvt.whitelab.util.QueryServiceHandler;
 import com.uvt.whitelab.util.SessionManager;
@@ -106,98 +102,24 @@ public abstract class BaseResponse {
 		query = null;
 		String id = this.getParameter("id", "");
 		String patt = this.getParameter("query", "").replaceAll("&", "%26");
-		int view = this.getParameter("view", 0);
-		int from = this.getParameter("from", 0);
 		
 		if (id.length() > 0) {
 			query = SessionManager.getQuery(session, id);
-			if (query == null)
+			if (query == null || (patt.length() > 0 && !patt.equals(query.getPatternWithin())))
 				id = "";
-			else {
-				if (patt.length() > 0 && !patt.equals(query.getPatternWithin())) {
-					query.setPattern(patt);
-					query.resetStatus();
-				}
-				if (view != query.getView())
-					query.setView(view);
-				if (from != query.getFrom())
-					query.setFrom(from);
-			}
 		}
 		
 		if (id.length() == 0 && patt.length() > 0) {
-			id = UUID.randomUUID().toString();
-			query = new Query(id,patt,view,from);
+			query = new Query(this);
+			id = query.getId();
 			SessionManager.addQuery(session, query);
 		}
 		
 		if (query != null) {
+			query = query.updateQuery(this);
+			if (!id.equals(query.getId()))
+				SessionManager.addQuery(session, query);
 			SessionManager.setCurrentQuery(session, query.getId());
-			int c = 0;
-			try {
-				String groupBy = this.getParameter("group", "");
-				if (!groupBy.equals(query.getGroup())) {
-					query.setGroup(URLDecoder.decode(groupBy, "UTF-8"));
-					c++;
-				}
-				
-				String sort = this.getParameter("sort", "");
-				if (!sort.equals(query.getSort())) {
-					query.setSort(URLDecoder.decode(sort, "UTF-8"));
-					c++;
-				}
-				
-				Integer start = this.getParameter("start", -1);
-				if (start != query.getStart()) {
-					query.setStart(start);
-					c++;
-				}
-				
-				Integer end = this.getParameter("end", -1);
-				if (end != query.getEnd()) {
-					query.setEnd(end);
-					c++;
-				}
-				
-				Integer first = this.getParameter("first", 0);
-				if (first != query.getFirst()) {
-					query.setFirst(first);
-					c++;
-				}
-				
-				Integer number = this.getParameter("number", 50);
-				if (number != query.getNumber()) {
-					query.setNumber(number);
-					c++;
-				}
-				
-				String docPid = this.getParameter("docpid", "");
-				if (!docPid.equals(query.getDocPid())) {
-					query.setDocPid(docPid);
-					c++;
-				}
-				
-				String filter = getFilterString();
-				if (!filter.equals(query.getFilter())) {
-					query.setFilter(filter);
-					c++;
-				}
-				
-				if (view == 12 && query.getWordsAroundHit() != 0) {
-					query.setWordsAroundHit(0);
-					c++;
-				} else if (query.getWordsAroundHit() != -1) {
-					query.setWordsAroundHit(-1);
-					c++;
-				}
-				
-				if (c > 0) {
-					query.resetStatus();
-				}
-				
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -255,58 +177,58 @@ public abstract class BaseResponse {
 //		return params;
 //	}
 	
-	private String getFilterString() {
-		Map<String,Map<String,List<String>>> filters = new HashMap<String,Map<String,List<String>>>();
-		
-		for (MetadataField dataField : this.servlet.getMetadataFields()) {
-			String[] filterValues = this.getParameterValues(dataField.getName(), null);
-			if (filterValues != null && filterValues.length > 0) {
-				Map<String,List<String>> vals = new HashMap<String,List<String>>();
-				List<String> is = new ArrayList<String>();
-				List<String> isnot = new ArrayList<String>();
-				vals.put("is", is);
-				vals.put("isnot", isnot);
-				
-				for (int i = 0; i < filterValues.length; i++) {
-					String filterValue = "";
-					try {
-						filterValue = URLDecoder.decode(filterValues[i], "UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-					
-					if (filterValue.startsWith("-") || filterValue.startsWith("\"-")) {
-						filterValue = filterValue.replaceFirst("-", "");
-						vals.get("isnot").add(filterValue);
-					} else {
-						vals.get("is").add(filterValue);
-					}
-				}
-				
-				if (vals.get("isnot").size() > 0 && vals.get("is").size() == 0) {
-					for (String filterValue : dataField.getValues()) {
-						filterValue = "\""+filterValue+"\"";
-						if (!vals.get("isnot").contains(filterValue) && !vals.get("is").contains(filterValue))
-							vals.get("is").add(filterValue);
-					}
-				} else {
-					vals.remove("isnot");
-				}
-				
-				filters.put(dataField.getName(), vals);
-			}
-		}
-
-		List<String> filterStrings = new ArrayList<String>();
-		String filter = "";
-		if (filters.keySet().size() > 0) {
-			for (String field : filters.keySet()) {
-				filterStrings.add(field+":("+StringUtils.join(filters.get(field).get("is").toArray(), " OR ").replaceAll("&", "%26")+")");
-			}
-			filter = "("+StringUtils.join(filterStrings.toArray()," AND ")+")";
-		}
-		return filter;
-	}
+//	private String getFilterString() {
+//		Map<String,Map<String,List<String>>> filters = new HashMap<String,Map<String,List<String>>>();
+//		
+//		for (MetadataField dataField : this.servlet.getMetadataFields()) {
+//			String[] filterValues = this.getParameterValues(dataField.getName(), null);
+//			if (filterValues != null && filterValues.length > 0) {
+//				Map<String,List<String>> vals = new HashMap<String,List<String>>();
+//				List<String> is = new ArrayList<String>();
+//				List<String> isnot = new ArrayList<String>();
+//				vals.put("is", is);
+//				vals.put("isnot", isnot);
+//				
+//				for (int i = 0; i < filterValues.length; i++) {
+//					String filterValue = "";
+//					try {
+//						filterValue = URLDecoder.decode(filterValues[i], "UTF-8");
+//					} catch (UnsupportedEncodingException e) {
+//						e.printStackTrace();
+//					}
+//					
+//					if (filterValue.startsWith("-") || filterValue.startsWith("\"-")) {
+//						filterValue = filterValue.replaceFirst("-", "");
+//						vals.get("isnot").add(filterValue);
+//					} else {
+//						vals.get("is").add(filterValue);
+//					}
+//				}
+//				
+//				if (vals.get("isnot").size() > 0 && vals.get("is").size() == 0) {
+//					for (String filterValue : dataField.getValues()) {
+//						filterValue = "\""+filterValue+"\"";
+//						if (!vals.get("isnot").contains(filterValue) && !vals.get("is").contains(filterValue))
+//							vals.get("is").add(filterValue);
+//					}
+//				} else {
+//					vals.remove("isnot");
+//				}
+//				
+//				filters.put(dataField.getName(), vals);
+//			}
+//		}
+//
+//		List<String> filterStrings = new ArrayList<String>();
+//		String filter = "";
+//		if (filters.keySet().size() > 0) {
+//			for (String field : filters.keySet()) {
+//				filterStrings.add(field+":("+StringUtils.join(filters.get(field).get("is").toArray(), " OR ").replaceAll("&", "%26")+")");
+//			}
+//			filter = "("+StringUtils.join(filterStrings.toArray()," AND ")+")";
+//		}
+//		return filter;
+//	}
 
 	// TODO refactor: put in QueryServiceHandler
 	protected String getBlackLabResponse(String corpus, String trail, Map<String,Object> params) {
@@ -557,86 +479,93 @@ public abstract class BaseResponse {
 	}
 
 	protected void loadMetaDataComponents() {
-		Map<String,String> options = new HashMap<String,String>();
-		Map<String,String> selectFields = new HashMap<String,String>();
-		SortedSet<String> filters = new TreeSet<String>();
-		Map<String,String> filterIds = new HashMap<String,String>();
-			
-		for (MetadataField dataField : this.servlet.getMetadataFields()) {
-			
-			//Get display name for field
-			String fieldName = dataField.getName();
-			if (this.labels.containsKey("metadataFields."+fieldName))
-				fieldName = this.labels.getString("metadataFields."+fieldName);
-			
-			filters.add(fieldName);
-			filterIds.put(fieldName, dataField.getName());
-			
-			//Generate option HTML
-			String option = "<option value=\"field:"+dataField.getName()+"\">"+fieldName+"</option>";
-			options.put(fieldName, option);
-			
-			if (dataField.numberOfValues() > 0) {
-				
-				List<String> vals = new ArrayList<String>();
-				Map<String,String> fdOptions = new HashMap<String,String>();
-				for (String value : dataField.getValues()) {
-					vals.add(value);
-					fdOptions.put(value, "<option value=\""+value+"\">"+value+"</option>");
-				}
+//		Map<String,String> options = new HashMap<String,String>();
+//		Map<String,String> selectFields = new HashMap<String,String>();
+//		SortedSet<String> filters = new TreeSet<String>();
+//		Map<String,String> filterIds = new HashMap<String,String>();
+//			
+//		for (MetadataField dataField : this.servlet.getMetadataFields()) {
+//			
+//			//Get display name for field
+//			String fieldName = dataField.getName();
+//			if (this.labels.containsKey("metadataFields."+fieldName))
+//				fieldName = this.labels.getString("metadataFields."+fieldName);
+//			
+//			filters.add(fieldName);
+//			filterIds.put(fieldName, dataField.getName());
+//			
+//			//Generate option HTML
+//			String option = "<option value=\"field:"+dataField.getName()+"\">"+fieldName+"</option>";
+//			options.put(fieldName, option);
+//			
+//			if (dataField.numberOfValues() > 0) {
+//				
+//				List<String> vals = new ArrayList<String>();
+//				Map<String,String> fdOptions = new HashMap<String,String>();
+//				for (String value : dataField.getValues()) {
+//					vals.add(value);
+//					fdOptions.put(value, "<option value=\""+value+"\">"+value+"</option>");
+//				}
+//
+//				String select = "<select class=\"metaInput\"><option value=\"\" selected></option>";
+//				SortedSet<String> keys = new TreeSet<String>(vals);
+//				for (String fieldValue : keys) {
+//					select = select+fdOptions.get(fieldValue);
+//				}
+//				if (!dataField.isComplete())
+//					select = select+"<option value=\"other\">"+this.labels.getString("other")+"</option>";
+//				
+//				select = select+"</select>";
+//				selectFields.put(dataField.getName(), select);
+//			} else {
+//				String select = "<input class=\"metaInput\" type=\"text\" />";
+//				selectFields.put(dataField.getName(), select);
+//			}
+//		}
+//		
+//		String rule = "<div class=\"rule row large-16 medium-16 small-16\">"
+//			+ "<div class=\"large-4 medium-4 small-4 columns\">"
+//			+ "<select class=\"metaLabel\">"
+//			+ "<option value=\"\" disabled=\"true\" selected=\"true\"></option>";
+//		
+//		Iterator<String> it = filters.iterator();
+//		while (it.hasNext()) {
+//			rule = rule + options.get(it.next());
+//		}
+//			
+//		rule = rule + "</select>"
+//			+ "</div>"
+//			+ "<div class=\"large-3 medium-3 small-3 columns\">"
+//			+ "<select class=\"metaOperator\">"
+//			+ "<option value=\"is\" selected=\"true\">"+this.labels.getString("meta.is")+"</option>"
+//			+ "<option value=\"not\">"+this.labels.getString("meta.not")+"</option>"
+//			+ "</select>"
+//			+ "</div>"
+//			+ "<div class=\"large-7 medium-7 small-7 columns\">"
+//			+ "<input class=\"metaInput\" type=\"text\">"
+//			+ "</div>"
+//			+ "<div class=\"large-2 medium-2 small-2 columns\">"
+//			+ "<a class=\"meta-min\" onclick=\"Whitelab.meta.removeRule(this)\">"
+//			+ "<img src=\"../web/img/minus.png\">"
+//			+ "</a>"
+//			+ "<a class=\"meta-plus\" onclick=\"Whitelab.meta.addRule()\">"
+//			+ "<img src=\"../web/img/plus.png\">"
+//			+ "</a>"
+//			+ "</div>"
+//			+ "</div>";
+//
 
-				String select = "<select class=\"metaInput\"><option value=\"\" selected></option>";
-				SortedSet<String> keys = new TreeSet<String>(vals);
-				for (String fieldValue : keys) {
-					select = select+fdOptions.get(fieldValue);
-				}
-				if (!dataField.isComplete())
-					select = select+"<option value=\"other\">"+this.labels.getString("other")+"</option>";
-				
-				select = select+"</select>";
-				selectFields.put(dataField.getName(), select);
-			} else {
-				String select = "<input class=\"metaInput\" type=\"text\" />";
-				selectFields.put(dataField.getName(), select);
-			}
-		}
-		
-		String rule = "<div class=\"rule row large-16 medium-16 small-16\">"
-			+ "<div class=\"large-4 medium-4 small-4 columns\">"
-			+ "<select class=\"metaLabel\">"
-			+ "<option value=\"\" disabled=\"true\" selected=\"true\"></option>";
-		
-		Iterator<String> it = filters.iterator();
-		while (it.hasNext()) {
-			rule = rule + options.get(it.next());
-		}
-			
-		rule = rule + "</select>"
-			+ "</div>"
-			+ "<div class=\"large-3 medium-3 small-3 columns\">"
-			+ "<select class=\"metaOperator\">"
-			+ "<option value=\"is\" selected=\"true\">"+this.labels.getString("meta.is")+"</option>"
-			+ "<option value=\"not\">"+this.labels.getString("meta.not")+"</option>"
-			+ "</select>"
-			+ "</div>"
-			+ "<div class=\"large-7 medium-7 small-7 columns\">"
-			+ "<input class=\"metaInput\" type=\"text\">"
-			+ "</div>"
-			+ "<div class=\"large-2 medium-2 small-2 columns\">"
-			+ "<a class=\"meta-min\" onclick=\"Whitelab.meta.removeRule(this)\">"
-			+ "<img src=\"../web/img/minus.png\">"
-			+ "</a>"
-			+ "<a class=\"meta-plus\" onclick=\"Whitelab.meta.addRule()\">"
-			+ "<img src=\"../web/img/plus.png\">"
-			+ "</a>"
-			+ "</div>"
-			+ "</div>";
-
-		this.getContext().put("metaRule", rule);
+		Map<String,String> options = this.servlet.getMetadataHtmlGenerator().generateOptions(labels);
+		Map<String,String> selectFields = this.servlet.getMetadataHtmlGenerator().loadSelectFields(labels);
+		SortedSet<String> filters = this.servlet.getMetadataHtmlGenerator().loadFilters(labels);
+		Map<String,String> filterIds = this.servlet.getMetadataHtmlGenerator().loadFilterIds(labels);
+		this.getContext().put("queryRules", this.servlet.getMetadataHtmlGenerator().generateQueryRules(labels, query));
+		this.getContext().put("metaRule", this.servlet.getMetadataHtmlGenerator().generateEmptyRule(labels, filters, options));
 		this.getContext().put("filters", filters);
 		this.getContext().put("filterIds", filterIds);
 		this.getContext().put("metaOptions",options);
 		this.getContext().put("metaSelect",selectFields);
+		this.getContext().put("generator", this.servlet.getMetadataHtmlGenerator());
 	}
 
 	protected void sendResponse(Map<String,Object> output) {
