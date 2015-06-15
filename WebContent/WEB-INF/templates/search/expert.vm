@@ -23,7 +23,7 @@
 <script>
 	Whitelab.search.error = false;
 	function validateForm() {
-		var q = Whitelab.search.execute('expert');
+		var q = Whitelab.search.composeQuery('expert');
 		if (q)
 			window.location.href = '/whitelab/search/results?'+q;
 	}

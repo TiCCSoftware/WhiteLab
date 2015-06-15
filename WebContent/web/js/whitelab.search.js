@@ -11,14 +11,90 @@ Whitelab.search = {
 	error : false,
 	first : 0,
 	number : 50,
+	from : 1,
+	batch : false,
 	
-	execute : function(tab) {
+	composeQuery : function(tab) {
 		Whitelab.search.setDefaults();
-		var from = 1;
 		if (typeof tab === 'undefined')
 			tab = Whitelab.search.tab;
 		
-		if (Whitelab.search.tab === "simple") {
+		if (tab === "simple") {
+			var term = $('#simple-input > input').val();
+			var terms = term.split(" ");
+			Whitelab.search.query = "";
+			for (var i = 0; i < terms.length; i++) {
+				if (terms[i].length > 0) {
+					var sub = terms[i].substring(0,2);
+					if (sub === '[]') {
+						if (terms[i].indexOf('{,') > -1) {
+							terms[i] = terms[i].replace('{,','{0,');
+						}
+						Whitelab.search.query = Whitelab.search.query + terms[i];
+					} else {
+						Whitelab.search.query = Whitelab.search.query + "[word=\""+terms[i]+"\"]";
+					}
+				}
+			}
+			if (Whitelab.search.query.length == 0 || term === '[]') {
+				Whitelab.search.error = true;
+			}
+		} else {
+			if (Whitelab.hasOwnProperty("meta"))
+				Whitelab.search.filterQuery = Whitelab.meta.parseQuery();
+			
+			if (Whitelab.search.tab === "extended") {
+				Whitelab.search.from = 2;
+				Whitelab.search.query = Whitelab.search.extended.parseQuery();
+			} else if (Whitelab.search.tab === "advanced") {
+				Whitelab.search.from = 3;
+				Whitelab.search.query = Whitelab.search.advanced.parseQuery();
+			} else if (Whitelab.search.tab === "expert") {
+				Whitelab.search.from = 4;
+				Whitelab.search.query = $("#querybox").val();
+			}
+			
+			if (Whitelab.search.query.length == 0 || Whitelab.search.query.indexOf('{,') > -1) {
+				Whitelab.search.query = "";
+				Whitelab.search.error = true;
+			}
+			
+			if (Whitelab.search.within === "sentence") {
+				Whitelab.debug("within sentence");
+				Whitelab.search.query = Whitelab.search.query + " within <s/>";
+			} else if (Whitelab.search.within === "paragraph") {
+				Whitelab.debug("within paragraph");
+				Whitelab.search.query = Whitelab.search.query + " within (<p/>|<event/>)";
+			}
+		}
+		if (Whitelab.search.error) {
+			alert("Invalid query");
+			return false;
+		} else {
+			var q = "query=" + encodeURIComponent(Whitelab.search.query)
+			+ "&view=" + Whitelab.search.view 
+			+ "&sort=" + Whitelab.search.sort
+			+ "&first=" + Whitelab.search.first
+			+ "&group_by=" + Whitelab.search.group_by
+			+ "&number=" + Whitelab.search.number
+			+ "&from=" + Whitelab.search.from;
+			
+			if (Whitelab.search.filterQuery.length > 0)
+				q = q+"&"+Whitelab.search.filterQuery;
+			
+			if (Whitelab.search.tab !== "simple" && Whitelab.search.query.indexOf(";") > -1)
+				q = q+"&batch=true";
+			
+			return q;
+		}
+	},
+	
+	execute : function(tab) {
+		Whitelab.search.setDefaults();
+		if (typeof tab === 'undefined')
+			tab = Whitelab.search.tab;
+		
+		if (tab === "simple") {
 			var term = $("#simple").find("input[type='text']").val();
 			var terms = term.split(" ");
 			for (var i = 0; i < terms.length; i++) {
@@ -205,6 +281,7 @@ Whitelab.search = {
 		Whitelab.search.number = 50;
 		Whitelab.search.sort = "";
 		Whitelab.search.error = false;
+		Whitelab.search.from = 1;
 	},
 	
 	setSearchParams : function(id) {

@@ -73,7 +73,7 @@
 
 	Whitelab.search.error = false;
 	function validateForm() {
-		var q = Whitelab.search.execute('advanced');
+		var q = Whitelab.search.composeQuery('advanced');
 		if (q)
 			window.location.href = '/whitelab/search/results?'+q;
 	}

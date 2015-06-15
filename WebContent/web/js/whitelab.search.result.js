@@ -319,18 +319,18 @@ Whitelab.search.result = {
 		}
 	},
 	
-	searchHitGroupContent : function(queryId,group_byClean,groupId) {
+	searchHitGroupContent : function(queryId,groupByClean,groupId) {
 
 		if (groupId.length == 0)
 			groupId = "unknown";
 		
-		Whitelab.debug("searchHitGroupContent("+queryId+",'"+group_byClean+"','"+groupId+"')");
+		Whitelab.debug("searchHitGroupContent("+queryId+",'"+groupByClean+"','"+groupId+"')");
 		Whitelab.search.view = 1;
 		Whitelab.search.group_by = "";
 		Whitelab.search.query = decodeURIComponent(Whitelab.search.query);
 		Whitelab.search.query = Whitelab.search.query.replace(/amp;/g,"");
 		
-		var g = group_byClean;
+		var g = groupByClean;
 		g = g.replace("field:","");
 		
 		Whitelab.search.filters = new Array();
@@ -453,16 +453,16 @@ Whitelab.search.result = {
 		Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
 	},
 	
-	searchDocGroupContent : function(queryId,group_byClean,groupId) {
+	searchDocGroupContent : function(queryId,groupByClean,groupId) {
 
 		if (groupId.length == 0)
 			groupId = "unknown";
 		
-		Whitelab.debug("searchDocGroupContent("+queryId+",'"+group_byClean+"','"+groupId+"')");
+		Whitelab.debug("searchDocGroupContent("+queryId+",'"+groupByClean+"','"+groupId+"')");
 		Whitelab.search.view = 2;
 		Whitelab.search.group_by = "";
 		
-		var g = group_byClean;
+		var g = groupByClean;
 		g = g.replace("field:","");
 		
 		Whitelab.search.filters = new Array();

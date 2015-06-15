@@ -740,7 +740,7 @@ select.meta-medium {
 }
 
 #simple > div > div {
-	display:table-row;
+	/*display:table-row;*/
 }
 
 #simple input {
@@ -772,12 +772,12 @@ button.search > span, button.reset > span {
 
 #simple-buttons {
 	width: 190px;
-	display:table-cell;
+	display:inline-block;
 	max-height: 44px;
 }
 
 #simple-input {
-	width: auto;
+	width: 100%;
 	display:table-cell;
 	max-height: 44px;
 }

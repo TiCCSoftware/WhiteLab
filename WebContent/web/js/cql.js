@@ -97,7 +97,7 @@ Cql.prototype.getQuery = function() {
 			q = queries.join("|");
 		if (q === "")
 			q = "[]";
-		return q;
+		return q.replace(/ /g,'');
 	} else {
 		return null;
 	}
