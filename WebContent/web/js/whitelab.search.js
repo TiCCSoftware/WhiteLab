@@ -67,7 +67,7 @@ Whitelab.search = {
 			+ "&view=" + Whitelab.search.view 
 			+ "&sort=" + Whitelab.search.sort
 			+ "&first=" + Whitelab.search.first
-			+ "&group_by=" + Whitelab.search.group_by
+			+ "&group=" + Whitelab.search.group_by
 			+ "&number=" + Whitelab.search.number
 			+ "&from=" + Whitelab.search.from;
 			
@@ -76,6 +76,8 @@ Whitelab.search = {
 			
 			if (Whitelab.search.tab !== "simple" && Whitelab.search.query.indexOf(";") > -1)
 				q = q+"&batch=true";
+
+			console.log(q);
 			
 			return q;
 		}
