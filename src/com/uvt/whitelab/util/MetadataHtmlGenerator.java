@@ -146,25 +146,27 @@ public class MetadataHtmlGenerator {
 		Map<String,String> options = new HashMap<String,String>();
 		for (MetadataField dataField : this.servlet.getMetadataFields()) {
 			String fieldName = dataField.getName();
+			String fieldLabel = fieldName;
 			if (labels.containsKey("metadataFields."+fieldName))
-				fieldName = labels.getString("metadataFields."+fieldName);
+				fieldLabel = labels.getString("metadataFields."+fieldName);
 			
-			options.put(fieldName, "<option value=\"field:"+dataField.getName()+"\">"+fieldName+"</option>");
+			options.put(fieldName, "<option value=\"field:"+dataField.getName()+"\">"+fieldLabel+"</option>");
 		}
 		return options;
 	}
 	
-	public String generateOption(ResourceBundle labels, String fieldName, boolean selected, String classLabel) {
-		String fieldLabel = fieldName;
-		if (labels.containsKey("metadataFields."+fieldName))
-			fieldLabel = labels.getString("metadataFields."+fieldName);
-		String option = "<option value=\""+fieldName+"\" class=\""+classLabel+"\"";
-		if (selected)
-			option = option+" selected=\"true\">"+fieldLabel+"</option>";
-		else
-			option = option+">"+fieldLabel+"</option>";
-		return option;
-	}
+//	public String generateOption(ResourceBundle labels, String fieldName, boolean selected, String classLabel) {
+//		String fieldLabel = fieldName;
+//		if (labels.containsKey("metadataFields."+fieldName))
+//			fieldLabel = labels.getString("metadataFields."+fieldName);
+//		String option = "<option value=\""+fieldName+"\"";
+//		if (classLabel != null)
+//			option = option+" class=\""+classLabel+"\"";
+//		if (selected)
+//			option = option+" selected=\"true\"";
+//		option = option+">"+fieldLabel+"</option>";
+//		return option;
+//	}
 	
 	public String generateOption(String fieldName, String fieldLabel, boolean selected, String classLabel) {
 		String option = "<option value=\""+fieldName+"\" class=\""+classLabel+"\"";

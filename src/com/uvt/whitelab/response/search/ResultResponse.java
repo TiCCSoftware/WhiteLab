@@ -94,6 +94,13 @@ public class ResultResponse extends BaseResponse {
 		@SuppressWarnings("unchecked")
 		List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
 		this.getContext().put("queries", queries);
+		this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
+		this.getContext().put("requestUrl", this.getRequestURL(false));
+		int ql = this.getParameter("ql", 0);
+		this.getContext().put("ql", ql);
+		this.getContext().put("qlBefore", ql - 5);
+		this.getContext().put("qlStart", ql + 1);
+		this.getContext().put("qlEnd", ql + 5);
 		
 //		try {
 //			this.getContext().put("memUsageEnd", this.servlet.getCurrentMemUsage());

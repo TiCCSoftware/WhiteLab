@@ -1472,11 +1472,6 @@ table#queries tbody tr td.control {
 	width: 75px;
 }
 
-table#queries tbody {
-	max-height: 200px;
-	overflow-y: scroll;
-}
-
 table#queries tbody tr:hover {
 	background: rgba(0,153,153,0.2);
 }
@@ -1484,6 +1479,17 @@ table#queries tbody tr:hover {
 table#queries tbody tr.active {
 	background: rgba(0,153,153,0.4);
 	cursor: auto;
+}
+
+table#queries tbody tr.ql {
+	background: #fff;
+	height: 5px;
+	border: 1px solid #ddd;
+}
+
+table#queries tbody tr.ql td {
+	text-align: center;
+	color: #999999;
 }
 
 button.edit, button.remove {

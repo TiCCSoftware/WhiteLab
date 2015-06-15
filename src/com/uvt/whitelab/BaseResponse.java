@@ -102,25 +102,33 @@ public abstract class BaseResponse {
 		query = null;
 		String id = this.getParameter("id", "");
 		String patt = this.getParameter("query", "").replaceAll("&", "%26");
+		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
+		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
+		boolean updateQuery = true;
 		
 		if (id.length() > 0) {
 			query = SessionManager.getQuery(session, id);
 			if (query == null || (patt.length() > 0 && !patt.equals(query.getPatternWithin())))
 				id = "";
+			else
+				updateQuery = false;
 		}
 		
 		if (id.length() == 0 && patt.length() > 0) {
+			System.out.println("NEW QUERY");
 			query = new Query(this);
 			id = query.getId();
 			SessionManager.addQuery(session, query);
 		}
 		
-		if (query != null) {
+		if (query != null && !editQuery && !deleteQuery && updateQuery) {
 			query = query.updateQuery(this);
 			if (!id.equals(query.getId()))
 				SessionManager.addQuery(session, query);
-			SessionManager.setCurrentQuery(session, query.getId());
 		}
+		
+		if (query != null)
+			SessionManager.setCurrentQuery(session, query.getId());
 	}
 
 //	protected Map<String, Object> getQueryParameters() {
@@ -613,6 +621,37 @@ public abstract class BaseResponse {
 		HttpSession sesh = request.getSession();
 		sesh.setMaxInactiveInterval(30*60);
 		return sesh;
+	}
+	
+	protected String getRequestURL(boolean includeHost) {
+
+	    String scheme = request.getScheme();             // http
+	    String serverName = request.getServerName();     // hostname.com
+	    int serverPort = request.getServerPort();        // 80
+	    String contextPath = request.getContextPath();   // /mywebapp
+	    String servletPath = request.getServletPath();   // /servlet/MyServlet
+	    String pathInfo = request.getPathInfo();         // /a/b;c=123
+	    String queryString = request.getQueryString();          // d=789
+
+	    // Reconstruct original requesting URL
+	    StringBuffer url =  new StringBuffer();
+	    if (includeHost) {
+		    url.append(scheme).append("://").append(serverName);
+	
+		    if ((serverPort != 80) && (serverPort != 443)) {
+		        url.append(":").append(serverPort);
+		    }
+	    }
+
+	    url.append(contextPath).append(servletPath);
+
+	    if (pathInfo != null) {
+	        url.append(pathInfo);
+	    }
+	    if (queryString != null) {
+	        url.append("?").append(queryString);
+	    }
+	    return url.toString();
 	}
 
 	/**

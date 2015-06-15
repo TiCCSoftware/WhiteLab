@@ -44,23 +44,24 @@ public class Query {
 		from = f;
 	}
 	
-	public Query(BaseResponse baseResponse) {
+	public Query(BaseResponse br) {
 		try {
 			id = UUID.randomUUID().toString();
-			view = baseResponse.getParameter("view", 0);
-			from = baseResponse.getParameter("from", 0);
-			group = URLDecoder.decode(baseResponse.getParameter("group", ""), "UTF-8");
-			sort = URLDecoder.decode(baseResponse.getParameter("sort", ""), "UTF-8");
-			start = baseResponse.getParameter("start", -1);
-			end = baseResponse.getParameter("end", -1);
-			first = baseResponse.getParameter("first", 0);
-			number = baseResponse.getParameter("number", 50);
+			view = br.getParameter("view", 0);
+			from = br.getParameter("from", 0);
+			group = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
+			sort = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
+			start = br.getParameter("start", -1);
+			end = br.getParameter("end", -1);
+			first = br.getParameter("first", 0);
+			number = br.getParameter("number", 50);
+			docPid = br.getParameter("docpid", "");
 			if (view == 12)
 				wordsAroundHit = 0;
 			else
 				wordsAroundHit = -1;
-			setPattern(baseResponse.getParameter("query", "").replaceAll("&", "%26"));
-			generateFilterStringFromInput(baseResponse,true);
+			setPattern(br.getParameter("query", "").replaceAll("&", "%26"));
+			generateFilterStringFromInput(br,true);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -75,17 +76,19 @@ public class Query {
 			int st = br.getParameter("start", -1);
 			int en = br.getParameter("end", -1);
 			int fi = br.getParameter("first", 0);
-			int n = br.getParameter("number", 0);
+			int n = br.getParameter("number", 50);
 			String d = br.getParameter("docpid", "");
 			
 			if (v != view || f != from || !g.equals(group) || !s.equals(sort) || st != start || en != end || fi != first || n != number || !d.equals(docPid) ||
 					(v == 12 && wordsAroundHit != 0)) {
+				System.out.println("QUERY CHANGED");
 				Query query = new Query(br);
 				return query;
 			}
 			
 			String ff = generateFilterStringFromInput(br,false);
 			if (!ff.equals(filter)) {
+				System.out.println("FILTER CHANGED");
 				Query query = new Query(br);
 				return query;
 			}
@@ -355,32 +358,34 @@ public class Query {
 		return params;
 	}
 	
-	public String getUrl(String page, String suffix) {
+	public String getUrl(String page, String suffix, boolean onlyId) {
 		String url = "/whitelab/"+page+"?";
 		url = url+"id="+getId();
-		try {
-			url = url+"&query="+URLEncoder.encode(getPatternWithin(), "UTF-8");
-			if (page.contains("/results") && view > 0)
-				url = url+"&view="+view;
-//			if (from > 0)
-//				url = url+"&from="+from;
-			if (filter.length() > 0)
-				url = url+"&filter="+URLEncoder.encode(getFilterUrlParameters(), "UTF-8");
-			if (group.length() > 0)
-				url = url+"&group="+URLEncoder.encode(group, "UTF-8");
-			if (sort.length() > 0)
-				url = url+"&sort="+URLEncoder.encode(sort, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		if (!onlyId) {
+			try {
+				url = url+"&query="+URLEncoder.encode(getPatternWithin(), "UTF-8");
+				if (page.contains("/results") && view > 0)
+					url = url+"&view="+view;
+	//			if (from > 0)
+	//				url = url+"&from="+from;
+				if (filter.length() > 0)
+					url = url+"&filter="+URLEncoder.encode(getFilterUrlParameters(), "UTF-8");
+				if (group.length() > 0)
+					url = url+"&group="+URLEncoder.encode(group, "UTF-8");
+				if (sort.length() > 0)
+					url = url+"&sort="+URLEncoder.encode(sort, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			if (first > 0)
+				url = url+"&first="+first;
+			if (docPid.length() == 0 && number > 50)
+				url = url+"&number="+number;
+			if (start > -1)
+				url = url+"&start="+start;
+			if (end > -1)
+				url = url+"&end="+end;
 		}
-		if (first > 0)
-			url = url+"&first="+first;
-		if (docPid.length() == 0 && number > 50)
-			url = url+"&number="+number;
-		if (start > -1)
-			url = url+"&start="+start;
-		if (end > -1)
-			url = url+"&end="+end;
 		if (suffix != null)
 			url = url + suffix;
 		return url;

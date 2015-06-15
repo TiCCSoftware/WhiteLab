@@ -76,5 +76,18 @@ public class SessionManager {
 			return queries.size();
 		return 0;
 	}
+	
+	public static boolean isStillCounting(HttpSession session) {
+		@SuppressWarnings("unchecked")
+		List<Query> queries = (List<Query>) session.getAttribute("queries");
+		if (queries != null) {
+			for (int i = 0; i < queries.size(); i++) {
+				Query query = queries.get(i);
+				if (query.getStatusString().equals("COUNTING"))
+					return true;
+			}
+		}
+		return false;
+	}
 
 }

@@ -12,9 +12,11 @@ Whitelab.search = {
 	first : 0,
 	number : 50,
 	
-	execute : function() {
+	execute : function(tab) {
 		Whitelab.search.setDefaults();
-		var tab = Whitelab.search.tab;
+		var from = 1;
+		if (typeof tab === 'undefined')
+			tab = Whitelab.search.tab;
 		
 		if (Whitelab.search.tab === "simple") {
 			var term = $("#simple").find("input[type='text']").val();
@@ -33,30 +35,38 @@ Whitelab.search = {
 				}
 			}
 			if (Whitelab.search.query.length == 0 || term === '[]') {
+				console.log("1");
 				Whitelab.search.error = true;
-			} else {
-				Whitelab.search.params = "query="+Whitelab.search.query;
+//			} else {
+//				Whitelab.search.params = "query="+Whitelab.search.query;
 			}
-			Whitelab.search.simple.reset();
+//			Whitelab.search.simple.reset();
 		} else {
 			if (Whitelab.hasOwnProperty("meta"))
 				Whitelab.search.filterQuery = Whitelab.meta.parseQuery();
 			
 			if (Whitelab.search.tab === "extended") {
+				from = 2;
 				Whitelab.search.query = Whitelab.search.extended.parseQuery();
-				Whitelab.search.extended.reset();
+//				Whitelab.search.extended.reset();
 			} else if (Whitelab.search.tab === "advanced") {
+				from = 3;
 				Whitelab.search.query = Whitelab.search.advanced.parseQuery();
-				Whitelab.search.advanced.reset();
+//				Whitelab.search.advanced.reset();
 			} else if (Whitelab.search.tab === "expert") {
+				from = 4;
 				Whitelab.search.query = $("#querybox").val();
-				Whitelab.search.expert.reset();
+//				Whitelab.search.expert.reset();
 			}
 			
 			if (Whitelab.search.query.length == 0 || Whitelab.search.query.indexOf('{,') > -1) {
+				console.log("QUERY: "+Whitelab.search.query);
 				Whitelab.search.query = "";
 				Whitelab.search.error = true;
+				console.log("2");
 			}
+			
+			Whitelab.search.query = Whitelab.search.query.replace(/ /g,'');
 			
 			if (Whitelab.search.within === "sentence") {
 				Whitelab.debug("within sentence");
@@ -65,29 +75,40 @@ Whitelab.search = {
 				Whitelab.debug("within paragraph");
 				Whitelab.search.query = Whitelab.search.query + " within (<p/>|<event/>)";
 			}
-			if (Whitelab.hasOwnProperty("meta"))
-				Whitelab.meta.reset();
+//			if (Whitelab.hasOwnProperty("meta"))
+//				Whitelab.meta.reset();
 		}
 		if (Whitelab.search.error) {
 			alert("Invalid query");
+			return false;
 		} else {
+			var qString = "query="+Whitelab.search.query.replace(/\&/g,'%26')+"&from="+from;
+			if (Whitelab.search.filterQuery.length > 0)
+				qString = qString+"&"+Whitelab.search.filterQuery;
+			
 			if (Whitelab.search.tab !== "simple" && Whitelab.search.query.indexOf(";") > -1) {
-				var qq = Whitelab.search.query.split(";");
-				for (var q = 0; q < qq.length; q++) {
-					Whitelab.search.query = qq[q];
-					Whitelab.search.queryCount++;
-					Whitelab.search.setSearchParams(null);
-					Whitelab.search.result.addQuery(Whitelab.search.queryCount,tab);
-					Whitelab.search.switchTab("result");
-					Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
-				}
-			} else {
-				Whitelab.search.queryCount++;
-				Whitelab.search.setSearchParams(null);
-				Whitelab.search.result.addQuery(Whitelab.search.queryCount,tab);
-				Whitelab.search.switchTab("result");
-				Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
+				qString = qString+"&batch=true";
 			}
+			
+			return qString;
+			
+//			if (Whitelab.search.tab !== "simple" && Whitelab.search.query.indexOf(";") > -1) {
+//				var qq = Whitelab.search.query.split(";");
+//				for (var q = 0; q < qq.length; q++) {
+//					Whitelab.search.query = qq[q];
+//					Whitelab.search.queryCount++;
+//					Whitelab.search.setSearchParams(null);
+//					Whitelab.search.result.addQuery(Whitelab.search.queryCount,tab);
+//					Whitelab.search.switchTab("result");
+//					Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
+//				}
+//			} else {
+//				Whitelab.search.queryCount++;
+//				Whitelab.search.setSearchParams(null);
+//				Whitelab.search.result.addQuery(Whitelab.search.queryCount,tab);
+//				Whitelab.search.switchTab("result");
+//				Whitelab.getData(Whitelab.search.params, Whitelab.search.result.displayResult,Whitelab.search.queryCount);
+//			}
 		}
 	},
 	

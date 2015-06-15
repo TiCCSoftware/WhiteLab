@@ -9,8 +9,8 @@
 	</div>
 	<div id="advanced" class="large-16 medium-16 small-16 content active">
 		<div class="buttonrow-left large-16 medium-16 small-16">
-			<input class="splitcheck" type="checkbox"><span> Split batch queries</span></input><br />
-			<button onclick="Whitelab.search.execute()" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
+			<input id="splitcheck" class="splitcheck" type="checkbox" /><span> Split batch queries</span></input><br />
+			<button onclick="validateForm();" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
 		</div>
 		<div id="construct-canvas" class="large-16 medium-16 small-16">
 			$column
@@ -70,5 +70,12 @@
 			$(this).parent().find("input.from").val($(this).val());
 		}
 	});
+
+	Whitelab.search.error = false;
+	function validateForm() {
+		var q = Whitelab.search.execute('advanced');
+		if (q)
+			window.location.href = '/whitelab/search/results?'+q;
+	}
 </script>
 #parse("footer.vm")
