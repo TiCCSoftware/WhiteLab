@@ -102,20 +102,21 @@ public abstract class BaseResponse {
 		query = null;
 		String id = this.getParameter("id", "");
 		String patt = this.getParameter("query", "").replaceAll("&", "%26");
+		String within = this.getParameter("within", "");
 		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
 		
 		if (id.length() > 0) {
 			query = SessionManager.getQuery(session, id);
-			if (query == null || (patt.length() > 0 && !patt.equals(query.getPatternWithin())))
+			if (query == null || (patt.length() > 0 && !query.equalPattern(patt,within)))
 				id = "";
 			else
 				updateQuery = false;
 		}
 		
 		if (id.length() == 0 && patt.length() > 0) {
-			System.out.println("NEW QUERY");
+			this.servlet.log("NEW QUERY");
 			query = new Query(this);
 			id = query.getId();
 			SessionManager.addQuery(session, query);

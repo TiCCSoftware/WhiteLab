@@ -4,7 +4,7 @@ Whitelab.search = {
 	params : "",
 	query : "",
 	filterQuery : "",
-	within : "document",
+	within : "",
 	group_by : "",
 	view : 1,
 	sort : "",
@@ -12,7 +12,6 @@ Whitelab.search = {
 	first : 0,
 	number : 50,
 	from : 1,
-	batch : false,
 	
 	composeQuery : function(tab) {
 		Whitelab.search.setDefaults();
@@ -58,20 +57,13 @@ Whitelab.search = {
 				Whitelab.search.query = "";
 				Whitelab.search.error = true;
 			}
-			
-			if (Whitelab.search.within === "sentence") {
-				Whitelab.debug("within sentence");
-				Whitelab.search.query = Whitelab.search.query + " within <s/>";
-			} else if (Whitelab.search.within === "paragraph") {
-				Whitelab.debug("within paragraph");
-				Whitelab.search.query = Whitelab.search.query + " within (<p/>|<event/>)";
-			}
 		}
 		if (Whitelab.search.error) {
 			alert("Invalid query");
 			return false;
 		} else {
 			var q = "query=" + encodeURIComponent(Whitelab.search.query)
+			+ "&within=" + Whitelab.search.within 
 			+ "&view=" + Whitelab.search.view 
 			+ "&sort=" + Whitelab.search.sort
 			+ "&first=" + Whitelab.search.first
@@ -274,7 +266,7 @@ Whitelab.search = {
 		Whitelab.search.params = "";
 		Whitelab.search.query = "";
 		Whitelab.search.filterQuery = "";
-		Whitelab.search.within = "document";
+		Whitelab.search.within = "";
 		Whitelab.search.group_by = "";
 		Whitelab.search.view = 1;
 		Whitelab.search.first = 0;

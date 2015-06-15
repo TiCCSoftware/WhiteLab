@@ -37,16 +37,18 @@ public class Query {
 	private Map<String,Map<String,List<String>>> filters;
 //	private List<String> filterStrings;
 	
-	public Query (String i, String p, int v, int f) {
-		id = i;
-		setPattern(p);
-		view = v;
-		from = f;
-	}
+//	public Query (String i, String p, int v, int f) {
+//		id = i;
+//		setPattern(p);
+//		view = v;
+//		from = f;
+//	}
 	
 	public Query(BaseResponse br) {
 		try {
 			id = UUID.randomUUID().toString();
+			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			within = br.getParameter("within", "");
 			view = br.getParameter("view", 0);
 			from = br.getParameter("from", 0);
 			group = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
@@ -60,7 +62,7 @@ public class Query {
 				wordsAroundHit = 0;
 			else
 				wordsAroundHit = -1;
-			setPattern(br.getParameter("query", "").replaceAll("&", "%26"));
+//			setPattern(br.getParameter("query", "").replaceAll("&", "%26"));
 			generateFilterStringFromInput(br,true);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -69,6 +71,8 @@ public class Query {
 	
 	public Query updateQuery(BaseResponse br) {
 		try {
+			String p = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			String w = br.getParameter("within", "");
 			int v = br.getParameter("view", 0);
 			int f = br.getParameter("from", 0);
 			String g = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
@@ -79,16 +83,17 @@ public class Query {
 			int n = br.getParameter("number", 50);
 			String d = br.getParameter("docpid", "");
 			
-			if (v != view || f != from || !g.equals(group) || !s.equals(sort) || st != start || en != end || fi != first || n != number || !d.equals(docPid) ||
+			if (!p.equals(pattern) || !w.equals(within) || v != view || f != from || !g.equals(group) || 
+					!s.equals(sort) || st != start || en != end || fi != first || n != number || !d.equals(docPid) ||
 					(v == 12 && wordsAroundHit != 0)) {
-				System.out.println("QUERY CHANGED");
+				br.getServlet().log("QUERY CHANGED");
 				Query query = new Query(br);
 				return query;
 			}
 			
 			String ff = generateFilterStringFromInput(br,false);
 			if (!ff.equals(filter)) {
-				System.out.println("FILTER CHANGED");
+				br.getServlet().log("FILTER CHANGED");
 				Query query = new Query(br);
 				return query;
 			}
@@ -102,15 +107,15 @@ public class Query {
 		return id;
 	}
 	
-	public void setPattern(String p) {
-		if (p.contains("within")) {
-			pattern = p.split(" within")[0];
-			setWithin("within"+p.split(" within")[1]);
-		} else {
-			pattern = p;
-			within = "";
-		}
-	}
+//	public void setPattern(String p) {
+//		if (p.contains("within")) {
+//			pattern = p.split(" within")[0];
+//			setWithin("within"+p.split(" within")[1]);
+//		} else {
+//			pattern = p;
+//			within = "";
+//		}
+//	}
 	
 	public String getSimplePattern() {
 		String patt = pattern.replaceAll("\"", "QT\"QT");
@@ -140,8 +145,11 @@ public class Query {
 	}
 	
 	public String getPatternWithin() {
-		if (within.length() > 0)
-			return pattern+" "+within;
+		if (within.length() > 0 && !within.equals("document"))
+			if (within.equals("sentence"))
+				return pattern+" within <s/>";
+			else
+				return pattern+" within (<p/>|<head/>|<event/>)";
 		return pattern;
 	}
 	
@@ -154,11 +162,8 @@ public class Query {
 	}
 	
 	public String getWithinString() {
-		if (within.contains("<s>")) {
-			return "sentence";
-		} else if (within.contains("<p>")) {
-			return "paragraph";
-		}
+		if (within.length() > 0)
+			return within;
 		return "document";
 	}
 	
@@ -337,7 +342,7 @@ public class Query {
 
 	public Map<String, Object> getParameters() {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("patt",pattern);
+		params.put("patt",getPatternWithin());
 		if (group.length() > 0)
 			params.put("group",group);
 		if (sort.length() > 0)
@@ -363,7 +368,9 @@ public class Query {
 		url = url+"id="+getId();
 		if (!onlyId) {
 			try {
-				url = url+"&query="+URLEncoder.encode(getPatternWithin(), "UTF-8");
+				url = url+"&query="+URLEncoder.encode(pattern, "UTF-8");
+				if (within.length() > 0)
+					url = url+"&within="+URLEncoder.encode(within, "UTF-8");
 				if (page.contains("/results") && view > 0)
 					url = url+"&view="+view;
 	//			if (from > 0)
@@ -460,6 +467,10 @@ public class Query {
 		}
 		
 		return filter_;
+	}
+	
+	public boolean equalPattern(String p, String w) {
+		return p.equals(pattern) && w.equals(within);
 	}
 	
 }
