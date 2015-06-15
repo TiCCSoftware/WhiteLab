@@ -35,7 +35,6 @@ Whitelab.search = {
 				}
 			}
 			if (Whitelab.search.query.length == 0 || term === '[]') {
-				console.log("1");
 				Whitelab.search.error = true;
 //			} else {
 //				Whitelab.search.params = "query="+Whitelab.search.query;
@@ -60,10 +59,8 @@ Whitelab.search = {
 			}
 			
 			if (Whitelab.search.query.length == 0 || Whitelab.search.query.indexOf('{,') > -1) {
-				console.log("QUERY: "+Whitelab.search.query);
 				Whitelab.search.query = "";
 				Whitelab.search.error = true;
-				console.log("2");
 			}
 			
 			Whitelab.search.query = Whitelab.search.query.replace(/ /g,'');
@@ -251,7 +248,7 @@ Whitelab.search = {
 					qe = qe.substring(0,q2);
 					if (qe.indexOf('(?i)') == 0) {
 						qe = qe.substring(4);
-					} else if (qe.indexOf('(?-i)') == 0) {
+					} else if (qe.indexOf('(?c)') == 0) {
 						qe = qe.substring(5);
 					}
 				}

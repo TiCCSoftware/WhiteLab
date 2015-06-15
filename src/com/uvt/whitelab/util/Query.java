@@ -127,7 +127,7 @@ public class Query {
 					else
 						inside = true;
 				} else if (inside) {
-					String str = parts[i].replace("(?i)", "");
+					String str = parts[i].replace("(?i)", "").replace("(?c)", "");
 					keep.add(str);
 				}
 			}

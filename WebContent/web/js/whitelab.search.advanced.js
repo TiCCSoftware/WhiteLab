@@ -319,7 +319,7 @@ Whitelab.search.advanced = {
 						term = term.substring(0,q2);
 						if (term.indexOf('(?i)') > -1) {
 							term = term.substring(4);
-						} else if (term.indexOf('(?-i)') > -1) {
+						} else if (term.indexOf('(?c)') > -1) {
 							term = term.substring(5);
 							if (type === 'word' || type === 'lemma') {
 								$("#construct-canvas .construct-column div.token-case > input").last().prop('checked', true);

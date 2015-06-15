@@ -194,8 +194,9 @@ Whitelab.search.result = {
 						} else {
 							q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
 						}*/
-						
-						q += "[" + newType + "=\"(?-i)" + pp + "\"]";
+
+//						q += "[" + newType + "=\"(?-i)" + pp + "\"]";
+						q += "[" + newType + "=\"" + pp + "\"]";
 					}
 					q += ")";
 					//q = q.replace(/&/g,"%26");
@@ -217,7 +218,8 @@ Whitelab.search.result = {
 							pp = pp.replace(/\)/g,"\\\)");
 							q = q+"["+t+"=\""+pp+"\"]";
 						} else {
-							q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+//							q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+							q = q+"["+t+"=\""+parts[p]+"\"]";
 						}
 					}
 					query = q+query;
@@ -237,7 +239,8 @@ Whitelab.search.result = {
 							pp = pp.replace(/\)/g,"\\\)");
 							q = q+"["+t+"=\""+pp+"\"]";
 						} else {
-							q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+//							q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+							q = q+"["+t+"=\""+parts[p]+"\"]";
 						}
 					}
 					query = query+q;
@@ -388,8 +391,9 @@ Whitelab.search.result = {
 				} else {
 					q = q+"["+newType+"=\"(?-i)"+pp+"\"]";
 				}*/
-				
-				q += "[" + newType + "=\"(?-i)" + pp + "\"]";
+
+//				q += "[" + newType + "=\"(?-i)" + pp + "\"]";
+				q += "[" + newType + "=\"" + pp + "\"]";
 			}
 			q += ")";
 			//q = q.replace(/&/g,"%26");
@@ -411,7 +415,8 @@ Whitelab.search.result = {
 					pp = pp.replace(/\)/g,"\\\)");
 					q = q+"["+t+"=\""+pp+"\"]";
 				} else {
-					q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+//					q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+					q = q+"["+t+"=\""+parts[p]+"\"]";
 				}
 			}
 			Whitelab.search.query = q+Whitelab.search.query;
@@ -431,7 +436,8 @@ Whitelab.search.result = {
 					pp = pp.replace(/\)/g,"\\\)");
 					q = q+"["+t+"=\""+pp+"\"]";
 				} else {
-					q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+//					q = q+"["+t+"=\"(?-i)"+parts[p]+"\"]";
+					q = q+"["+t+"=\""+parts[p]+"\"]";
 				}
 			}
 			Whitelab.search.query = Whitelab.search.query+q;
