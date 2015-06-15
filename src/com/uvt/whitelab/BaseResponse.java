@@ -111,8 +111,6 @@ public abstract class BaseResponse {
 			query = SessionManager.getQuery(session, id);
 			if (query == null || (patt.length() > 0 && !query.equalPattern(patt,within)))
 				id = "";
-			else
-				updateQuery = false;
 		}
 		
 		if (id.length() == 0 && patt.length() > 0) {

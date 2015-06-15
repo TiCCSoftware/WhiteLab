@@ -125,6 +125,9 @@ public class ResultHandler {
 		String sort = query.getSort();
 		if (sort.length() > 0)
 			transformer.addParameter("sort_by", sort);
+
+		transformer.addParameter("query_result_url",query.getUrl("search/results", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
+		transformer.addParameter("query_document_url",query.getUrl("search/document", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
 		
 		transformer.addParameter("per_hit",labels.getString("result.per_hit"));
 		transformer.addParameter("per_doc",labels.getString("result.per_doc"));

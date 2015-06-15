@@ -46,6 +46,7 @@ public class ResultResponse extends BaseResponse {
 				}
 			}
 			
+			this.servlet.log("Query status: "+query.getStatus());
 			if (query.getStatus() == 0) {
 				String corpus = this.labels.getString("corpus");
 				Integer view = query.getView();

@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class Query {
 	private String id;
 	private String pattern = "";
 	private String within = "";
-	private int view = 0;
+	private int view = 1;
 	private int from = 0;
 	private String group = "";
 	private String sort = "";
@@ -49,7 +50,7 @@ public class Query {
 			id = UUID.randomUUID().toString();
 			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
 			within = br.getParameter("within", "");
-			view = br.getParameter("view", 0);
+			view = br.getParameter("view", 1);
 			from = br.getParameter("from", 0);
 			group = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
 			sort = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
@@ -73,8 +74,8 @@ public class Query {
 		try {
 			String p = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
 			String w = br.getParameter("within", "");
-			int v = br.getParameter("view", 0);
-			int f = br.getParameter("from", 0);
+			int v = br.getParameter("view", 1);
+//			int f = br.getParameter("from", 0);
 			String g = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
 			String s = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
 			int st = br.getParameter("start", -1);
@@ -83,12 +84,23 @@ public class Query {
 			int n = br.getParameter("number", 50);
 			String d = br.getParameter("docpid", "");
 			
-			if (!p.equals(pattern) || !w.equals(within) || v != view || f != from || !g.equals(group) || 
-					!s.equals(sort) || st != start || en != end || fi != first || n != number || !d.equals(docPid) ||
+			if (!p.equals(pattern) || !w.equals(within) ||
 					(v == 12 && wordsAroundHit != 0)) {
-				br.getServlet().log("QUERY CHANGED");
+				br.getServlet().log("QUERY CHANGED - NEW QUERY");
 				Query query = new Query(br);
 				return query;
+			} else if (v != view || !g.equals(group) || !s.equals(sort) || n != number ||
+					st != start || en != end || fi != first || !d.equals(docPid)) {
+				br.getServlet().log("QUERY CHANGED - RESET");
+				view = v;
+				group = g;
+				sort = s;
+				number = n;
+				first = fi;
+				start = st;
+				end = en;
+				docPid = d;
+				this.resetStatus();
 			}
 			
 			String ff = generateFilterStringFromInput(br,false);
@@ -260,7 +272,7 @@ public class Query {
 	
 	public String getStatusString() {
 		if (status == 0)
-			return "NEW";
+			return "WAITING";
 		else if (status == 1)
 			return "COUNTING";
 		else if (status == 2)
@@ -332,13 +344,12 @@ public class Query {
 		return result;
 	}
 	
-//	public void resetStatus(String msg) {
-//		System.out.println("resetStatus('"+msg+"')");
-//		setStatus(0);
+	public void resetStatus() {
+		setStatus(0);
 //		setHits(0);
 //		setDocs(0);
-//		setResult("");
-//	}
+		setResult("");
+	}
 
 	public Map<String, Object> getParameters() {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -363,34 +374,40 @@ public class Query {
 		return params;
 	}
 	
-	public String getUrl(String page, String suffix, boolean onlyId) {
+	public String getUrl(String page, String suffix, boolean onlyId, String[] exceptArray) {
+		List<String> except = new ArrayList<String>();
+		if (exceptArray != null)
+			except = Arrays.asList(exceptArray);
 		String url = "/whitelab/"+page+"?";
 		url = url+"id="+getId();
 		if (!onlyId) {
 			try {
-				url = url+"&query="+URLEncoder.encode(pattern, "UTF-8");
-				if (within.length() > 0)
+				if (!except.contains("query"))
+					url = url+"&query="+URLEncoder.encode(pattern, "UTF-8");
+				if (within.length() > 0 && !except.contains("within"))
 					url = url+"&within="+URLEncoder.encode(within, "UTF-8");
-				if (page.contains("/results") && view > 0)
+				if (page.contains("/results") && view > 0 && !except.contains("view"))
 					url = url+"&view="+view;
 	//			if (from > 0)
 	//				url = url+"&from="+from;
-				if (filter.length() > 0)
+				if (filter.length() > 0 && !except.contains("filter"))
 					url = url+"&filter="+URLEncoder.encode(getFilterUrlParameters(), "UTF-8");
-				if (group.length() > 0)
+				if (group.length() > 0 &&!except.contains("group"))
 					url = url+"&group="+URLEncoder.encode(group, "UTF-8");
-				if (sort.length() > 0)
+				if (sort.length() > 0 && !except.contains("sort"))
 					url = url+"&sort="+URLEncoder.encode(sort, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			if (first > 0)
+			if (first > 0 && !except.contains("first"))
 				url = url+"&first="+first;
-			if (docPid.length() == 0 && number > 50)
+			if (docPid.length() == 0 && number > 50 && !except.contains("number"))
 				url = url+"&number="+number;
-			if (start > -1)
+			if (docPid.length() > 0 && !except.contains("docpid"))
+				url = url+"&docpid="+docPid;
+			if (start > -1 && !except.contains("start"))
 				url = url+"&start="+start;
-			if (end > -1)
+			if (end > -1 && !except.contains("end"))
 				url = url+"&end="+end;
 		}
 		if (suffix != null)

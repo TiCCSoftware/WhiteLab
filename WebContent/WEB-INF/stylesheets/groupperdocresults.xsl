@@ -2,6 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
+	<xsl:param name="query_result_url" select="''"/>
+	
 	<xsl:param name="sort_by" select="''"/>
 	<xsl:param name="options" select="''" />
 	<xsl:param name="query" select="''" />
@@ -220,30 +222,27 @@
 		<ul class="nav nav-tabs" id="contentTabs">
 			<li>
 				<a>
-					<xsl:attribute name="onclick">
-						<xsl:text>Whitelab.search.update(</xsl:text>
-						<xsl:value-of select="$query_id" />
-						<xsl:text>,{view : 1})</xsl:text>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=1</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$per_hit" />
 				</a>
 			</li>
 			<li>
 				<a>
-					<xsl:attribute name="onclick">
-						<xsl:text>Whitelab.search.update(</xsl:text>
-						<xsl:value-of select="$query_id" />
-						<xsl:text>,{view : 2})</xsl:text>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=2</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$per_doc" />
 				</a>
 			</li>
 			<li>
 				<a>
-					<xsl:attribute name="onclick">
-						<xsl:text>Whitelab.search.update(</xsl:text>
-						<xsl:value-of select="$query_id" />
-						<xsl:text>,{group_by: "", view : 8})</xsl:text>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=8</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$grouped_per_hit" />
 				</a>

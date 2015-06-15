@@ -14,14 +14,14 @@
 	</thead>
 	<tbody>
 		#if($qlBefore > -1)
-			#set($url=$query.getUrl("search/results","&ql=$qlBefore",false))
+			#set($url=$query.getUrl("search/results","&ql=$qlBefore",false,null))
 			<tr class="ql up" onclick="document.location.href='$url'"><td colspan="9">...</td></tr>
 		#end
 		#set($i = 0)
 		#foreach($q in $queries)
 			#set($i = $i + 1)
 			#if($qlStart <= $i && $i <= $qlEnd)
-				#set($url=$q.getUrl("search/results","&ql=${ql}",false))
+				#set($url=$q.getUrl("search/results","&ql=${ql}",false,null))
 				#if($q.isCurrent())
 					<tr class="active query-row">
 					<td class="r">$i</td>
@@ -45,8 +45,8 @@
 				#end
 					<td>
 						#set($fromString=$q.getFromString("search"))
-						#set($editUrl=$q.getUrl("search/$fromString","&edit=true&ql=${ql}",true))
-						#set($deleteUrl=$q.getUrl("search/results","&delete=true&ql=${ql}",true))
+						#set($editUrl=$q.getUrl("search/$fromString","&edit=true&ql=${ql}",true,null))
+						#set($deleteUrl=$q.getUrl("search/results","&delete=true&ql=${ql}",true,null))
 						<button onclick="document.location.href='$editUrl'" class="edit">EDIT</button>
 						<button onclick="document.location.href='$deleteUrl'" class="remove">X</button>
 					</td>
@@ -55,7 +55,7 @@
 		#end
 		#if($qlEnd < $i)
 			#set($qlAfter=$ql+5)
-			#set($url=$query.getUrl("search/results","&ql=${qlAfter}",false))
+			#set($url=$query.getUrl("search/results","&ql=${qlAfter}",false,null))
 			<tr class="ql down" onclick="document.location.href='$url'"><td colspan="9">...</td></tr>
 		#end
 	</tbody>
