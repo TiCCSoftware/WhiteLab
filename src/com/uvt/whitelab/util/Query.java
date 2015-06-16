@@ -34,16 +34,9 @@ public class Query {
 	private String docPid = "";
 	private int start = -1;
 	private int end = -1;
-	private String result = "";
 	private Map<String,Map<String,List<String>>> filters;
-//	private List<String> filterStrings;
-	
-//	public Query (String i, String p, int v, int f) {
-//		id = i;
-//		setPattern(p);
-//		view = v;
-//		from = f;
-//	}
+
+	private String result = "";
 	
 	public Query(BaseResponse br) {
 		try {
@@ -226,6 +219,10 @@ public class Query {
 		return group;
 	}
 	
+	public String getGroupClean() {
+		return group.replace("field:", "");
+	}
+	
 	public void setSort(String s) {
 		sort = s;
 	}
@@ -275,7 +272,7 @@ public class Query {
 			return "WAITING";
 		else if (status == 1)
 			return "COUNTING";
-		else if (status == 2)
+		else if (status == 2 && hits > -1)
 			return "FINISHED";
 		return "ERROR";
 	}

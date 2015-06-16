@@ -99,8 +99,8 @@ var Whitelab = {
 		xhr.send(params);
 	},
 	
-	getData : function(params, callback, target, update) {
-		var xhr = Whitelab.createRequest('POST', Whitelab.baseUrl+"query");
+	getData : function(url, params, callback, target, update) {
+		var xhr = Whitelab.createRequest('POST', url);
 		if (!xhr) {
 			return;
 		}

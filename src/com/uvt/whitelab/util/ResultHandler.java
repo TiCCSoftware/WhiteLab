@@ -75,6 +75,8 @@ public class ResultHandler {
 			return loadStylesheet("perdocstatsresults.xsl");
 		} else if (view == 8) {
 			return loadStylesheet("groupperhitresults.xsl");
+		} else if (view == 9) {
+			return loadStylesheet("hitgroup.xsl");
 		} else if (view == 10) {
 			return loadStylesheet("groupperhitngramresults.xsl");
 		} else if (view == 12 && !check) {
@@ -83,6 +85,8 @@ public class ResultHandler {
 			return loadStylesheet("wordcloudnopos.xsl");
 		} else if (view == 16) {
 			return loadStylesheet("groupperdocresults.xsl");
+		} else if (view == 17) {
+			return loadStylesheet("docgroup.xsl");
 		}
 		return stylesheet;
 	}
@@ -128,6 +132,7 @@ public class ResultHandler {
 
 		transformer.addParameter("query_result_url",query.getUrl("search/results", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
 		transformer.addParameter("query_document_url",query.getUrl("search/document", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
+		transformer.addParameter("query_export_url",query.getUrl("page/export", null, true, new String[] {}));
 		
 		transformer.addParameter("per_hit",labels.getString("result.per_hit"));
 		transformer.addParameter("per_doc",labels.getString("result.per_doc"));

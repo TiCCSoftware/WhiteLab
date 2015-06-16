@@ -40,10 +40,23 @@ Whitelab.search.result = {
 		$("#results").append(resultBox);
 	},
 	
+	displayGroupContent : function(response,target) {
+		Whitelab.debug("displayGroupContent");
+		Whitelab.debug(target);
+		Whitelab.debug(response);
+		if (response != null && response.hasOwnProperty("html")) {
+			$(target).append(response.html);
+		}
+	},
+	
 	displayResult : function(response,target) {
+		Whitelab.debug("displayResult");
+		Whitelab.debug(target);
+		Whitelab.debug(response);
 		var update = false;
 		if (response != null) {
 			if (response.hasOwnProperty("html") && response.html.indexOf("ERROR") > -1) {
+				Whitelab.debug("ERROR");
 				$("#status_"+target).html("ERROR");
 				$("#result_"+target).html(response.html);
 			} else {
@@ -289,14 +302,26 @@ Whitelab.search.result = {
 		$(target).toggleClass("hide");
 	},
 	
-	hitProgress : function(item,query,group_by,groupid,max,queryid) {
-		var target = $(item).attr("data-target");
-		Whitelab.debug("hitProgress('"+target+"')");
-		if ($(target).hasClass("first") || $(target).find(".row-fluid").length == 0) {
-			Whitelab.search.result.getHitGroupContent('#'+target.substring(1),query,group_by,groupid,max,queryid);
-			$(target).removeClass("first");
-		}
+	toggleHitGroupContent : function(target,term) {
 		$(target).toggleClass("hide");
+		if ($(target).hasClass("first") || $(target).find(".row-fluid").length == 0) {
+			$(target).removeClass("first");
+			Whitelab.search.result.hitGroupContent(target.replace(/\./,'#'),term,0);
+		}
+	},
+	
+	hitGroupContent : function(target,term,first) {
+		if (!first)
+			first = $(target).find("input.start").first().val();
+		var max = $(target).find("input.count").first().val();
+		max = +max;
+		first = +first;
+		if (first < max) {
+			var cql = Whitelab.search.simpleStringToCQL(term,true);
+			Whitelab.getData("/whitelab/search/results", "query="+cql+"&view=9&first="+first, Whitelab.search.result.displayGroupContent, target+'_content', null);
+			first = first + 20;
+			$(target).find("input.start").first().val(first);
+		}
 	},
 	
 	removeQuery : function(id) {

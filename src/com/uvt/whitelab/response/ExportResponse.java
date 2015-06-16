@@ -9,8 +9,8 @@ package com.uvt.whitelab.response;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
+//import java.util.HashMap;
+//import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.xml.transform.TransformerException;
@@ -19,75 +19,118 @@ import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.XslTransformer;
 
 public class ExportResponse extends BaseResponse {
-
-	private String corpus;
-	private String trail = "/hits";
-	private Integer view = 1;
 	private XslTransformer transformer = new XslTransformer();
 	private SecureRandom random = new SecureRandom();
 
 	@Override
 	protected void completeRequest() {
 		
-		corpus = this.labels.getString("corpus");
-		Map<String,Object> params = query.getParameters();
-		
-		if (params.keySet().size() > 0 && params.containsKey("patt")) {
-			
-			view = this.getParameter("view", 1);
-			int number = this.getParameter("number", 1);
-			this.servlet.log("number: "+number);
-
-			if (view == 2 || view == 4 || view == 16)
+		if (query != null) {
+			String corpus = this.labels.getString("corpus");
+			Integer view = query.getView();
+			int max = query.getHits();
+			String trail = "/hits";
+			if (view == 2 || view == 16) {
 				trail = "/docs";
+				max = query.getDocs();
+			}
 			
-			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
-			
-			String result = this.jobToTSV(params);
-			
-			sendFileResponse(result, fileName);
-			
-		} else {
-			Map<String,Object> output = new HashMap<String,Object>();
-			output.put("html", "<p>ERROR: Insufficient parameters.</p>");
-			output.put("hits", 0);
-			output.put("docs", 0);
-			output.put("counting", "false");
-			sendResponse(output);
-		}
-	}
-
-	public String jobToTSV(Map<String,Object> params) {
-		StringBuilder result = new StringBuilder();
-		if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
-			int n = (int) params.get("number");
-			if (n > 50000)
-				n = 50000;
-			params.put("number", 2500);
-			
-			for (int f = 0; f < n; f = f + 2500) {
-				params.put("first", f);
+			StringBuilder result = new StringBuilder();
+			if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
+				int n = 50000;
+				if (n > max)
+					n = max;
+				int prev_n = query.getNumber();
+				int prev_f = query.getFirst();
+				query.setNumber(2500);
+				
+				for (int f = 0; f < n; f = f + 2500) {
+					query.setFirst(f);
+					try {
+						String resp = getBlackLabResponse(corpus, trail, query.getParameters());
+						String stylesheet = this.getExportStylesheet(view);
+						this.setTransformerDisplayParameters(f == 0,n);
+						result.append(transformer.transform(resp, stylesheet));
+					} catch (IOException | TransformerException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				query.setNumber(prev_n);
+				query.setFirst(prev_f);
+			} else {
 				try {
-					String resp = getBlackLabResponse(corpus, trail, params);
+					String resp = getBlackLabResponse(corpus, trail, query.getParameters());
 					String stylesheet = this.getExportStylesheet(view);
-					this.setTransformerDisplayParameters(f == 0,n);
+					this.setTransformerDisplayParameters(true,query.getNumber());
 					result.append(transformer.transform(resp, stylesheet));
 				} catch (IOException | TransformerException e) {
 					e.printStackTrace();
 				}
 			}
-		} else {
-			try {
-				String resp = getBlackLabResponse(corpus, trail, params);
-				String stylesheet = this.getExportStylesheet(view);
-				this.setTransformerDisplayParameters(true,(int) params.get("number"));
-				result.append(transformer.transform(resp, stylesheet));
-			} catch (IOException | TransformerException e) {
-				e.printStackTrace();
-			}
+			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+			sendFileResponse(result.toString(), fileName);
 		}
-		return result.toString();
+		
+//		corpus = this.labels.getString("corpus");
+//		Map<String,Object> params = query.getParameters();
+//		
+//		if (params.keySet().size() > 0 && params.containsKey("patt")) {
+//			
+//			view = this.getParameter("view", 1);
+//			int number = this.getParameter("number", 1);
+//			this.servlet.log("number: "+number);
+//
+//			if (view == 2 || view == 4 || view == 16)
+//				trail = "/docs";
+//			
+//			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+//			
+//			String result = this.jobToTSV(params);
+//			
+//			sendFileResponse(result, fileName);
+//			
+//		} else {
+//			Map<String,Object> output = new HashMap<String,Object>();
+//			output.put("html", "<p>ERROR: Insufficient parameters.</p>");
+//			output.put("hits", 0);
+//			output.put("docs", 0);
+//			output.put("counting", "false");
+//			sendResponse(output);
+//		}
 	}
+
+//	public String jobToTSV(Map<String,Object> params) {
+//		StringBuilder result = new StringBuilder();
+//		if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
+//			int n = (int) params.get("number");
+//			if (n > 50000)
+//				n = 50000;
+//			params.put("number", 2500);
+//			
+//			for (int f = 0; f < n; f = f + 2500) {
+//				params.put("first", f);
+//				try {
+//					String resp = getBlackLabResponse(corpus, trail, params);
+//					String stylesheet = this.getExportStylesheet(view);
+//					this.setTransformerDisplayParameters(f == 0,n);
+//					result.append(transformer.transform(resp, stylesheet));
+//				} catch (IOException | TransformerException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		} else {
+//			try {
+//				String resp = getBlackLabResponse(corpus, trail, params);
+//				String stylesheet = this.getExportStylesheet(view);
+//				this.setTransformerDisplayParameters(true,(int) params.get("number"));
+//				result.append(transformer.transform(resp, stylesheet));
+//			} catch (IOException | TransformerException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return result.toString();
+//	}
 
 	private void setTransformerDisplayParameters(boolean includeHeader, int n) {
 		this.servlet.log("setTransformerDisplayParameters");

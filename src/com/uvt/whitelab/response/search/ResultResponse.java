@@ -2,6 +2,7 @@ package com.uvt.whitelab.response.search;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ public class ResultResponse extends BaseResponse {
 //			e1.printStackTrace();
 //		}
 		
+		int view = 1;
+		
 		if (query == null && queryCount > 0)
 			query = SessionManager.setCurrentQuery(session, null);
 		
@@ -46,19 +49,22 @@ public class ResultResponse extends BaseResponse {
 				}
 			}
 			
-			this.servlet.log("Query status: "+query.getStatus());
 			if (query.getStatus() == 0) {
 				String corpus = this.labels.getString("corpus");
-				Integer view = query.getView();
+				view = query.getView();
 				resultHandler = new ResultHandler(this.servlet, this.query);
 				String html = "<p>ERROR: Could not parse XML result.</p>";
 				String resp = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><empty></empty>";
 				
 				String trail = "/hits";
-				if (view == 2 || view == 16)
+				if (view == 2 || view == 16 || view == 17)
 					trail = "/docs";
+				if (view == 9)
+					query.setView(1);
+				else if (view == 17)
+					query.setView(2);
 				
-				if (view >= 8 && query.getGroup().length() == 0)
+				if (view >= 8 && view != 9 && view != 17 && query.getGroup().length() == 0)
 					html = resultHandler.parseResult(resp,this.labels,view);
 				else {
 					resp = getBlackLabResponse(corpus, trail, query.getParameters());
@@ -76,7 +82,7 @@ public class ResultResponse extends BaseResponse {
 					this.getContext().put("hits", hits);
 					this.getContext().put("docs", docs);
 					
-					if (view >= 8) {
+					if (view >= 8 && view != 9 && view != 17) {
 						Integer groups = resultHandler.getGroupsFromXML(resp);
 						this.getContext().put("groups", groups);
 					}
@@ -87,11 +93,17 @@ public class ResultResponse extends BaseResponse {
 						this.getContext().put("cloud", cloud);
 					}
 				}
-		//		TODO add reload mechanism to stylesheet (directly to BLS)
 				query.setResult(html);
 			}
 			this.getContext().put("query", query);
 		}
+		
+		if (view == 9 || view == 17) {
+			Map<String,Object> output = new HashMap<String,Object>();
+			output.put("html", query.getResult());
+			sendResponse(output);
+		}
+		
 		@SuppressWarnings("unchecked")
 		List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
 		this.getContext().put("queries", queries);

@@ -103,11 +103,12 @@ public abstract class BaseResponse {
 		String id = this.getParameter("id", "");
 		String patt = this.getParameter("query", "").replaceAll("&", "%26");
 		String within = this.getParameter("within", "");
+		int view = this.getParameter("view", 1);
 		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
 		
-		if (id.length() > 0) {
+		if (id.length() > 0 && view != 9 && view != 17) {
 			query = SessionManager.getQuery(session, id);
 			if (query == null || (patt.length() > 0 && !query.equalPattern(patt,within)))
 				id = "";
@@ -117,16 +118,17 @@ public abstract class BaseResponse {
 			this.servlet.log("NEW QUERY");
 			query = new Query(this);
 			id = query.getId();
-			SessionManager.addQuery(session, query);
+			if (view != 9 && view != 17)
+				SessionManager.addQuery(session, query);
 		}
 		
 		if (query != null && !editQuery && !deleteQuery && updateQuery) {
 			query = query.updateQuery(this);
-			if (!id.equals(query.getId()))
+			if (!id.equals(query.getId()) && view != 9 && view != 17)
 				SessionManager.addQuery(session, query);
 		}
 		
-		if (query != null)
+		if (query != null && view != 9 && view != 17)
 			SessionManager.setCurrentQuery(session, query.getId());
 	}
 

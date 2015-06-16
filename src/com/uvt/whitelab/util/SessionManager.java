@@ -21,23 +21,27 @@ public class SessionManager {
 	public static void deleteQuery(HttpSession session, String queryId) {
 		@SuppressWarnings("unchecked")
 		List<Query> queries = (List<Query>) session.getAttribute("queries");
-		List<Query> keep = new ArrayList<Query>();
-		for (int i = 0; i < queries.size(); i++) {
-			Query query = queries.get(i);
-			String id = query.getId();
-			if (!id.equals(queryId))
-				keep.add(query);
+		if (queries != null) {
+			List<Query> keep = new ArrayList<Query>();
+			for (int i = 0; i < queries.size(); i++) {
+				Query query = queries.get(i);
+				String id = query.getId();
+				if (!id.equals(queryId))
+					keep.add(query);
+			}
+			session.setAttribute("queries", keep);
 		}
-		session.setAttribute("queries", keep);
 	}
 
 	public static Query getQuery(HttpSession session, String queryId) {
 		@SuppressWarnings("unchecked")
 		List<Query> queries = (List<Query>) session.getAttribute("queries");
-		for (int i = 0; i < queries.size(); i++) {
-			Query query = queries.get(i);
-			if (query.getId().equals(queryId))
-				return query;
+		if (queries != null) {
+			for (int i = 0; i < queries.size(); i++) {
+				Query query = queries.get(i);
+				if (query.getId().equals(queryId))
+					return query;
+			}
 		}
 		return null;
 	}
@@ -46,13 +50,15 @@ public class SessionManager {
 		Query current = null;
 		@SuppressWarnings("unchecked")
 		List<Query> queries = (List<Query>) session.getAttribute("queries");
-		for (int i = 0; i < queries.size(); i++) {
-			Query query = queries.get(i);
-			if ((queryId == null && i == 0) || query.getId().equals(queryId)) {
-				query.setCurrent(true);
-				current = query;
-			} else
-				query.setCurrent(false);
+		if (queries != null) {
+			for (int i = 0; i < queries.size(); i++) {
+				Query query = queries.get(i);
+				if ((queryId == null && i == 0) || query.getId().equals(queryId)) {
+					query.setCurrent(true);
+					current = query;
+				} else
+					query.setCurrent(false);
+			}
 		}
 		session.setAttribute("queries", queries);
 		return current;
@@ -61,10 +67,12 @@ public class SessionManager {
 	public static Query getCurrentQuery(HttpSession session) {
 		@SuppressWarnings("unchecked")
 		List<Query> queries = (List<Query>) session.getAttribute("queries");
-		for (int i = 0; i < queries.size(); i++) {
-			Query query = queries.get(i);
-			if (query.isCurrent())
-				return query;
+		if (queries != null) {
+			for (int i = 0; i < queries.size(); i++) {
+				Query query = queries.get(i);
+				if (query.isCurrent())
+					return query;
+			}
 		}
 		return null;
 	}

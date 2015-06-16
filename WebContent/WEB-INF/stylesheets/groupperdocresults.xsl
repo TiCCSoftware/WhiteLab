@@ -3,6 +3,8 @@
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
 	<xsl:param name="query_result_url" select="''"/>
+	<xsl:param name="query_document_url" select="''"/>
+	<xsl:param name="query_export_url" select="''"/>
 	
 	<xsl:param name="sort_by" select="''"/>
 	<xsl:param name="options" select="''" />
@@ -37,8 +39,7 @@
 		<script>
 			$(document).ready(function() {
 				
-				$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').append('<xsl:value-of select="$options" />');
-				Whitelab.search.group_by = '<xsl:value-of select="$group_by_name" />';
+				$(document).find('#results select.group_bySelect').append('<xsl:value-of select="$options" />');
 				if (Whitelab.search.group_by.length > 0) {
 					$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').val(Whitelab.search.group_by);
 				}
@@ -75,52 +76,58 @@
 							<tr>
 								<th class="tbl_groupname">
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.search.update(</xsl:text>
-											<xsl:value-of select="$query_id" />
-											<xsl:text>,{sort:''})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=16&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="$group" />
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.search.update(</xsl:text>
-											<xsl:value-of select="$query_id" />
-											<xsl:text>,{sort:'identity'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=16&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=identity</xsl:text>
 										</xsl:attribute>
 										&#9650;
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.search.update(</xsl:text>
-											<xsl:value-of select="$query_id" />
-											<xsl:text>,{sort:'-identity'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=16&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=-identity</xsl:text>
 										</xsl:attribute>
 										&#9660;
 									</a>
 								</th>
 								<th>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.search.update(</xsl:text>
-											<xsl:value-of select="$query_id" />
-											<xsl:text>,{sort:''})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=16&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="$documents" />
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.search.update(</xsl:text>
-											<xsl:value-of select="$query_id" />
-											<xsl:text>,{sort:'-size'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=16&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=-size</xsl:text>
 										</xsl:attribute>
 										&#9650;
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.search.update(</xsl:text>
-											<xsl:value-of select="$query_id" />
-											<xsl:text>,{sort:'size'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=16&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=size</xsl:text>
 										</xsl:attribute>
 										&#9660;
 									</a>
@@ -141,6 +148,13 @@
 										<div class="progress" data-toggle="collapse">
 											<xsl:attribute name="data-target"><xsl:value-of
 												select="'.'" /><xsl:value-of select="$rowId" /></xsl:attribute>
+											<xsl:attribute name="onclick">
+												<xsl:text>Whitelab.search.result.toggleDocGroupContent('.</xsl:text>
+												<xsl:value-of select="$rowId" />
+												<xsl:text>','</xsl:text>
+												<xsl:value-of select="$gr" />
+												<xsl:text>');</xsl:text>
+											</xsl:attribute>
 											<xsl:attribute name="onclick"><xsl:value-of
 												select="'Whitelab.search.result.docProgress(this,'" /><xsl:value-of select="$apos" /><xsl:value-of select="$query" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$group_by_name_clean" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
 												select="identityDisplay" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
@@ -163,21 +177,22 @@
 												select="identityDisplay" /></xsl:attribute>
 											<div class="inline-concordance">
 												<button class="btn btn-link">
-													<xsl:attribute name="onclick"><xsl:value-of
-														select="'Whitelab.search.result.searchDocGroupContent('"/><xsl:value-of select="$query_id" />
-														<xsl:value-of select="','"/><xsl:value-of select="$apos" /><xsl:value-of select="$group_by_name_clean" /><xsl:value-of select="$apos" /><xsl:value-of select="','" /><xsl:value-of select="$apos" /><xsl:value-of
-														select="identityDisplay" /><xsl:value-of select="$apos" /><xsl:value-of
-														select="');'" /></xsl:attribute>
+													<xsl:attribute name="onclick">
+														<xsl:text>var cql = Whitelab.search.simpleStringToCQL('</xsl:text>
+														<xsl:value-of select="$gr" />
+														<xsl:text>',true); document.location.href = '/whitelab/search/results?query='+cql+'&amp;view=2&amp;from=4';</xsl:text>
+													</xsl:attribute>
 													<xsl:value-of select="$detailed_conc"/>
 												</button>
 												-
 												<button class="btn btn-link nolink">
-													<xsl:attribute name="onclick"><xsl:value-of
-														select="'Whitelab.search.result.getDocGroupContent('" /><xsl:value-of select="$apos" /><xsl:value-of select="'#'" /><xsl:value-of
-														select="$rowId" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$query" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of select="$group_by_name_clean" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
-														select="identityDisplay" /><xsl:value-of select="$apos" />,<xsl:value-of select="$apos" /><xsl:value-of
-														select="size" /><xsl:value-of select="$apos" />,<xsl:value-of select="$query_id"/><xsl:value-of
-														select="');'" /></xsl:attribute>
+													<xsl:attribute name="onclick">
+														<xsl:text>Whitelab.search.result.docGroupContent('#</xsl:text>
+														<xsl:value-of select="$rowId" />
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$gr" />
+														<xsl:text>',null);</xsl:text>
+													</xsl:attribute>
 													<xsl:value-of select="$load_more"/>
 												</button>
 												<div class="loading"><img src="../web/img/spinner.gif" /></div>
@@ -195,8 +210,7 @@
 		<script>
 			$(document).ready(function() {
 				
-				$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').append('<xsl:value-of select="$options" />');
-				Whitelab.search.group_by = '<xsl:value-of select="$group_by_name" />';
+				$(document).find('#results select.group_bySelect').append('<xsl:value-of select="$options" />');
 				if (Whitelab.search.group_by.length > 0) {
 					$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').val(Whitelab.search.group_by);
 				}
@@ -212,7 +226,11 @@
 	<xsl:template name="export">
 		<div class="export large-16 medium-16 small-16 row">
 			<button class="small">
-				<xsl:attribute name="onclick"><xsl:text>Whitelab.search.doExport(</xsl:text><xsl:value-of select="$query_id"/><xsl:text>);</xsl:text></xsl:attribute>
+				<xsl:attribute name="onclick">
+					<xsl:text>document.location.href='</xsl:text>
+					<xsl:value-of select="$query_export_url" />
+					<xsl:text>'</xsl:text>
+				</xsl:attribute>
 				<xsl:value-of select="$result_export"/>
 			</button>
 		</div>
@@ -259,9 +277,9 @@
 		<div class="large-16 medium-16 small-16 row">
 			<select class="group_bySelect">
 				<xsl:attribute name="onchange">
-					<xsl:text>Whitelab.search.result.selectGrouping(</xsl:text>
-					<xsl:value-of select="$query_id" />
-					<xsl:text>,$(this).val(),16)</xsl:text>
+					<xsl:text>document.location.href = '</xsl:text>
+					<xsl:value-of select="$query_result_url" />
+					<xsl:text>&amp;view=16&amp;group='+$(this).val();</xsl:text>
 				</xsl:attribute>
 				<option value="">
 					<xsl:if test="'' = $group_by_name">
@@ -300,9 +318,13 @@
 				<xsl:value-of select="$result_pagination_show" />
 				<select class="show-select meta-small">
 					<xsl:attribute name="onchange">
-						<xsl:text>Whitelab.search.update(</xsl:text>
-						<xsl:value-of select="$query_id" />
-						<xsl:text>,{number : $(this).val(), sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+						<xsl:text>window.location.href=&quot;</xsl:text>
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=16&amp;number=&quot;+$(this).val()+&quot;&amp;group=</xsl:text>
+						<xsl:value-of select="$group_by_name" />
+						<xsl:text>&amp;sort=</xsl:text>
+						<xsl:value-of select="$sort_by" />
+						<xsl:text>&quot;;</xsl:text>
 					</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="$resultsPerPage = 200">
@@ -339,10 +361,14 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.search.update(</xsl:text>
-										<xsl:value-of select="$query_id" />
-										<xsl:text>,{first:0, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=16&amp;first=0&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;&lt;'" />
 								</a>
@@ -358,12 +384,16 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.search.update(</xsl:text>
-										<xsl:value-of select="$query_id" />
-										<xsl:text>,{first:</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=16&amp;first=</xsl:text>
 										<xsl:value-of select="($currentPage - 2) * $resultsPerPage" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+										<xsl:text>&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;'" />
 								</a>
@@ -395,12 +425,16 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.search.update(</xsl:text>
-										<xsl:value-of select="$query_id" />
-										<xsl:text>,{first:</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=16&amp;first=</xsl:text>
 										<xsl:value-of select="($currentPage * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+										<xsl:text>&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;'" />
 								</a>
@@ -416,12 +450,16 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.search.update(</xsl:text>
-										<xsl:value-of select="$query_id" />
-										<xsl:text>,{first:</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=16&amp;first=</xsl:text>
 										<xsl:value-of select="(($numberOfPages - 1) * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+										<xsl:text>&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;&gt;'" />
 								</a>
@@ -441,9 +479,16 @@
 				<xsl:value-of select="$numberOfPages" /><xsl:text> </xsl:text>
 				<button class="small go">
 					<xsl:attribute name="onclick">
-						<xsl:text>Whitelab.search.result.goToPage(</xsl:text>
-						<xsl:value-of select="$query_id" />
-						<xsl:text>,this,</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>,'</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>')</xsl:text>
+						<xsl:text>var value = ($('#page-select').val() - 1) *</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>;</xsl:text>
+						<xsl:text>document.location.href='</xsl:text>
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=16&amp;first='+value+'&amp;number=</xsl:text>
+						<xsl:value-of select="$resultsPerPage"/>
+						<xsl:text>&amp;group=</xsl:text>
+						<xsl:value-of select="$group_by_name" />
+						<xsl:text>&amp;sort=</xsl:text>
+						<xsl:value-of select="$sort_by" />
+						<xsl:text>';</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$result_go" />
 				</button>
@@ -468,12 +513,16 @@
 			<xsl:otherwise>
 				<li>
 					<a>
-						<xsl:attribute name="onclick">
-							<xsl:text>Whitelab.search.update(</xsl:text>
-							<xsl:value-of select="$query_id" />
-							<xsl:text>,{first:</xsl:text>
+						<xsl:attribute name="href">
+							<xsl:value-of select="$query_result_url" />
+							<xsl:text>&amp;view=16&amp;first=</xsl:text>
 							<xsl:value-of select="($start - 1) * $perpage" />
-							<xsl:text>, number:</xsl:text><xsl:value-of select="$perpage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+							<xsl:text>&amp;number=</xsl:text>
+							<xsl:value-of select="$perpage"/>
+							<xsl:text>&amp;group=</xsl:text>
+							<xsl:value-of select="$group_by_name" />
+							<xsl:text>&amp;sort=</xsl:text>
+							<xsl:value-of select="$sort_by" />
 						</xsl:attribute>
 						<xsl:value-of select="$start" />
 					</a>

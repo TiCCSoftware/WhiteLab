@@ -28,7 +28,7 @@
 					<td class="q">$q.getPattern()</td>
 					<td class="w">$q.getWithinString()</td>
 					<td class="m">$q.getFilter()</td>
-					<td class="g">$q.getGroup()</td>
+					<td class="g">$q.getGroupClean()</td>
 					<td class="status">$q.getStatusString()</td>
 					<td class="h">$q.getHits()</td>
 					<td class="control">$q.getDocs()</td>
