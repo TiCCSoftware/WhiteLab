@@ -39,10 +39,7 @@
 		<script>
 			$(document).ready(function() {
 				
-				$(document).find('#results select.group_bySelect').append('<xsl:value-of select="$options" />');
-				if (Whitelab.search.group_by.length > 0) {
-					$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').val(Whitelab.search.group_by);
-				}
+				$('#results select.group_bySelect').append('<xsl:value-of select="$options" />');
 			});
 		</script>
 	</xsl:template>
@@ -210,10 +207,8 @@
 		<script>
 			$(document).ready(function() {
 				
-				$(document).find('#results select.group_bySelect').append('<xsl:value-of select="$options" />');
-				if (Whitelab.search.group_by.length > 0) {
-					$(document).find('#result_<xsl:value-of select="$query_id" /> .group_bySelect').val(Whitelab.search.group_by);
-				}
+				$('#results select.group_bySelect').append('<xsl:value-of select="$options" />');
+				$('#results select.group_bySelect').val('<xsl:value-of select="$group_by_name"></xsl:value-of>');
 			
 				$('.nolink').click(function(event) {
 					event.preventDefault();
