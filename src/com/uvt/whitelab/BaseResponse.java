@@ -242,8 +242,8 @@ public abstract class BaseResponse {
 //	}
 
 	// TODO refactor: put in QueryServiceHandler
-	protected String getBlackLabResponse(String corpus, String trail, Map<String,Object> params) {
-		String url = getBlackLabURL(corpus,trail,params);
+	protected String getBlackLabResponse(String corpus, String trail, Map<String,Object> parameters) {
+		String url = getBlackLabURL(corpus,trail,parameters);
 		return getBlackLabResponse(url);
 	}
 
@@ -263,7 +263,7 @@ public abstract class BaseResponse {
 	protected String getBlackLabURL(String corpus, String trail, Map<String,Object> params) {
 		String url = this.labels.getString("blsUrlInternal")+ "/" + corpus + trail;
 		this.lastUrl = url;
-		String parameters = getParameterStringExcept(new String[]{});
+		String parameters = getParameterStringExcept(new String[]{}, params);
 		
 		if (parameters.length() > 0) {
 			url = url + "?" + parameters;
@@ -272,11 +272,11 @@ public abstract class BaseResponse {
 	}
 
 	// TODO refactor: put in QueryServiceHandler
-	protected String getParameterStringExcept(String[] except) {
+	protected String getParameterStringExcept(String[] except, Map<String,Object> params) {
 		String parameters = "";
 		
-		if (query != null) {
-			Map<String,Object> params = query.getParameters();
+//		if (query != null) {
+//			Map<String,Object> params = query.getParameters();
 			for (String key : params.keySet()) {
 				if (!Arrays.asList(except).contains(key)) {
 					if (parameters.length() > 0)
@@ -285,7 +285,7 @@ public abstract class BaseResponse {
 						parameters = key + "=" +params.get(key);
 				}
 			}
-		}
+//		}
 		
 		parameters = parameters.replaceAll(" ", "%20");
 		return parameters;

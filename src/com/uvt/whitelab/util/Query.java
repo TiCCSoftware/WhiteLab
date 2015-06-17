@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 
 import com.uvt.whitelab.BaseResponse;
 
@@ -24,6 +25,7 @@ public class Query {
 	private String group = "";
 	private String sort = "";
 	private String filter = "";
+	private int groups = 0;
 	private int hits = 0;
 	private int docs = 0;
 	private int status = 0;
@@ -35,8 +37,63 @@ public class Query {
 	private int start = -1;
 	private int end = -1;
 	private Map<String,Map<String,List<String>>> filters;
+	private JSONArray cloud;
 
 	private String result = "";
+	
+	public Query(Query q, Map<String,Object> replace) {
+		id = UUID.randomUUID().toString();
+		if (replace.containsKey("pattern"))
+			pattern = (String) replace.get("pattern");
+		else
+			pattern = q.getPattern();
+		if (replace.containsKey("within"))
+			within = (String) replace.get("within");
+		else
+			within = q.getWithin();
+		if (replace.containsKey("group"))
+			group = (String) replace.get("group");
+		else
+			group = q.getGroup();
+		if (replace.containsKey("sort"))
+			sort = (String) replace.get("sort");
+		else
+			sort = q.getSort();
+		if (replace.containsKey("docpid"))
+			docPid = (String) replace.get("docpid");
+		else
+			docPid = q.getDocPid();
+		if (replace.containsKey("view"))
+			view = (Integer) replace.get("view");
+		else
+			view = q.getView();
+		if (replace.containsKey("from"))
+			from = (Integer) replace.get("from");
+		else
+			from = q.getFrom();
+		if (replace.containsKey("start"))
+			start = (Integer) replace.get("start");
+		else
+			start = q.getStart();
+		if (replace.containsKey("end"))
+			end = (Integer) replace.get("end");
+		else
+			end = q.getEnd();
+		if (replace.containsKey("first"))
+			first = (Integer) replace.get("first");
+		else
+			first = q.getFirst();
+		if (replace.containsKey("number"))
+			number = (Integer) replace.get("number");
+		else
+			number = q.getNumber();
+		if (replace.containsKey("filters")) {
+			@SuppressWarnings("unchecked")
+			Map<String,Map<String,List<String>>> map = (Map<String,Map<String,List<String>>>) replace.get("filters");
+			filters = map;
+		} else
+			filters = q.getFilters();
+	}
 	
 	public Query(BaseResponse br) {
 		try {
@@ -145,6 +202,10 @@ public class Query {
 		}
 	}
 	
+	public void setPattern(String p) {
+		pattern = p;
+	}
+	
 	public String getPattern() {
 		return pattern;
 	}
@@ -241,6 +302,14 @@ public class Query {
 	
 	public Map<String,Map<String,List<String>>> getFilters() {
 		return filters;
+	}
+	
+	public void setGroups(int g) {
+		groups = g;
+	}
+	
+	public int getGroups() {
+		return groups;
 	}
 	
 	public void setHits(int h) {
@@ -341,6 +410,14 @@ public class Query {
 		return result;
 	}
 	
+	public void setCloud(JSONArray c) {
+		cloud = c;
+	}
+	
+	public JSONArray getCloud() {
+		return cloud;
+	}
+	
 	public void resetStatus() {
 		setStatus(0);
 //		setHits(0);
@@ -350,7 +427,7 @@ public class Query {
 
 	public Map<String, Object> getParameters() {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("patt",getPatternWithin());
+		params.put("patt",this.getPatternWithin());
 		if (group.length() > 0)
 			params.put("group",group);
 		if (sort.length() > 0)
