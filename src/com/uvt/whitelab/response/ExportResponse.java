@@ -70,6 +70,8 @@ public class ExportResponse extends BaseResponse {
 			}
 			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
 			sendFileResponse(result.toString(), fileName);
+		} else {
+			this.servlet.log("NO QUERY");
 		}
 		
 //		corpus = this.labels.getString("corpus");
