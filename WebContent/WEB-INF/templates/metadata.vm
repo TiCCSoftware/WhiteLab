@@ -18,7 +18,7 @@
 			<div class="meta-footer large-16 medium-16 small-16">
 				#if($showMetaOptions && $showMetaOptions == "yes")
 				<p>
-					<input type="checkbox" id="group-check"> $labels.getString("meta.group")<select id="group-select" class="meta-medium">
+					<input type="checkbox" id="group-check"> $labels.getString("meta.group")<select id="group-select" class="meta-medium" onchange="checkGroupSelectOptions($(this).val());">
 					#if($query && $query.getView() == 16)
 						<option value="hits">$labels.getString("meta.group.hits")</option>
 						<option value="documents" selected="true">$labels.getString("meta.group.documents")</option>
@@ -37,55 +37,55 @@
 						<option value="" selected="true"></option>
 					#end
 					#if($query && $qGroup == "hit:word")
-						$generator.generateOption("hit:word","hit ${labels.getString('word')}",true,"")
+						$generator.generateOption("hit:word","hit ${labels.getString('word')}",true,"hits")
 					#else
-						$generator.generateOption("hit:word","hit ${labels.getString('word')}",false,"")
+						$generator.generateOption("hit:word","hit ${labels.getString('word')}",false,"hits")
 					#end
 					#if($query && $qGroup == "wordleft:word")
-						$generator.generateOption("wordleft:word","${labels.getString('word')} ${labels.getString('left')}",true,"")
+						$generator.generateOption("wordleft:word","${labels.getString('word')} ${labels.getString('left')}",true,"hits")
 					#else
-						$generator.generateOption("wordleft:word","${labels.getString('word')} ${labels.getString('left')}",false,"")
+						$generator.generateOption("wordleft:word","${labels.getString('word')} ${labels.getString('left')}",false,"hits")
 					#end
 					#if($query && $qGroup == "wordright:word")
-						$generator.generateOption("wordright:word","${labels.getString('word')} ${labels.getString('right')}",true,"")
+						$generator.generateOption("wordright:word","${labels.getString('word')} ${labels.getString('right')}",true,"hits")
 					#else
-						$generator.generateOption("wordright:word","${labels.getString('word')} ${labels.getString('right')}",false,"")
+						$generator.generateOption("wordright:word","${labels.getString('word')} ${labels.getString('right')}",false,"hits")
 					#end
 					#if($query && $qGroup == "hit:lemma")
-						$generator.generateOption("hit:lemma","hit ${labels.getString('lemma')}",true,"")
+						$generator.generateOption("hit:lemma","hit ${labels.getString('lemma')}",true,"hits")
 					#else
-						$generator.generateOption("hit:lemma","hit ${labels.getString('lemma')}",false,"")
+						$generator.generateOption("hit:lemma","hit ${labels.getString('lemma')}",false,"hits")
 					#end
 					#if($query && $qGroup == "wordleft:lemma")
-						$generator.generateOption("wordleft:lemma","${labels.getString('lemma')} ${labels.getString('left')}",true,"")
+						$generator.generateOption("wordleft:lemma","${labels.getString('lemma')} ${labels.getString('left')}",true,"hits")
 					#else
-						$generator.generateOption("wordleft:lemma","${labels.getString('lemma')} ${labels.getString('left')}",false,"")
+						$generator.generateOption("wordleft:lemma","${labels.getString('lemma')} ${labels.getString('left')}",false,"hits")
 					#end
 					#if($query && $qGroup == "wordright:lemma")
-						$generator.generateOption("wordright:lemma","${labels.getString('lemma')} ${labels.getString('right')}",true,"")
+						$generator.generateOption("wordright:lemma","${labels.getString('lemma')} ${labels.getString('right')}",true,"hits")
 					#else
-						$generator.generateOption("wordright:lemma","${labels.getString('lemma')} ${labels.getString('right')}",false,"")
+						$generator.generateOption("wordright:lemma","${labels.getString('lemma')} ${labels.getString('right')}",false,"hits")
 					#end
 					#if($query && $qGroup == "hit:pos")
-						$generator.generateOption("hit:pos","hit ${labels.getString('pos')}",true,"")
+						$generator.generateOption("hit:pos","hit ${labels.getString('pos')}",true,"hits")
 					#else
-						$generator.generateOption("hit:pos","hit ${labels.getString('pos')}",false,"")
+						$generator.generateOption("hit:pos","hit ${labels.getString('pos')}",false,"hits")
 					#end
 					#if($query && $qGroup == "wordleft:pos")
-						$generator.generateOption("wordleft:pos","${labels.getString('pos')} ${labels.getString('left')}",true,"")
+						$generator.generateOption("wordleft:pos","${labels.getString('pos')} ${labels.getString('left')}",true,"hits")
 					#else
-						$generator.generateOption("wordleft:pos","${labels.getString('pos')} ${labels.getString('left')}",false,"")
+						$generator.generateOption("wordleft:pos","${labels.getString('pos')} ${labels.getString('left')}",false,"hits")
 					#end
 					#if($query && $qGroup == "wordright:pos")
-						$generator.generateOption("wordright:pos","${labels.getString('pos')} ${labels.getString('right')}",true,"")
+						$generator.generateOption("wordright:pos","${labels.getString('pos')} ${labels.getString('right')}",true,"hits")
 					#else
-						$generator.generateOption("wordright:pos","${labels.getString('pos')} ${labels.getString('right')}",false,"")
+						$generator.generateOption("wordright:pos","${labels.getString('pos')} ${labels.getString('right')}",false,"hits")
 					#end
 					#foreach($field in $filters)
 						#if($query && $qGroup == $field)
-							$generator.generateOption($labels,$field,true,"")
+							$generator.generateOption("field:${field}","$field",true,"")
 						#else
-							$generator.generateOption($labels,$field,false,"")
+							$generator.generateOption("field:${field}","$field",false,"")
 						#end
 					#end
 					</select>
@@ -115,6 +115,15 @@
 </dl>
 <script>
 	Whitelab.meta.rule = '$metaRule';
+	
+	function checkGroupSelectOptions(val) {
+		Whitelab.debug("checkGroupSelectOptions("+val+")");
+		if (val == 'documents') {
+			$("#group_by-select option.hits").attr('disabled','disabled');
+		} else {
+			$("#group_by-select option.hits").removeAttr('disabled');
+		}
+	}
 	
 	#[[
 	$(document).on("change", "select.metaLabel", function(e) {
