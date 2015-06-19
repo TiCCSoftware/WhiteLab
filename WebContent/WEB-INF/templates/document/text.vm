@@ -1,0 +1,17 @@
+<div id="text_tab" class="doc-pane tab-pane active">
+	#if($query)
+		<div class="hitscroll">
+			<a href="#" onclick="Whitelab.search.document.gotoPreviousAnchor(event); return false;">
+				<b>&laquo; $labels.getString("document.hit.previous")</b>
+			</a>
+			 | 
+			 <a href="#" onclick="Whitelab.search.document.gotoNextAnchor(event); return false;">
+				<b>$labels.getString("document.hit.next") &raquo;</b>
+			</a>
+		</div>
+	#end
+	<div class="gradient"></div>
+	#if($content)
+		$content
+	#end
+</div>

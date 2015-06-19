@@ -1,118 +1,17 @@
+<script>
+	lang = "$lang";
+</script>
 <div id="doc-display" class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1">
 	#if($doctab)
 		#parse("document/tabs.vm")
 		#if($doctab == "statistics")
 			#parse("document/statistics.vm")
 		#elseif($doctab == "wordcloud")
-			<div id="cloud_tab" class="doc-pane tab-pane">
-				<div class="gradient"></div>
-				<div id="docCloudSettings"><input type="checkbox" class="split"/> $labels.getString("document.cloud.split")</div>
-				<div id="docCloudDisplay"></div>
-			</div>
+			#parse("document/wordcloud.vm")
 		#elseif($doctab == "metadata")
-			<div id="meta_tab" class="doc-pane tab-pane">
-				<div class="gradient"></div>
-				#if($document)
-					$document.getMetadata()
-				#end
-			</div>
+			#parse("document/metadata.vm")
 		#else
-			<div id="text_tab" class="doc-pane tab-pane active">
-				#if($query)
-					<div class="hitscroll">
-						<a href="#" onclick="Whitelab.search.document.gotoPreviousAnchor(event); return false;">
-							<b>&laquo; $labels.getString("document.hit.previous")</b>
-						</a>
-						 | 
-						 <a href="#" onclick="Whitelab.search.document.gotoNextAnchor(event); return false;">
-							<b>$labels.getString("document.hit.next") &raquo;</b>
-						</a>
-					</div>
-				#end
-				<div class="gradient"></div>
-				#if($document)
-					$document.getContent()
-				#end
-			</div>
+			#parse("document/text.vm")
 		#end
 	#end
 </div>
-<script>
-	
-	lang = "$lang";
-	
-	$(function() {
-		#if($document)
-			#if($doctab == "statistics")
-				loadStatsData(null,null,null);
-				loadGrowthData(null,null,null);
-				loadTokenPosPieData(null,null,null);
-				loadLemmaPosPieData(null,null,null);
-				loadPosData("$docId","#docPosDisplay");
-			#elseif($doctab == "wordcloud")
-				loadCloudData(null,null);
-			#end
-		#end
-	});
-		
-	#if($doctab == "statistics")
-		
-		function loadStatsData(target,response,url) {
-			if (target != null) {
-				displayStats(response,target);
-			} else {
-				#set($params = "stats&docpid=$docId")
-				getData("document", "$params", loadStatsData, "#docStatsDisplay");
-			}
-			return null;
-		}
-			
-		function loadGrowthData(target,response,url) {
-			if (target != null) {
-				displayGrowth(response,target,url);
-			} else {
-				#set($params = "growth&docpid=$docId")
-				getData("document", "$params", loadGrowthData, "#docGrowthDisplay");
-			}
-			return null;
-		}
-			
-		function loadTokenPosPieData(target,response,url) {
-			if (target != null) {
-				displayPosPie(response,target,url);
-			} else {
-				#set($params = "pospie=token&docpid=$docId")
-				getData("document", "$params", loadTokenPosPieData, "#docTokenPosPieDisplay");
-			}
-			return null;
-		}
-			
-		function loadLemmaPosPieData(target,response,url) {
-			if (target != null) {
-				displayPosPie(response,target,url);
-			} else {
-				#set($params = "pospie=lemma&docpid=$docId")
-				getData("document", "$params", loadLemmaPosPieData, "#docLemmaPosPieDisplay");
-			}
-			return null;
-		}
-	
-	#elseif($doctab == "wordcloud")
-	
-		function loadCloudData(target,response) {
-			if (target != null) {
-				clearCloud();
-				var data = $.parseJSON(response.data);
-				for (var i = 0; i < data.length; i++) {
-					var item = data[i];
-					addNode(item.lemma,item.freq,item.pos,item.clean);
-				}
-			} else {
-				#set($params = "cloud&docpid=$docId")
-				getData("document", "$params", loadCloudData, "#docCloudDisplay");
-			}
-		}
-	
-	#end
-	
-</script>

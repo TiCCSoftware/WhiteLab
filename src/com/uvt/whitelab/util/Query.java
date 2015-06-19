@@ -34,6 +34,7 @@ public class Query {
 	private int first = 0;
 	private int number = 50;
 	private String docPid = "";
+	private WhitelabDocument document = null;
 	private int start = -1;
 	private int end = -1;
 	private Map<String,Map<String,List<String>>> filters;
@@ -93,6 +94,9 @@ public class Query {
 			filters = map;
 		} else
 			filters = q.getFilters();
+
+		if (!docPid.equals(""))
+			document = new WhitelabDocument(docPid);
 	}
 	
 	public Query(BaseResponse br) {
@@ -109,6 +113,8 @@ public class Query {
 			first = br.getParameter("first", 0);
 			number = br.getParameter("number", 50);
 			docPid = br.getParameter("docpid", "");
+			if (!docPid.equals(""))
+				document = new WhitelabDocument(docPid);
 			if (view == 12)
 				wordsAroundHit = 0;
 			else
@@ -140,17 +146,29 @@ public class Query {
 				Query query = new Query(br);
 				return query;
 			} else if (v != view || !g.equals(group) || !s.equals(sort) || n != number ||
-					st != start || en != end || fi != first || !d.equals(docPid)) {
+					fi != first) {
 				br.getServlet().log("QUERY CHANGED - RESET");
 				view = v;
 				group = g;
 				sort = s;
 				number = n;
 				first = fi;
-				start = st;
-				end = en;
-				docPid = d;
 				this.resetStatus();
+			}
+			
+			if (st != start || en != end || !d.equals(docPid)) {
+				br.getServlet().log("QUERY CHANGED - DOC UPDATED");
+				if (d.equals("")) {
+					docPid = d;
+					document = null;
+				} else if (!d.equals(docPid)) {
+					docPid = d;
+					document = new WhitelabDocument(docPid);
+				}
+				if (document != null) {
+					start = st;
+					end = en;
+				}
 			}
 			
 			String ff = generateFilterStringFromInput(br,false);
@@ -394,6 +412,14 @@ public class Query {
 		return docPid;
 	}
 
+	public void setDocument(WhitelabDocument d) {
+		document = d;
+	}
+	
+	public WhitelabDocument getDocument() {
+		return document;
+	}
+
 	public void setWordsAroundHit(int i) {
 		wordsAroundHit = i;
 	}
@@ -452,6 +478,13 @@ public class Query {
 		List<String> except = new ArrayList<String>();
 		if (exceptArray != null)
 			except = Arrays.asList(exceptArray);
+		return getUrl(page,suffix,onlyId,except);
+	}
+		
+	public String getUrl(String page, String suffix, boolean onlyId, List<String> exceptArray) {
+		List<String> except = new ArrayList<String>();
+		if (exceptArray != null)
+			except = exceptArray;
 		String url = "/whitelab/"+page+"?";
 		url = url+"id="+getId();
 		if (!onlyId) {
@@ -462,8 +495,8 @@ public class Query {
 					url = url+"&within="+URLEncoder.encode(within, "UTF-8");
 				if (page.contains("/results") && view > 0 && !except.contains("view"))
 					url = url+"&view="+view;
-	//			if (from > 0)
-	//				url = url+"&from="+from;
+				if (from > 0 && !except.contains("from"))
+					url = url+"&from="+from;
 				if (filter.length() > 0 && !except.contains("filter"))
 					url = url+"&filter="+URLEncoder.encode(getFilterUrlParameters(), "UTF-8");
 				if (group.length() > 0 &&!except.contains("group"))

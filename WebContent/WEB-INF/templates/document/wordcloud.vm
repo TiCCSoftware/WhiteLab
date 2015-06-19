@@ -1,0 +1,12 @@
+<div id="cloud_tab" class="doc-pane tab-pane active">
+	<div class="gradient"></div>
+	<div id="docCloudSettings"><input type="checkbox" class="split"/> $labels.getString("document.cloud.split")</div>
+	<div id="docCloudDisplay"></div>
+</div>
+<script>
+	
+	$(function() {
+		loadCloudData("#docCloudDisplay",false,$data);
+	});
+	
+</script>

@@ -1,13 +1,73 @@
-<div id="stats_tab" class="doc-pane tab-pane">
+<div id="stats_tab" class="doc-pane tab-pane active">
 	<div class="gradient"></div>
-	<div id="docStatsDisplay" class="display row"></div>
-	<div id="docGrowthDisplay" class="display row"></div>
-	<div class="display row">
-		<div id="docTokenPosPieDisplay" class="columns large-8"></div>
-		<div id="docLemmaPosPieDisplay" class="columns large-8"></div>
+	<div class="row">
+		<br/>
+		<p style="padding-left: 30px;">$labels.getString("result.pagination.show"): <select class="meta-medium" style="width: auto;" onchange="document.location.href='$statisticsUrl'+$(this).val();"></p>
+			#if(!$statType)
+				<option value="" selected disabled>$labels.getString("document.stats.title")</option>
+			#else
+				<option value="">$labels.getString("document.stats.title")</option>
+			#end
+			#if($statType && $statType == "growth")
+				<option value="&growth" selected disabled>$labels.getString("document.growth.title")</option>
+			#else
+				<option value="&growth">$labels.getString("document.growth.title")</option>
+			#end
+			#if($statType && $statType == "pospie")
+				<option value="&pospie" selected disabled>$labels.getString("document.pospie.title")</option>
+			#else
+				<option value="&pospie">$labels.getString("document.pospie.title")</option>
+			#end
+			#if($statType && $statType == "posdata")
+				<option value="&posdata" selected disabled>$labels.getString("document.posdata.title")</option>
+			#else
+				<option value="&posdata">$labels.getString("document.posdata.title")</option>
+			#end
+		</select>
 	</div>
-	<div id="docPosDisplay" class="row">
-		<ul id="pos_nav"></ul>
-		<div id="pos_data"></div>
-	</div>
+	#if($statType)
+		#if($statType=="growth")
+			<div id="docGrowthDisplay" class="row"></div>
+		#elseif($statType=="posdata")
+			<div id="docPosDisplay" class="row">
+				<ul id="pos_nav">
+					#foreach($pos in $posLabels)
+						#set($posColor=$posColors.get($pos))
+						#set($posUrl=$statisticsUrl+"&posdata&pos="+$pos)
+						#if($posSelected==$pos)
+							<li style="color: white; background-color: $posColor;" class="active">
+						#else
+							<li style="color: $posColor; background-color: white;">
+						#end
+							<a href="#" onclick="document.location.href='$posUrl';">
+								<h3 style="font-weight: bold;">$pos</h3>
+							</a>
+						</li>
+					#end
+				</ul>
+				<div id="pos_data"></div>
+			</div>
+		#elseif($statType=="pospie")
+			<div class="row">
+				<div id="docTokenPosPieDisplay" class="columns large-8"></div>
+				<div id="docLemmaPosPieDisplay" class="columns large-8"></div>
+			</div>
+		#end
+	#else
+		<div id="docStatsDisplay" class="row"></div>
+	#end
 </div>
+<script>
+	$(function() {
+		#if($statType=="growth")
+			displayGrowth($data,'$labels.getString("document.growth.title")',"#docGrowthDisplay");
+		#elseif($statType=="posdata")
+			loadPosData("#docPosDisplay","$posSelected",$freqlist,$histogram,"$statisticsUrl"+"&posdata");
+		#elseif($statType=="pospie")
+			displayPosPie($tokenpie,'$labels.getString("document.tokenpospie.title")',"#docTokenPosPieDisplay","");
+			displayPosPie($lemmapie,'$labels.getString("document.lemmapospie.title")',"#docLemmaPosPieDisplay","");
+		#else
+			displayStats($data,'$labels.getString("document.stats.title")',"#docStatsDisplay");
+		#end
+	});
+</script>

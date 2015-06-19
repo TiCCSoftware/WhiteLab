@@ -1,0 +1,6 @@
+<div id="meta_tab" class="doc-pane tab-pane active">
+	<div class="gradient"></div>
+	#if($content)
+		$content
+	#end
+</div>

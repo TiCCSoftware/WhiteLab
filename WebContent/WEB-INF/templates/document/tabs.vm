@@ -1,38 +1,43 @@
+#set($except=["first","from","group","sort","filters","number"])
+#set($textUrl=$query.getUrl("$maintab/document","&tab=text",false,$except))
+#set($metadataUrl=$query.getUrl("$maintab/document","&tab=metadata",false,$except))
+#set($statisticsUrl=$query.getUrl("$maintab/document","&tab=statistics",false,$except))
+#set($wordcloudUrl=$query.getUrl("$maintab/document","&tab=wordcloud",false,$except))
 <ul class="nav nav-tabs" id="docContentTabs">
 	#if(!$doctab || $doctab == "text")
 		<li id="text_link" class="doc_link active disabled">
-			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.text").capitalize()</a>
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.text")</a>
 		</li>
 	#else
 		<li id="text_link" class="doc_link">
-			<a href="/whitelab/$maintab/document?tab=text">$labels.getString("document.tab.text").capitalize()</a>
+			<a href="$textUrl">$labels.getString("document.tab.text")</a>
 		</li>
 	#end
 	#if($doctab == "metadata")
 		<li id="meta_link" class="doc_link active disabled">
-			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.metadata").capitalize()</a>
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.metadata")</a>
 		</li>
 	#else
 		<li id="text_link" class="doc_link">
-			<a href="/whitelab/$maintab/document?tab=metadata">$labels.getString("document.tab.metadata").capitalize()</a>
+			<a href="$metadataUrl">$labels.getString("document.tab.metadata")</a>
 		</li>
 	#end
 	#if($doctab == "statistics")
 		<li id="stats_link" class="doc_link active disabled">
-			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.statistics").capitalize()</a>
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.statistics")</a>
 		</li>
 	#else
 		<li id="text_link" class="doc_link">
-			<a href="/whitelab/$maintab/document?tab=statistics">$labels.getString("document.tab.statistics").capitalize()</a>
+			<a href="$statisticsUrl">$labels.getString("document.tab.statistics")</a>
 		</li>
 	#end
 	#if($doctab == "wordcloud")
-		<li id="cloud_link" class="doc_link">
-			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.cloud").capitalize()</a>
+		<li id="cloud_link" class="doc_link active disabled">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("document.tab.cloud")</a>
 		</li>
 	#else
 		<li id="text_link" class="doc_link">
-			<a href="/whitelab/$maintab/document?tab=wordcloud">$labels.getString("document.tab.cloud").capitalize()</a>
+			<a href="$wordcloudUrl">$labels.getString("document.tab.cloud")</a>
 		</li>
 	#end
 </ul>

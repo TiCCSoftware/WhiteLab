@@ -52,6 +52,13 @@ public class WhitelabDocument {
 	private Integer lemmaCount = 0;
 	private Integer typeCount = 0;
 	
+	public WhitelabDocument() {
+	}
+	
+	public WhitelabDocument(String docPid) {
+		id = docPid;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -240,7 +247,7 @@ public class WhitelabDocument {
 		return data.toString();
 	}
 	
-	public String getPosFreqList(String pos, Integer max, String format) {
+	public String getPosFreqList(String pos, String format) {
 		JSONArray data = new JSONArray();
 		
 		try {

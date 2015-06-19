@@ -45,7 +45,7 @@ public class ResultResponse extends BaseResponse {
 				}
 			}
 			
-			if (query.getStatus() == 0) {
+			if (query.getStatus() < 2) {
 				String batch = this.getParameter("batch", "false");
 				if (batch.equals("true")) {
 					String[] patterns = query.getPattern().split(";");
@@ -78,7 +78,7 @@ public class ResultResponse extends BaseResponse {
 		this.getContext().put("query", query);
 		this.getContext().put("queries", queries);
 		this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
-		this.getContext().put("requestUrl", this.getRequestURL(false));
+		this.getContext().put("requestUrl", query.getUrl("search/results", null, true, new String[]{}));
 		int ql = this.getParameter("ql", 0);
 		this.getContext().put("ql", ql);
 		this.getContext().put("qlBefore", ql - 5);

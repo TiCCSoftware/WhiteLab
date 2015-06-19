@@ -131,7 +131,7 @@ public class ResultHandler {
 			transformer.addParameter("sort_by", sort);
 
 		transformer.addParameter("query_result_url",query.getUrl("search/results", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
-		transformer.addParameter("query_document_url",query.getUrl("search/document", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
+		transformer.addParameter("query_document_url",query.getUrl("search/document", null, false, new String[] { "pattern", "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
 		transformer.addParameter("query_export_url",query.getUrl("page/export", null, true, new String[] {}));
 		
 		transformer.addParameter("per_hit",labels.getString("result.per_hit"));

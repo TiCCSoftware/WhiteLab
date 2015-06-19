@@ -23,7 +23,6 @@ public class DocumentResponse extends BaseResponse {
 	private XslTransformer transformer = new XslTransformer();
 	private String queryType = null;
 	private String subType = null;
-	private Integer max = -1;
 	private String format = "json";
 	private WhitelabDocument document = null;
 
@@ -81,7 +80,7 @@ public class DocumentResponse extends BaseResponse {
 				outparams.put("data", document.getMetadata());
 				break;
 			case "freqlist":
-				outparams.put("data", document.getPosFreqList(subType, max, format));
+				outparams.put("data", document.getPosFreqList(subType, format));
 				break;
 			case "histogram":
 				outparams.put("data", document.getPosHistogram(subType, format));
@@ -144,7 +143,6 @@ public class DocumentResponse extends BaseResponse {
 		} else if (this.request.getParameter("freqlist") != null) {
 			queryType = "freqlist";
 			subType = this.request.getParameter("pos");
-			max = Integer.parseInt(this.request.getParameter("max"));
 			format = this.getParameter("format","json");
 		} else if (this.request.getParameter("histogram") != null) {
 			queryType = "histogram";
@@ -203,7 +201,6 @@ public class DocumentResponse extends BaseResponse {
 				
 				if (document.getMetadata().length() == 0) {
 					String meta = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid, params);
-					this.servlet.log("Meta response: \n"+meta);
 					try {
 						String metadataStylesheet = loadStylesheet("article_metadata.xsl");
 						String metaResult = transformer.transform(meta, metadataStylesheet);
