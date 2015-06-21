@@ -18,12 +18,12 @@ var cloud = null;
 var container = null;
 
 
-function loadCloudData(target,s,data) {
+function loadCloudData(target,s,data,o) {
 	for (var i = 0; i < data.length; i++) {
 		var item = data[i];
 		addNode(item.lemma,item.freq,item.pos,item.clean);
 	}
-	generateCloud(target, s, false);
+	generateCloud(target, s, o);
 }
 
 function clearCloud() {

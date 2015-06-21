@@ -9,6 +9,10 @@ package com.uvt.whitelab.response;
 import com.uvt.whitelab.BaseResponse;
 
 public class ErrorResponse extends BaseResponse {
+	
+	public ErrorResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -22,7 +26,7 @@ public class ErrorResponse extends BaseResponse {
 
 	@Override
 	public ErrorResponse duplicate() {
-		return new ErrorResponse();
+		return new ErrorResponse("error");
 	}
 
 }

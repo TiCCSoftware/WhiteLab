@@ -1,5 +1,6 @@
 package com.uvt.whitelab.util;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -15,8 +16,12 @@ import org.json.JSONArray;
 
 import com.uvt.whitelab.BaseResponse;
 
-public class Query {
+public class Query implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1481862859779413486L;
 	private String id;
 	private String pattern = "";
 	private String within = "";
@@ -39,11 +44,18 @@ public class Query {
 	private int end = -1;
 	private Map<String,Map<String,List<String>>> filters;
 	private JSONArray cloud;
-
+	private String xml = "";
 	private String result = "";
+	
+	private List<String> lemmas;
+	private JSONArray growthData;
 	
 	public Query(Query q, Map<String,Object> replace) {
 		id = UUID.randomUUID().toString();
+		if (replace.containsKey("from"))
+			from = (Integer) replace.get("from");
+		else
+			from = q.getFrom();
 		if (replace.containsKey("pattern"))
 			pattern = (String) replace.get("pattern");
 		else
@@ -68,10 +80,6 @@ public class Query {
 			view = (Integer) replace.get("view");
 		else
 			view = q.getView();
-		if (replace.containsKey("from"))
-			from = (Integer) replace.get("from");
-		else
-			from = q.getFrom();
 		if (replace.containsKey("start"))
 			start = (Integer) replace.get("start");
 		else
@@ -97,17 +105,22 @@ public class Query {
 
 		if (!docPid.equals(""))
 			document = new WhitelabDocument(docPid);
+		
+		if (from == 5) {
+			lemmas = new ArrayList<String>();
+			growthData = new JSONArray();
+		}
 	}
 	
 	public Query(BaseResponse br) {
 		try {
 			id = UUID.randomUUID().toString();
-			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
-			within = br.getParameter("within", "");
-			view = br.getParameter("view", 1);
 			from = br.getParameter("from", 0);
+			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			view = br.getParameter("view", 1);
 			group = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
 			sort = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
+			within = br.getParameter("within", "");
 			start = br.getParameter("start", -1);
 			end = br.getParameter("end", -1);
 			first = br.getParameter("first", 0);
@@ -121,6 +134,11 @@ public class Query {
 				wordsAroundHit = -1;
 //			setPattern(br.getParameter("query", "").replaceAll("&", "%26"));
 			generateFilterStringFromInput(br,true);
+			
+			if (from == 5) {
+				lemmas = new ArrayList<String>();
+				growthData = new JSONArray();
+			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -173,7 +191,7 @@ public class Query {
 			
 			String ff = generateFilterStringFromInput(br,false);
 			if (!ff.equals(filter)) {
-				br.getServlet().log("FILTER CHANGED");
+				br.getServlet().log("FILTER CHANGED FROM "+filter+" TO "+ff);
 				Query query = new Query(br);
 				return query;
 			}
@@ -436,12 +454,28 @@ public class Query {
 		return result;
 	}
 	
+	public void setXml(String r) {
+		xml = r;
+	}
+	
+	public String getXml() {
+		return xml;
+	}
+	
 	public void setCloud(JSONArray c) {
 		cloud = c;
 	}
 	
 	public JSONArray getCloud() {
 		return cloud;
+	}
+	
+	public void setGrowthData(JSONArray gd) {
+		growthData = gd;
+	}
+	
+	public JSONArray getGrowthData() {
+		return growthData;
 	}
 	
 	public void resetStatus() {
@@ -498,7 +532,7 @@ public class Query {
 				if (from > 0 && !except.contains("from"))
 					url = url+"&from="+from;
 				if (filter.length() > 0 && !except.contains("filter"))
-					url = url+"&filter="+URLEncoder.encode(getFilterUrlParameters(), "UTF-8");
+					url = url+"&"+getFilterUrlParameters(true);
 				if (group.length() > 0 &&!except.contains("group"))
 					url = url+"&group="+URLEncoder.encode(group, "UTF-8");
 				if (sort.length() > 0 && !except.contains("sort"))
@@ -519,16 +553,29 @@ public class Query {
 		}
 		if (suffix != null)
 			url = url + suffix;
+		
 		return url;
 	}
 	
-	public String getFilterUrlParameters() {
+	public String getFilterUrlParameters(boolean encode) throws UnsupportedEncodingException {
 		List<String> params = new ArrayList<String>();
 		for (String f : filters.keySet()) {
-			for (String v : filters.get(f).get("is"))
-				params.add(f+"="+v);
-			for (String v : filters.get(f).get("isnot"))
-				params.add(f+"=-"+v);
+			if (filters.get(f).containsKey("is")) {
+				for (String v : filters.get(f).get("is")) {
+					if (encode)
+						params.add(f+"="+URLEncoder.encode(v, "UTF-8"));
+					else
+						params.add(f+"="+v);
+				}
+			}
+			if (filters.get(f).containsKey("isnot")) {
+				for (String v : filters.get(f).get("isnot")) {
+					if (encode)
+						params.add(f+"=-"+URLEncoder.encode(v, "UTF-8"));
+					else
+						params.add(f+"=-"+v);
+				}
+			}
 		}
 		return StringUtils.join(params.toArray(),"&");
 	}

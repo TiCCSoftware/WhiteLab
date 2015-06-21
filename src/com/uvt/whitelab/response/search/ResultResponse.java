@@ -6,14 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-
 import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.Query;
 import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.SessionManager;
 
 public class ResultResponse extends BaseResponse {
+	
+	public ResultResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -46,6 +48,7 @@ public class ResultResponse extends BaseResponse {
 			}
 			
 			if (query.getStatus() < 2) {
+				ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
 				String batch = this.getParameter("batch", "false");
 				if (batch.equals("true")) {
 					String[] patterns = query.getPattern().split(";");
@@ -54,12 +57,12 @@ public class ResultResponse extends BaseResponse {
 						Map<String,Object> replace = new HashMap<String,Object>();
 						replace.put("pattern", patterns[i]);
 						Query q = new Query(query,replace);
-						q = executeQuery(q);
+						q = resultHandler.executeQuery(q,null);
 						SessionManager.addQuery(session, q);
 					}
-					query = executeQuery(query);
+					query = resultHandler.executeQuery(query,null);
 				} else {
-					query = executeQuery(query);
+					query = resultHandler.executeQuery(query,null);
 				}
 			}
 		}
@@ -96,52 +99,6 @@ public class ResultResponse extends BaseResponse {
 		
 		this.displayHtmlTemplate(this.servlet.getTemplate("search/results"));
 	}
-	
-	private Query executeQuery(Query q) {
-		this.servlet.log("executing: "+q.getPattern());
-		String corpus = this.labels.getString("corpus");
-		int view = q.getView();
-		ResultHandler resultHandler = new ResultHandler(this.servlet, q);
-		String html = "<p>ERROR: Could not parse XML result.</p>";
-		String resp = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><empty></empty>";
-		
-		String trail = "/hits";
-		if (view == 2 || view == 16 || view == 17)
-			trail = "/docs";
-		if (view == 9)
-			q.setView(1);
-		else if (view == 17)
-			q.setView(2);
-		
-		if (view >= 8 && view != 9 && view != 17 && q.getGroup().length() == 0)
-			html = resultHandler.parseResult(resp,this.labels,view);
-		else {
-			resp = getBlackLabResponse(corpus, trail, q.getParameters());
-			String counting = resultHandler.isStillCounting(resp);
-			Integer hits = resultHandler.getHitsFromXML(resp);
-			Integer docs = resultHandler.getDocsFromXML(resp);
-
-			q.setHits(hits);
-			q.setDocs(docs);
-			if (counting.equalsIgnoreCase("false"))
-				q.setStatus(2);
-			else
-				q.setStatus(1);
-			
-			if (view >= 8 && view != 9 && view != 17) {
-				Integer groups = resultHandler.getGroupsFromXML(resp);
-				q.setGroups(groups);
-			}
-			
-			html = resultHandler.parseResult(resp,this.labels,view);
-			if (view == 12 && q.getFirst() == 0) {
-				JSONArray cloud = resultHandler.parseCloudResult(resp,this.labels,view);
-				q.setCloud(cloud);
-			}
-		}
-		q.setResult(html);
-		return q;
-	}
 
 	@Override
 	protected void logRequest() {
@@ -150,7 +107,7 @@ public class ResultResponse extends BaseResponse {
 
 	@Override
 	public ResultResponse duplicate() {
-		return new ResultResponse();
+		return new ResultResponse("search");
 	}
 
 }

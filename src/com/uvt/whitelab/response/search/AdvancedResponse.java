@@ -4,10 +4,17 @@ import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.FieldDescriptor;
 
 public class AdvancedResponse extends BaseResponse {
+	
+	public AdvancedResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
-		loadMetaDataComponents();
+		if (query == null)
+			loadMetaDataComponents(false);
+		else
+			loadMetaDataComponents(true);
 		loadAdvancedComponents();
 		
 		this.getContext().put("showMetaOptions", "yes");
@@ -128,7 +135,7 @@ public class AdvancedResponse extends BaseResponse {
 
 	@Override
 	public AdvancedResponse duplicate() {
-		return new AdvancedResponse();
+		return new AdvancedResponse("search");
 	}
 
 }

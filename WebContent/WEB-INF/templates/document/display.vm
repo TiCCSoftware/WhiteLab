@@ -7,6 +7,8 @@
 		#if($doctab == "statistics")
 			#parse("document/statistics.vm")
 		#elseif($doctab == "wordcloud")
+			#set($m=-22)
+			#set($omitLegend="false")
 			#parse("document/wordcloud.vm")
 		#elseif($doctab == "metadata")
 			#parse("document/metadata.vm")

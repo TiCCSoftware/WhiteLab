@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,11 +24,12 @@ import com.uvt.whitelab.WhiteLab;
 public class ResultHandler {
 	private WhiteLab servlet;
 	private XslTransformer transformer = null;
+	private ResourceBundle labels;
 //	private String query_id = null;
 //	private String query = null;
 //	private String group = null;
 //	private String sort = null;
-	private Query query;
+//	private Query query;
 	
 //	public ResultHandler(WhiteLab s, String qid, String q) {
 //		servlet = s;
@@ -34,16 +38,99 @@ public class ResultHandler {
 //		transformer = new XslTransformer();
 //	}
 	
-	public ResultHandler(WhiteLab s, Query q) {
+	public ResultHandler(WhiteLab s, ResourceBundle l) {
 		servlet = s;
-		query = q;
+		labels = l;
 		transformer = new XslTransformer();
 	}
+	
+	public Query executeQuery(Query query, String trail) {
+		this.servlet.log("executing: "+query.getPattern());
+		String corpus = this.labels.getString("corpus");
+		int view = query.getView();
+		
+		String html = "<p>ERROR: Could not parse XML result.</p>";
+		String resp = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><empty></empty>";
+		
+		if (trail == null) {
+			trail = "/hits";
+			if (view == 2 || view == 16 || view == 17)
+				trail = "/docs";
+		}
+		if (view == 9)
+			query.setView(1);
+		else if (view == 17)
+			query.setView(2);
+		
+		if (view >= 8 && view != 9 && view != 17 && query.getGroup().length() == 0)
+			html = parseResult(resp,this.labels,query);
+		else {
+			resp = getBlackLabResponse(corpus, trail, query.getParameters());
+			query.setXml(resp);
+			String counting = isStillCounting(resp);
+			Integer hits = getHitsFromXML(resp);
+			Integer docs = getDocsFromXML(resp);
 
-	public String parseResult(String response,ResourceBundle labels,Integer view) {
+			query.setHits(hits);
+			query.setDocs(docs);
+			
+			if (counting.equalsIgnoreCase("false"))
+				query.setStatus(2);
+			else
+				query.setStatus(1);
+			
+			if (view >= 8 && view != 9 && view != 17) {
+				Integer groups = getGroupsFromXML(resp);
+				query.setGroups(groups);
+			}
+			
+			html = parseResult(resp,this.labels,query);
+			if (view == 12) {
+				System.out.println("PARSING CLOUD");
+				JSONArray cloud = parseCloudResult(resp,this.labels,query);
+				query.setCloud(cloud);
+			}
+		}
+		query.setResult(html);
+		return query;
+	}
+
+	public void loadDocument(WhitelabDocument document, Query query, String lang) {
+		Map<String,Object> params = query.getParameters();
+
+		ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
+		String response = resultHandler.getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+document.getId()+"/contents", params);
+
 		try {
-			String stylesheet = getStylesheet(view,false);
-			setTransformerDisplayParameters(view,labels);
+			setTransformerDisplayParameters(document.getId(), query.getPattern(), lang);
+			String documentStylesheet = loadStylesheet("article_folia.xsl");
+			String htmlResult = transformer.transformArticle(response, documentStylesheet, query.getStart(), query.getEnd());
+			document.setContent(htmlResult);
+			document.setXml(response);
+			document.start = query.getStart();
+			document.end = query.getEnd();
+			document.count();
+		} catch (IOException | TransformerException e) {
+			e.printStackTrace();
+		}
+		
+		String meta = resultHandler.getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+document.getId(), params);
+		
+		try {
+			setTransformerDisplayParameters(document.getId(), query.getPattern(), lang);
+			String metadataStylesheet = loadStylesheet("article_metadata.xsl");
+			String metaResult = transformer.transform(meta, metadataStylesheet);
+			document.setMetadata(metaResult);
+			document.setMetaXml(meta);
+		} catch (IOException | TransformerException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String parseResult(String response,ResourceBundle labels,Query query) {
+		try {
+			String stylesheet = getStylesheet(query.getView(),false);
+			setTransformerDisplayParameters(query,labels);
 			return transformer.transform(response, stylesheet);
 		} catch (TransformerException | IOException e) {
 			e.printStackTrace();
@@ -51,10 +138,10 @@ public class ResultHandler {
 		return "<p>ERROR: Could not parse XML result.</p>";
 	}
 	
-	public JSONArray parseCloudResult(String response,ResourceBundle labels,Integer view) {
+	public JSONArray parseCloudResult(String response,ResourceBundle labels,Query query) {
 		try {
-			String stylesheet = getStylesheet(view,true);
-			setTransformerDisplayParameters(view,labels);
+			String stylesheet = getStylesheet(query.getView(),true);
+			setTransformerDisplayParameters(query,labels);
 			String str = transformer.transform(response, stylesheet);
 			JSONArray cloud = new JSONArray(str);
 			cloud = cleanCloudLemmas(cloud);
@@ -111,7 +198,8 @@ public class ResultHandler {
 		return builder.toString();
 	}
 
-	private void setTransformerDisplayParameters(Integer view,ResourceBundle labels) {
+	private void setTransformerDisplayParameters(Query query,ResourceBundle labels) {
+		int view = query.getView();
 		transformer.clearParameters();
 		
 		if (query != null) {
@@ -173,6 +261,41 @@ public class ResultHandler {
 			addGroupOptions(true,labels);
 		else if (view == 16)
 			addGroupOptions(false,labels);
+	}
+	
+	private void setTransformerDisplayParameters(String docPid, String pattern, String lang) {
+		transformer.clearParameters();
+//		String query = this.getParameter("query", "");
+		transformer.addParameter("query", pattern);
+		if (pattern.length() == 0)
+			transformer.addParameter("whitelab_page", "explore");
+		else
+			transformer.addParameter("whitelab_page", "search");
+		transformer.addParameter("doc_id", docPid);
+		transformer.addParameter("lang", lang);
+		
+		transformer.addParameter("title_name", this.labels.getString("document.meta.field.title"));
+		transformer.addParameter("author_name", this.labels.getString("document.meta.field.author"));
+		transformer.addParameter("description_name", this.labels.getString("document.meta.field.description"));
+		transformer.addParameter("document_id_name", this.labels.getString("document.meta.field.docid"));
+		transformer.addParameter("texttype_name", this.labels.getString("document.meta.field.texttype"));
+		transformer.addParameter("collection_name", this.labels.getString("document.meta.field.collection"));
+		transformer.addParameter("license_code_name", this.labels.getString("document.meta.field.licensecode"));
+		transformer.addParameter("license_date_name", this.labels.getString("document.meta.field.licensedate"));
+		transformer.addParameter("country_name", this.labels.getString("document.meta.field.country"));
+		transformer.addParameter("continent_name", this.labels.getString("document.meta.field.continent"));
+		transformer.addParameter("language_name", this.labels.getString("document.meta.field.language"));
+		
+		transformer.addParameter("by",this.labels.getString("result.by"));
+		transformer.addParameter("document_id", this.labels.getString("document.meta.docid"));
+		transformer.addParameter("texttype", this.labels.getString("document.meta.texttype"));
+		transformer.addParameter("collection", this.labels.getString("document.meta.collection"));
+		transformer.addParameter("license_code", this.labels.getString("document.meta.licensecode"));
+		transformer.addParameter("license_date", this.labels.getString("document.meta.licensedate"));
+		transformer.addParameter("country", this.labels.getString("document.meta.country"));
+		transformer.addParameter("continent", this.labels.getString("document.meta.continent"));
+		transformer.addParameter("language", this.labels.getString("document.meta.language"));
+		
 	}
 
 	private void addGroupOptions(boolean addHitFields,ResourceBundle labels) {
@@ -258,6 +381,72 @@ public class ResultHandler {
 			
 		}
 		return cloud;
+	}
+
+	public String getBlackLabResponse(String corpus, String trail, Map<String,Object> parameters) {
+		String url = getBlackLabURL(corpus,trail,parameters);
+		return getBlackLabResponse(url);
+	}
+
+	protected String getBlackLabResponse(String url) {
+		QueryServiceHandler webservice = new QueryServiceHandler(url, 1);
+		try {
+			String response = webservice.makeRequest(new HashMap<String, String[]>());
+			return response;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	protected String getBlackLabURL(String corpus, String trail, Map<String,Object> params) {
+		String url = this.labels.getString("blsUrlInternal")+ "/" + corpus + trail;
+//		this.lastUrl = url;
+		String parameters = getParameterStringExcept(new String[]{}, params);
+		
+		if (parameters.length() > 0) {
+			url = url + "?" + parameters;
+		}
+		return url;
+	}
+
+	protected String getParameterStringExcept(String[] except, Map<String,Object> params) {
+		String parameters = "";
+		
+//		if (query != null) {
+//			Map<String,Object> params = query.getParameters();
+			for (String key : params.keySet()) {
+				if (!Arrays.asList(except).contains(key)) {
+					if (parameters.length() > 0)
+						parameters = parameters + "&" + key + "=" + params.get(key);
+					else
+						parameters = key + "=" +params.get(key);
+				}
+			}
+//		}
+		
+		parameters = parameters.replaceAll(" ", "%20");
+		return parameters;
+	}
+
+	public String getNextDocumentPid(Query query) {
+		String response = query.getXml();
+		String currentDocPid = query.getDocPid();
+		boolean n = false;
+		if (currentDocPid.length() == 0)
+			n = true;
+		if (response != null) {
+			final Pattern pattern = Pattern.compile("<docPid>(.+?)</docPid>");
+			final Matcher matcher = pattern.matcher(response);
+			while (matcher.find()) {
+				String docPid = matcher.group(1);
+				if (docPid.length() > 0 && n)
+					return docPid;
+				if (docPid.length() > 0 && docPid.equals(currentDocPid))
+					n = true;
+			}
+		}
+		return null;
 	}
 
 }

@@ -3,10 +3,17 @@ package com.uvt.whitelab.response.search;
 import com.uvt.whitelab.BaseResponse;
 
 public class ExpertResponse extends BaseResponse {
+	
+	public ExpertResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
-		loadMetaDataComponents();
+		if (query == null)
+			loadMetaDataComponents(false);
+		else
+			loadMetaDataComponents(true);
 		loadCQLInfoBox();
 		
 		this.getContext().put("showMetaOptions", "yes");
@@ -41,7 +48,7 @@ public class ExpertResponse extends BaseResponse {
 
 	@Override
 	public ExpertResponse duplicate() {
-		return new ExpertResponse();
+		return new ExpertResponse("search");
 	}
 
 }

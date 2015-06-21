@@ -15,6 +15,10 @@ import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.MetadataField;
 
 public class TreemapResponse extends BaseResponse {
+	
+	public TreemapResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -41,7 +45,7 @@ public class TreemapResponse extends BaseResponse {
 
 	@Override
 	public TreemapResponse duplicate() {
-		return new TreemapResponse();
+		return new TreemapResponse("explore");
 	}
 
 }

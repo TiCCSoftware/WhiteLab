@@ -1,12 +1,14 @@
-<div id="cloud_tab" class="doc-pane tab-pane active">
+<div id="cloud_tab" class="doc-pane tab-pane active" style="margin-top: ${m}px;">
 	<div class="gradient"></div>
-	<div id="docCloudSettings"><input type="checkbox" class="split"/> $labels.getString("document.cloud.split")</div>
+	#if($omitLegend=="false")
+		<div id="docCloudSettings"><input type="checkbox" class="split"/> $labels.getString("document.cloud.split")</div>
+	#end
 	<div id="docCloudDisplay"></div>
 </div>
 <script>
 	
 	$(function() {
-		loadCloudData("#docCloudDisplay",false,$data);
+		loadCloudData("#docCloudDisplay",false,$data,$omitLegend);
 	});
 	
 </script>

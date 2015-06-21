@@ -9,6 +9,10 @@ package com.uvt.whitelab.response;
 import com.uvt.whitelab.BaseResponse;
 
 public class HomeResponse extends BaseResponse {
+	
+	public HomeResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -23,7 +27,7 @@ public class HomeResponse extends BaseResponse {
 
 	@Override
 	public HomeResponse duplicate() {
-		return new HomeResponse();
+		return new HomeResponse("home");
 	}
 
 }

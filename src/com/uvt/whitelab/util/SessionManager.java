@@ -8,14 +8,20 @@ import javax.servlet.http.HttpSession;
 public class SessionManager {
 	
 	public static void addQuery(HttpSession session, Query query) {
-		@SuppressWarnings("unchecked")
-		List<Query> queries = (List<Query>) session.getAttribute("queries");
-		if (queries == null)
-			queries = new ArrayList<Query>();
-		queries.add(0, query);
-		if (queries.size() > 25)
-			queries = queries.subList(queries.size() - 25, queries.size() - 1);
-		session.setAttribute("queries", queries);
+		if (query.getFrom() <= 4) {
+			@SuppressWarnings("unchecked")
+			List<Query> queries = (List<Query>) session.getAttribute("queries");
+			if (queries == null)
+				queries = new ArrayList<Query>();
+			queries.add(0, query);
+			if (queries.size() > 25)
+				queries = queries.subList(queries.size() - 25, queries.size() - 1);
+			session.setAttribute("queries", queries);
+		} else if (query.getFrom() == 5) {
+			session.setAttribute("statsQuery", query);
+		} else if (query.getFrom() == 6) {
+			session.setAttribute("ngramsQuery", query);
+		}
 	}
 	
 	public static void deleteQuery(HttpSession session, String queryId) {
@@ -33,15 +39,29 @@ public class SessionManager {
 		}
 	}
 
-	public static Query getQuery(HttpSession session, String queryId) {
-		@SuppressWarnings("unchecked")
-		List<Query> queries = (List<Query>) session.getAttribute("queries");
-		if (queries != null) {
-			for (int i = 0; i < queries.size(); i++) {
-				Query query = queries.get(i);
-				if (query.getId().equals(queryId))
-					return query;
+	public static Query getQuery(HttpSession session, String queryId, int from) {
+		if (from <= 4) { // search
+			@SuppressWarnings("unchecked")
+			List<Query> queries = (List<Query>) session.getAttribute("queries");
+			if (queries != null) {
+				for (int i = 0; i < queries.size(); i++) {
+					Query query = queries.get(i);
+					if (query.getId().equals(queryId))
+						return query;
+				}
 			}
+		} else if (from == 5) { // explore/statistics
+			Query statsQuery = (Query) session.getAttribute("statsQuery");
+			if (statsQuery != null && statsQuery.getId().equals(queryId))
+				return statsQuery;
+			else
+				session.removeAttribute("statsQuery");
+		} else if (from == 6) { // explore/ngrams
+			Query ngramsQuery = (Query) session.getAttribute("ngramsQuery");
+			if (ngramsQuery != null && ngramsQuery.getId().equals(queryId))
+				return ngramsQuery;
+			else
+				session.removeAttribute("ngramsQuery");
 		}
 		return null;
 	}

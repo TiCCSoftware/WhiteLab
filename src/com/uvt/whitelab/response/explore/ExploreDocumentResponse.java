@@ -3,6 +3,10 @@ package com.uvt.whitelab.response.explore;
 import com.uvt.whitelab.BaseResponse;
 
 public class ExploreDocumentResponse extends BaseResponse {
+	
+	public ExploreDocumentResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -17,7 +21,7 @@ public class ExploreDocumentResponse extends BaseResponse {
 
 	@Override
 	public ExploreDocumentResponse duplicate() {
-		return new ExploreDocumentResponse();
+		return new ExploreDocumentResponse("explore");
 	}
 
 }

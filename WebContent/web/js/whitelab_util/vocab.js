@@ -61,7 +61,7 @@ function displayStats(data,title,target) {
 	$(target).append(table);
 }
 
-function displayGrowth(data,title,target) {
+function displayGrowth(data,title,target,url) {
 //	var data = $.parseJSON(response.data);
 	var container = document.createElement('div');
 	$(container).attr("class","chart active");

@@ -10,11 +10,18 @@ import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.FieldDescriptor;
 
 public class NgramsResponse extends BaseResponse {
+	
+	public NgramsResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
 		loadPosValues();
-		loadMetaDataComponents();
+		if (query == null)
+			loadMetaDataComponents(false);
+		else
+			loadMetaDataComponents(true);
 
 		this.getContext().put("showMetaOptions", "no");
 		this.displayHtmlTemplate(this.servlet.getTemplate("explore/ngrams"));
@@ -44,7 +51,7 @@ public class NgramsResponse extends BaseResponse {
 
 	@Override
 	public NgramsResponse duplicate() {
-		return new NgramsResponse();
+		return new NgramsResponse("explore");
 	}
 
 }

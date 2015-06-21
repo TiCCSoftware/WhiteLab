@@ -15,7 +15,6 @@ import java.io.StringWriter;
 //import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 //import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +39,6 @@ import org.json.JSONObject;
 
 //import com.uvt.whitelab.util.MetadataField;
 import com.uvt.whitelab.util.Query;
-import com.uvt.whitelab.util.QueryServiceHandler;
 import com.uvt.whitelab.util.SessionManager;
 
 /**
@@ -62,10 +60,12 @@ public abstract class BaseResponse {
 	protected HttpSession session;
 	protected Query query;
 	protected int queryCount = 0;
+	protected String namespace;
 	
 	protected long startTime = new Date().getTime();
 
-	protected BaseResponse() {
+	protected BaseResponse(String ns) {
+		namespace = ns;
 	}
 	
 	public WhiteLab getServlet() {
@@ -104,13 +104,14 @@ public abstract class BaseResponse {
 		String patt = this.getParameter("query", "").replaceAll("&", "%26");
 		String within = this.getParameter("within", "");
 		int view = this.getParameter("view", 1);
+		int from = this.getParameter("from", 1);
 		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
 		
 		if (id.length() > 0 && view != 9 && view != 17) {
-			query = SessionManager.getQuery(session, id);
-			if (query == null || (patt.length() > 0 && !query.equalPattern(patt,within)))
+			query = SessionManager.getQuery(session, id, from);
+			if (query == null || (from <= 4 && patt.length() > 0 && !query.equalPattern(patt,within)))
 				id = "";
 			else if (query != null && patt.length() == 0)
 				updateQuery = false;
@@ -130,7 +131,7 @@ public abstract class BaseResponse {
 				SessionManager.addQuery(session, query);
 		}
 		
-		if (query != null && view != 9 && view != 17)
+		if (query != null && view != 9 && view != 17 && namespace.equals("search"))
 			SessionManager.setCurrentQuery(session, query.getId());
 	}
 
@@ -240,56 +241,6 @@ public abstract class BaseResponse {
 //		}
 //		return filter;
 //	}
-
-	// TODO refactor: put in QueryServiceHandler
-	protected String getBlackLabResponse(String corpus, String trail, Map<String,Object> parameters) {
-		String url = getBlackLabURL(corpus,trail,parameters);
-		return getBlackLabResponse(url);
-	}
-
-	// TODO refactor: put in QueryServiceHandler
-	protected String getBlackLabResponse(String url) {
-		QueryServiceHandler webservice = new QueryServiceHandler(url, 1);
-		try {
-			String response = webservice.makeRequest(new HashMap<String, String[]>());
-			return response;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	// TODO refactor: put in QueryServiceHandler
-	protected String getBlackLabURL(String corpus, String trail, Map<String,Object> params) {
-		String url = this.labels.getString("blsUrlInternal")+ "/" + corpus + trail;
-		this.lastUrl = url;
-		String parameters = getParameterStringExcept(new String[]{}, params);
-		
-		if (parameters.length() > 0) {
-			url = url + "?" + parameters;
-		}
-		return url;
-	}
-
-	// TODO refactor: put in QueryServiceHandler
-	protected String getParameterStringExcept(String[] except, Map<String,Object> params) {
-		String parameters = "";
-		
-//		if (query != null) {
-//			Map<String,Object> params = query.getParameters();
-			for (String key : params.keySet()) {
-				if (!Arrays.asList(except).contains(key)) {
-					if (parameters.length() > 0)
-						parameters = parameters + "&" + key + "=" + params.get(key);
-					else
-						parameters = key + "=" +params.get(key);
-				}
-			}
-//		}
-		
-		parameters = parameters.replaceAll(" ", "%20");
-		return parameters;
-	}
 
 //	protected String getParameterStringExcept(String[] except) {
 //		String parameters = "";
@@ -489,7 +440,7 @@ public abstract class BaseResponse {
 		return builder.toString();
 	}
 
-	protected void loadMetaDataComponents() {
+	protected void loadMetaDataComponents(boolean includeQueryData) {
 //		Map<String,String> options = new HashMap<String,String>();
 //		Map<String,String> selectFields = new HashMap<String,String>();
 //		SortedSet<String> filters = new TreeSet<String>();
@@ -569,11 +520,12 @@ public abstract class BaseResponse {
 		Map<String,String> options = this.servlet.getMetadataHtmlGenerator().generateOptions(labels);
 		Map<String,String> selectFields = this.servlet.getMetadataHtmlGenerator().loadSelectFields(labels);
 		SortedSet<String> filters = this.servlet.getMetadataHtmlGenerator().loadFilters(labels);
-		Map<String,String> filterIds = this.servlet.getMetadataHtmlGenerator().loadFilterIds(labels);
-		this.getContext().put("queryRules", this.servlet.getMetadataHtmlGenerator().generateQueryRules(labels, query));
+//		Map<String,String> filterIds = this.servlet.getMetadataHtmlGenerator().loadFilterIds(labels);
+		if (includeQueryData)
+			this.getContext().put("queryRules", this.servlet.getMetadataHtmlGenerator().generateQueryRules(labels, query));
 		this.getContext().put("metaRule", this.servlet.getMetadataHtmlGenerator().generateEmptyRule(labels, filters, options));
 		this.getContext().put("filters", filters);
-		this.getContext().put("filterIds", filterIds);
+//		this.getContext().put("filterIds", filterIds);
 		this.getContext().put("metaOptions",options);
 		this.getContext().put("metaSelect",selectFields);
 		this.getContext().put("generator", this.servlet.getMetadataHtmlGenerator());

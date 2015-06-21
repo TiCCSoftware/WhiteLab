@@ -1,0 +1,44 @@
+#set($exceptArray=["view","docpid"])
+#set($docExceptArray=["group","view","docpid"])
+<ul class="nav nav-tabs" id="contentTabs">
+	#if($statstab == "freqlist")
+		<li id="result_list_link" class="tab-link active">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("explore.statistics.tabs.freqlist")</a>
+		</li>
+	#else
+		#set($url=$query.getUrl("explore/statistics","&view=12&tab=freqlist",false,$exceptArray))
+		<li id="result_list_link" class="tab-link">
+			<a href='${url}&group=hit:word'>$labels.getString("explore.statistics.tabs.freqlist")</a>
+		</li>
+	#end
+	#if($statstab == "doclist")
+		<li id="result_doclist_link" class="tab-link active">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("explore.statistics.tabs.doclist")</a>
+		</li>
+	#else
+		#set($url=$query.getUrl("explore/statistics","&view=4&tab=doclist",false,$docExceptArray))
+		<li id="result_doclist_link" class="tab-link">
+			<a href='$url'>$labels.getString("explore.statistics.tabs.doclist")</a>
+		</li>
+	#end
+	#if($statstab == "growth")
+		<li id="growth_link" class="tab-link active">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("explore.statistics.tabs.growth")</a>
+		</li>
+	#else
+		#set($url=$query.getUrl("explore/statistics","&view=4&tab=growth",false,$docExceptArray))
+		<li id="growth_link" class="tab-link">
+			<a href='$url'>$labels.getString("explore.statistics.tabs.growth")</a>
+		</li>
+	#end
+	#if($statstab == "wordcloud")
+		<li id="cloud_link" class="tab-link active">
+			<a href="#" onclick="event.preventDefault();">$labels.getString("explore.statistics.tabs.cloud")</a>
+		</li>
+	#else
+		#set($url=$query.getUrl("explore/statistics","&view=12&tab=wordcloud&group=hit:lemma",false,$docExceptArray))
+		<li id="cloud_link" class="tab-link">
+			<a href='$url'>$labels.getString("explore.statistics.tabs.cloud")</a>
+		</li>
+	#end
+</ul>

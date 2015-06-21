@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.uvt.whitelab.BaseResponse;
+import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.WhitelabDocument;
 import com.uvt.whitelab.util.XslTransformer;
 
@@ -25,6 +26,10 @@ public class DocumentResponse extends BaseResponse {
 	private String subType = null;
 	private String format = "json";
 	private WhitelabDocument document = null;
+	
+	public DocumentResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -61,12 +66,12 @@ public class DocumentResponse extends BaseResponse {
 			case "growth":
 				if (subType.equals("bare"))
 					try {
-						outparams.put("data", new JSONArray(document.getGrowthData(this.lang, format, true)));
+						outparams.put("data", new JSONArray(document.getGrowthData(this.lang, format, true, 0,0,0)));
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				else
-					outparams.put("data", document.getGrowthData(this.lang, format, false));
+					outparams.put("data", document.getGrowthData(this.lang, format, false, 0,0,0));
 				if (this.lang.equals("en"))
 					outparams.put("title", "Vocabulary Growth Curve");
 				else
@@ -179,6 +184,7 @@ public class DocumentResponse extends BaseResponse {
 			}
 			
 			if (document.getContent().length() == 0 || start != document.start) {
+				ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
 				Map<String,Object> params = query.getParameters();
 				
 				if (this.getParameter("type", "").equals("explore") && params.containsKey("patt"))
@@ -186,7 +192,7 @@ public class DocumentResponse extends BaseResponse {
 			
 				setTransformerDisplayParameters(docPid);
 
-				String response = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid+"/contents", params);
+				String response = resultHandler.getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid+"/contents", params);
 
 				try {
 					String documentStylesheet = loadStylesheet("article_folia.xsl");
@@ -200,7 +206,7 @@ public class DocumentResponse extends BaseResponse {
 				}
 				
 				if (document.getMetadata().length() == 0) {
-					String meta = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid, params);
+					String meta = resultHandler.getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+docPid, params);
 					try {
 						String metadataStylesheet = loadStylesheet("article_metadata.xsl");
 						String metaResult = transformer.transform(meta, metadataStylesheet);
@@ -267,7 +273,7 @@ public class DocumentResponse extends BaseResponse {
 
 	@Override
 	public DocumentResponse duplicate() {
-		return new DocumentResponse();
+		return new DocumentResponse("search");
 	}
 
 }

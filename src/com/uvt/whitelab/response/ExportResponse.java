@@ -12,20 +12,28 @@ import java.security.SecureRandom;
 //import java.util.HashMap;
 //import java.util.Map;
 
+
+
 import javax.servlet.ServletOutputStream;
 import javax.xml.transform.TransformerException;
 
 import com.uvt.whitelab.BaseResponse;
+import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.XslTransformer;
 
 public class ExportResponse extends BaseResponse {
 	private XslTransformer transformer = new XslTransformer();
 	private SecureRandom random = new SecureRandom();
+	
+	public ExportResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
 		
 		if (query != null) {
+			ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
 			String corpus = this.labels.getString("corpus");
 			Integer view = query.getView();
 			int max = query.getHits();
@@ -47,7 +55,7 @@ public class ExportResponse extends BaseResponse {
 				for (int f = 0; f < n; f = f + 2500) {
 					query.setFirst(f);
 					try {
-						String resp = getBlackLabResponse(corpus, trail, query.getParameters());
+						String resp = resultHandler.getBlackLabResponse(corpus, trail, query.getParameters());
 						String stylesheet = this.getExportStylesheet(view);
 						this.setTransformerDisplayParameters(f == 0,n);
 						result.append(transformer.transform(resp, stylesheet));
@@ -60,7 +68,7 @@ public class ExportResponse extends BaseResponse {
 				query.setFirst(prev_f);
 			} else {
 				try {
-					String resp = getBlackLabResponse(corpus, trail, query.getParameters());
+					String resp = resultHandler.getBlackLabResponse(corpus, trail, query.getParameters());
 					String stylesheet = this.getExportStylesheet(view);
 					this.setTransformerDisplayParameters(true,query.getNumber());
 					result.append(transformer.transform(resp, stylesheet));
@@ -205,7 +213,7 @@ public class ExportResponse extends BaseResponse {
 
 	@Override
 	public ExportResponse duplicate() {
-		return new ExportResponse();
+		return new ExportResponse("home");
 	}
 
 }

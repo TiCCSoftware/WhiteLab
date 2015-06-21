@@ -9,11 +9,16 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import com.uvt.whitelab.BaseResponse;
+import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.WhitelabDocument;
 import com.uvt.whitelab.util.XslTransformer;
 
 public class SearchDocumentResponse extends BaseResponse {
 	private XslTransformer transformer = new XslTransformer();
+	
+	public SearchDocumentResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -23,7 +28,8 @@ public class SearchDocumentResponse extends BaseResponse {
 			WhitelabDocument document = query.getDocument();
 			if (document != null) {
 				if (document.getXml().length() == 0 || query.getStart() != document.start) {
-					loadDocument(document);
+					ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
+					resultHandler.loadDocument(document, query, this.lang);
 				}
 				if (tab.equals("text")) {
 					this.getContext().put("content", document.getContent());
@@ -31,7 +37,7 @@ public class SearchDocumentResponse extends BaseResponse {
 					this.getContext().put("content", document.getMetadata());
 				} else if (tab.equals("statistics")) {
 					if (this.request.getParameterMap().containsKey("growth")) {
-						this.getContext().put("data", document.getGrowthData(this.lang, "json", false));
+						this.getContext().put("data", document.getGrowthDataString(this.lang, "json", false, 0,0,0));
 						this.getContext().put("statType", "growth");
 					} else if (this.request.getParameterMap().containsKey("posdata")) {
 						this.getContext().put("freqlist", document.getPosFreqList(this.getParameter("pos", "ADJ"), "json"));
@@ -93,37 +99,6 @@ public class SearchDocumentResponse extends BaseResponse {
 		return posColors;
 	}
 
-	private void loadDocument(WhitelabDocument document) {
-		Map<String,Object> params = query.getParameters();
-
-		String response = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+document.getId()+"/contents", params);
-
-		try {
-			setTransformerDisplayParameters(document.getId());
-			String documentStylesheet = loadStylesheet("article_folia.xsl");
-			String htmlResult = transformer.transformArticle(response, documentStylesheet, query.getStart(), query.getEnd());
-			document.setContent(htmlResult);
-			document.setXml(response);
-			document.start = query.getStart();
-			document.end = query.getEnd();
-			document.count();
-		} catch (IOException | TransformerException e) {
-			e.printStackTrace();
-		}
-		
-		String meta = getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+document.getId(), params);
-		
-		try {
-			setTransformerDisplayParameters(document.getId());
-			String metadataStylesheet = loadStylesheet("article_metadata.xsl");
-			String metaResult = transformer.transform(meta, metadataStylesheet);
-			document.setMetadata(metaResult);
-			document.setMetaXml(meta);
-		} catch (IOException | TransformerException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	protected void logRequest() {
 		this.servlet.log("SearchDocumentResponse");
@@ -131,42 +106,7 @@ public class SearchDocumentResponse extends BaseResponse {
 
 	@Override
 	public SearchDocumentResponse duplicate() {
-		return new SearchDocumentResponse();
-	}
-	
-	private void setTransformerDisplayParameters(String docPid) {
-		transformer.clearParameters();
-		String query = this.getParameter("query", "");
-		transformer.addParameter("query", query);
-		if (query.length() == 0)
-			transformer.addParameter("whitelab_page", "explore");
-		else
-			transformer.addParameter("whitelab_page", "search");
-		transformer.addParameter("doc_id", docPid);
-		transformer.addParameter("lang", this.lang);
-		
-		transformer.addParameter("title_name", this.labels.getString("document.meta.field.title"));
-		transformer.addParameter("author_name", this.labels.getString("document.meta.field.author"));
-		transformer.addParameter("description_name", this.labels.getString("document.meta.field.description"));
-		transformer.addParameter("document_id_name", this.labels.getString("document.meta.field.docid"));
-		transformer.addParameter("texttype_name", this.labels.getString("document.meta.field.texttype"));
-		transformer.addParameter("collection_name", this.labels.getString("document.meta.field.collection"));
-		transformer.addParameter("license_code_name", this.labels.getString("document.meta.field.licensecode"));
-		transformer.addParameter("license_date_name", this.labels.getString("document.meta.field.licensedate"));
-		transformer.addParameter("country_name", this.labels.getString("document.meta.field.country"));
-		transformer.addParameter("continent_name", this.labels.getString("document.meta.field.continent"));
-		transformer.addParameter("language_name", this.labels.getString("document.meta.field.language"));
-		
-		transformer.addParameter("by",this.labels.getString("result.by"));
-		transformer.addParameter("document_id", this.labels.getString("document.meta.docid"));
-		transformer.addParameter("texttype", this.labels.getString("document.meta.texttype"));
-		transformer.addParameter("collection", this.labels.getString("document.meta.collection"));
-		transformer.addParameter("license_code", this.labels.getString("document.meta.licensecode"));
-		transformer.addParameter("license_date", this.labels.getString("document.meta.licensedate"));
-		transformer.addParameter("country", this.labels.getString("document.meta.country"));
-		transformer.addParameter("continent", this.labels.getString("document.meta.continent"));
-		transformer.addParameter("language", this.labels.getString("document.meta.language"));
-		
+		return new SearchDocumentResponse("search");
 	}
 
 }

@@ -3,6 +3,10 @@ package com.uvt.whitelab.response.search;
 import com.uvt.whitelab.BaseResponse;
 
 public class SimpleResponse extends BaseResponse {
+	
+	public SimpleResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -18,7 +22,7 @@ public class SimpleResponse extends BaseResponse {
 
 	@Override
 	public SimpleResponse duplicate() {
-		return new SimpleResponse();
+		return new SimpleResponse("search");
 	}
 
 }

@@ -126,26 +126,23 @@
 	}
 	
 	#[[
-	$(document).on("change", "select.metaLabel", function(e) {
+	$(document).on("change", "select.metaLabel.switchable", function(e) {
 		e.preventDefault();
-		console.log("metaLabel changed");
 		
 		var val = $(this).val();
-		console.log("metaLabel value: "+val);
 		var chk = 0;
 		var inputParent = $(this).parent().parent().find(".metaInput").parent();
 		]]#
 		
 		#set($d = "'")
 		#foreach($sfield in $filters)
-			#set($f = $filterIds.get($sfield))
 			#set($b="if (val === 'field:")
 			#set($a="') {")
-			${b}${f}${a}
+			${b}${sfield}${a}
 			#[[
 				chk = 1;
 				$(inputParent).html(''+
-				]]# ${d}$metaSelect.get($f)${d} #[[
+				]]# ${d}$metaSelect.get($sfield)${d} #[[
 				+'');
 			}
 			]]#

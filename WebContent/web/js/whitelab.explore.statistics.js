@@ -58,31 +58,31 @@ Whitelab.explore.statistics = {
 		}
 	},
 	
-	clearData : function() {
-		Whitelab.explore.statistics.hitsLoaded = false;
-		Whitelab.explore.statistics.docsLoaded = false;
-		Whitelab.explore.statistics.vocabLoaded = false;
-		Whitelab.explore.statistics.detailsSet = false;
-		Whitelab.explore.statistics.cloud = null;
-		Whitelab.explore.statistics.chart = null;
-		Whitelab.explore.statistics.chartData = null;
-		Whitelab.explore.statistics.chartDataOffset = 0;
-		Whitelab.explore.statistics.chartOptions = null;
-		Whitelab.explore.statistics.typesSeen = {};
-		Whitelab.explore.statistics.lemmasSeen = {};
-		Whitelab.explore.statistics.tokensProcessed = 0;
-
-		$("#stats div.info span > div").html("");
-		$("#stats div.info").addClass("hidden");
-		Whitelab.explore.statistics.switchTab('result_list');
-		$("#result_statistics").addClass("hidden");
-		$("#result_status").addClass("hidden");
-		$("#result_status").html("");
-		$("#result_list").html("");
-		$("#result_doclist").html("");
-		$("#vocabChartDisplay").html("");
-		$("#cloudDisplay").html("");
-	},
+//	clearData : function() {
+//		Whitelab.explore.statistics.hitsLoaded = false;
+//		Whitelab.explore.statistics.docsLoaded = false;
+//		Whitelab.explore.statistics.vocabLoaded = false;
+//		Whitelab.explore.statistics.detailsSet = false;
+//		Whitelab.explore.statistics.cloud = null;
+//		Whitelab.explore.statistics.chart = null;
+//		Whitelab.explore.statistics.chartData = null;
+//		Whitelab.explore.statistics.chartDataOffset = 0;
+//		Whitelab.explore.statistics.chartOptions = null;
+//		Whitelab.explore.statistics.typesSeen = {};
+//		Whitelab.explore.statistics.lemmasSeen = {};
+//		Whitelab.explore.statistics.tokensProcessed = 0;
+//
+//		$("#stats div.info span > div").html("");
+//		$("#stats div.info").addClass("hidden");
+//		Whitelab.explore.statistics.switchTab('result_list');
+//		$("#result_statistics").addClass("hidden");
+//		$("#result_status").addClass("hidden");
+//		$("#result_status").html("");
+//		$("#result_list").html("");
+//		$("#result_doclist").html("");
+//		$("#vocabChartDisplay").html("");
+//		$("#cloudDisplay").html("");
+//	},
 	
 	displayResult : function(response) {
 		if (response != null) {
@@ -147,6 +147,40 @@ Whitelab.explore.statistics = {
 			Whitelab.debug(Whitelab.baseUrl + "export?"+params);
 			window.location = Whitelab.baseUrl + "export?"+params;
 		}
+	},
+	
+	composeQuery : function(type) {
+		Whitelab.explore.statistics.setDefaults();
+		
+		if (Whitelab.hasOwnProperty("meta") && !Whitelab.explore.statistics.detailsSet)
+			Whitelab.explore.statistics.filterQuery = Whitelab.meta.parseQuery();
+		if (Whitelab.search.within != null && Whitelab.search.within == "paragraph") {
+			Whitelab.explore.statistics.query += " within (<p/>|<event/>)";
+		} else if (Whitelab.search.within != null && Whitelab.search.within == "sentence") {
+			Whitelab.explore.statistics.query += " within <s/>";
+		}
+
+		if (Whitelab.explore.statistics.filterQuery.length == 0) {
+			if (!Whitelab.hasOwnProperty("tour") || Whitelab.tour.page == null)
+				alert("Please define a metadata filter.");
+		} else {
+			
+			if (type === "docs") {
+				Whitelab.explore.statistics.view = 4;
+				Whitelab.explore.statistics.group_by = "";
+			} else {
+				if (!Whitelab.explore.statistics.detailsSet) {
+					Whitelab.explore.statistics.group_by = $('select#stats-groupSelect').val();
+				} else {
+					Whitelab.explore.statistics.group_by = $("#stats-group").html();
+				}
+			}
+			
+			Whitelab.explore.statistics.setQueryDetails();
+			Whitelab.explore.statistics.setSearchParams();
+			$("#result_statistics").removeClass("hidden");
+		}
+		return Whitelab.explore.statistics.params;
 	},
 	
 	execute : function(type) {
@@ -311,7 +345,7 @@ Whitelab.explore.statistics = {
 		+ "&number=" + Whitelab.explore.statistics.number;
 		
 		if (Whitelab.explore.statistics.view == 12)
-			Whitelab.explore.statistics.params = Whitelab.explore.statistics.params + "&group_by=hit:" + Whitelab.explore.statistics.group_by;
+			Whitelab.explore.statistics.params = Whitelab.explore.statistics.params + "&group=hit:" + Whitelab.explore.statistics.group_by;
 		
 		if (Whitelab.explore.statistics.filterQuery.length > 0)
 			Whitelab.explore.statistics.params = Whitelab.explore.statistics.params + "&" + Whitelab.explore.statistics.filterQuery;

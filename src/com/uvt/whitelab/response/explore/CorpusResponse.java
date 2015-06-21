@@ -9,6 +9,10 @@ import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.MetadataField;
 
 public class CorpusResponse extends BaseResponse {
+	
+	public CorpusResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -25,7 +29,7 @@ public class CorpusResponse extends BaseResponse {
 
 	@Override
 	public CorpusResponse duplicate() {
-		return new CorpusResponse();
+		return new CorpusResponse("explore");
 	}
 	
 	private void loadTreemapOptions() {

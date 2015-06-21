@@ -103,7 +103,7 @@ public class WhitelabDocument {
 		return types;
 	}
 
-	public String getGrowthData(String lang, String format, Boolean bare) {
+	public JSONArray getGrowthData(String lang, String format, Boolean bare, int startIndex, int startValue1, int startValue2) {
 		JSONArray data = new JSONArray();
 		List<String> doneT = new ArrayList<String>();
 		List<String> doneL = new ArrayList<String>();
@@ -127,9 +127,9 @@ public class WhitelabDocument {
 			}
 		}
 		
-		int x = 0;
-		int y1 = 0;
-		int y2 = 0;
+		int x = startIndex;
+		int y1 = startValue1;
+		int y2 = startValue2;
 		
 		try {
 			JSONArray zero = new JSONArray();
@@ -189,6 +189,11 @@ public class WhitelabDocument {
 			}
 		}
 		
+		return data;
+	}
+	
+	public String getGrowthDataString(String lang, String format, Boolean bare, int startIndex, int startValue1, int startValue2) {
+		JSONArray data = getGrowthData(lang, format, bare, startIndex, startValue1, startValue2);
 		if (format.equals("csv")) {
 			List<Integer> skip = new ArrayList<Integer>();
 			skip.add(2);

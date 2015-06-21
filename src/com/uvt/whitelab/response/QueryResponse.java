@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.MetadataField;
+import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.StringCleaner;
 import com.uvt.whitelab.util.XslTransformer;
 
@@ -36,6 +37,10 @@ public class QueryResponse extends BaseResponse {
 	private XslTransformer transformer = new XslTransformer();
 	private Integer view = 1;
 	private boolean getCount = false;
+
+	public QueryResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
@@ -88,8 +93,9 @@ public class QueryResponse extends BaseResponse {
 				sendResponse(output);
 				
 			} else {
-			
-				String resp = getBlackLabResponse(corpus, trail, params);
+
+				ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
+				String resp = resultHandler.getBlackLabResponse(corpus, trail, params);
 				String counting = isStillCounting(resp);
 				Integer hits = getHitsFromXML(resp);
 				Integer docs = getDocsFromXML(resp);
@@ -337,7 +343,7 @@ public class QueryResponse extends BaseResponse {
 
 	@Override
 	public QueryResponse duplicate() {
-		return new QueryResponse();
+		return new QueryResponse("search");
 	}
 
 }

@@ -101,17 +101,17 @@ public class MetadataHtmlGenerator {
 		return filters;
 	}
 	
-	public Map<String,String> loadFilterIds(ResourceBundle labels) {
-		Map<String,String> filterIds = new HashMap<String,String>();
-		for (MetadataField dataField : this.servlet.getMetadataFields()) {
-			String fieldName = dataField.getName();
-			if (labels.containsKey("metadataFields."+fieldName))
-				fieldName = labels.getString("metadataFields."+fieldName);
-			
-			filterIds.put(fieldName, dataField.getName());
-		}
-		return filterIds;
-	}
+//	public Map<String,String> loadFilterIds(ResourceBundle labels) {
+//		Map<String,String> filterIds = new HashMap<String,String>();
+//		for (MetadataField dataField : this.servlet.getMetadataFields()) {
+//			String fieldName = dataField.getName();
+//			if (labels.containsKey("metadataFields."+fieldName))
+//				fieldName = labels.getString("metadataFields."+fieldName);
+//			
+//			filterIds.put(fieldName, dataField.getName());
+//		}
+//		return filterIds;
+//	}
 	
 	public Map<String,String> loadSelectFields(ResourceBundle labels) {
 		Map<String,String> selectFields = new HashMap<String,String>();
@@ -183,10 +183,14 @@ public class MetadataHtmlGenerator {
 		List<String> queryRules = new ArrayList<String>();
 		Map<String,Map<String,List<String>>> queryFilters = query.getFilters();
 		for (String filter : queryFilters.keySet()) {
-			for (String value : queryFilters.get(filter).get("is"))
-				queryRules.add(generateRule(labels,filter,"is",value));
-			for (String value : queryFilters.get(filter).get("isnot"))
-				queryRules.add(generateRule(labels,filter,"isnot",value));
+			if (queryFilters.get(filter).containsKey("is")) {
+				for (String value : queryFilters.get(filter).get("is"))
+					queryRules.add(generateRule(labels,filter,"is",value));
+			}
+			if (queryFilters.get(filter).containsKey("isnot")) {
+				for (String value : queryFilters.get(filter).get("isnot"))
+					queryRules.add(generateRule(labels,filter,"isnot",value));
+			}
 		}
 		return StringUtils.join(queryRules.toArray(),"");
 	}
@@ -194,7 +198,7 @@ public class MetadataHtmlGenerator {
 	public String generateRule(ResourceBundle labels, String metaLabel, String operator, String metaValue) {
 		String rule = "<div class=\"rule row large-16 medium-16 small-16\">"
 				+ "<div class=\"large-4 medium-4 small-4 columns\">"
-				+ "<select class=\"metaLabel\">"
+				+ "<select class=\"metaLabel switchable\">"
 				+ "<option value=\""+metaLabel+"\" selected=\"true\">"+metaLabel+"</option>"
 				+ "</select>"
 				+ "</div>"
@@ -226,7 +230,7 @@ public class MetadataHtmlGenerator {
 	public String generateEmptyRule(ResourceBundle labels, SortedSet<String> filters, Map<String, String> options) {
 		String rule = "<div class=\"rule row large-16 medium-16 small-16\">"
 				+ "<div class=\"large-4 medium-4 small-4 columns\">"
-				+ "<select class=\"metaLabel\">"
+				+ "<select class=\"metaLabel switchable\">"
 				+ "<option value=\"\" disabled=\"true\" selected=\"true\"></option>";
 			
 			Iterator<String> it = filters.iterator();

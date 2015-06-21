@@ -8,11 +8,18 @@ import com.uvt.whitelab.util.FieldDescriptor;
 import com.uvt.whitelab.util.FieldDescriptor.ValuePair;
 
 public class ExtendedResponse extends BaseResponse {
+	
+	public ExtendedResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
 		loadProperties();
-		loadMetaDataComponents();
+		if (query == null)
+			loadMetaDataComponents(false);
+		else
+			loadMetaDataComponents(true);
 		
 		this.getContext().put("showMetaOptions", "yes");
 		this.displayHtmlTemplate(this.servlet.getTemplate("search/extended"));
@@ -45,7 +52,7 @@ public class ExtendedResponse extends BaseResponse {
 
 	@Override
 	public ExtendedResponse duplicate() {
-		return new ExtendedResponse();
+		return new ExtendedResponse("search");
 	}
 
 }
