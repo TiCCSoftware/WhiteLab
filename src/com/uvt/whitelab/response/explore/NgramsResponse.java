@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.FieldDescriptor;
+import com.uvt.whitelab.util.ResultHandler;
+import com.uvt.whitelab.util.SessionManager;
 
 public class NgramsResponse extends BaseResponse {
 	
@@ -18,11 +20,21 @@ public class NgramsResponse extends BaseResponse {
 	@Override
 	protected void completeRequest() {
 		loadPosValues();
+		int nsize = this.getParameter("size", 5);
 		if (query == null)
 			loadMetaDataComponents(false);
-		else
+		else {
+			ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
+			
+			query.resetStatus();
+			query = resultHandler.executeQuery(query,"/hits");
+			
 			loadMetaDataComponents(true);
+			this.getContext().put("query", query);
+			this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
+		}
 
+		this.getContext().put("size", nsize);
 		this.getContext().put("showMetaOptions", "no");
 		this.displayHtmlTemplate(this.servlet.getTemplate("explore/ngrams"));
 	}

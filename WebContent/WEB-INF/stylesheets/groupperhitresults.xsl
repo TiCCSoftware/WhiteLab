@@ -467,7 +467,7 @@
 			<div class="small-text large-3 medium-3 small-4 columns">
 				<xsl:value-of select="$result_page" />
 				<input type="hidden" class="max-results"><xsl:attribute name="value"><xsl:value-of select="$resultsPerPage" /></xsl:attribute></input>
-				<input class="page-select meta-small" type="number" min="1">
+				<input id="page-select" class="page-select meta-small" type="number" min="1">
 					<xsl:attribute name="max"><xsl:value-of select="$numberOfPages" /></xsl:attribute>
 					<xsl:attribute name="value"><xsl:value-of select="$currentPage" /></xsl:attribute>
 				</input>

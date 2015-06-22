@@ -1,11 +1,15 @@
 #set($src='../web/img/plus.png')
+#set($metaActive="")
 #if($maintab == 'explore')
 	#set($src='../web/img/minus.png')
+	#set($metaActive="active")
+#elseif($query && $tab != "simple")
+	#set($metaActive="active")
 #end
 <dl class="accordion large-16 medium-16 small-16" id="accordion" data-accordion>
 	<dd class="accordion-navigation large-16 medium-16 small-16">
 		<a href="#${maintab}-meta" class="large-16 medium-16 small-16 meta-top-plus" onclick="Whitelab.meta.switchState(this);"><img class="img-plus" src="${src}"><h6>Metadata filters</h6></a>
-		<div id="${maintab}-meta" class="content content-meta large-16 medium-16 small-16">
+		<div id="${maintab}-meta" class="content content-meta large-16 medium-16 small-16 $metaActive">
 			<div class="meta-header large-16 medium-16 small-16">
 				<p>$labels.getString("meta.header")</p>
 			</div>

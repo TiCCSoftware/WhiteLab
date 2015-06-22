@@ -50,7 +50,7 @@
 						#set($statsHits="")
 						#set($statsDocs="")
 						#if($query)
-							#set($statsFilter=$query.getFilterUrlParameters(false))
+							#set($statsFilter=$query.getFilter())
 							#set($statsGroup=$query.getGroup())
 							#set($statsCount=$query.getGroups())
 							#set($statsHits=$query.getHits())

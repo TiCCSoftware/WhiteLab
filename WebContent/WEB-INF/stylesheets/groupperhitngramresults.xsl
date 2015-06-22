@@ -2,6 +2,11 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
+	<xsl:param name="query_result_url" select="''"/>
+	<xsl:param name="query_document_url" select="''"/>
+	<xsl:param name="query_export_url" select="''"/>
+	
+	<xsl:param name="group_by_name" select="''" />
 	<xsl:param name="sort_by" select="''"/>
 	<xsl:param name="group" select="''" />
 	<xsl:param name="hits" select="''" />
@@ -47,40 +52,58 @@
 							<tr>
 								<th class="tbl_groupname">
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.explore.ngram.update({sort:''})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=10&amp;from=6&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="$group" />
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.explore.ngram.update({sort:'identity'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=10&amp;from=6&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=identity</xsl:text>
 										</xsl:attribute>
 										&#9650;
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.explore.ngram.update({sort:'-identity'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=10&amp;from=6&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=-identity</xsl:text>
 										</xsl:attribute>
 										&#9660;
 									</a>
 								</th>
 								<th>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.explore.ngram.update({sort:''})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=10&amp;from=6&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="$hits" />
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.explore.ngram.update({sort:'-size'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=10&amp;from=6&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=-size</xsl:text>
 										</xsl:attribute>
 										&#9650;
 									</a>
 									<a>
-										<xsl:attribute name="onclick">
-											<xsl:text>Whitelab.explore.ngram.update({sort:'size'})</xsl:text>
+										<xsl:attribute name="href">
+											<xsl:value-of select="$query_result_url" />
+											<xsl:text>&amp;view=10&amp;from=6&amp;group=</xsl:text>
+											<xsl:value-of select="$group_by_name" />
+											<xsl:text>&amp;sort=size</xsl:text>
 										</xsl:attribute>
 										&#9660;
 									</a>
@@ -123,7 +146,11 @@
 	<xsl:template name="export">
 		<div class="export large-16 medium-16 small-16 row">
 			<button class="small">
-				<xsl:attribute name="onclick"><xsl:text>Whitelab.explore.ngram.doExport();</xsl:text></xsl:attribute>
+				<xsl:attribute name="onclick">
+					<xsl:text>document.location.href='</xsl:text>
+					<xsl:value-of select="$query_export_url" />
+					<xsl:text>'</xsl:text>
+				</xsl:attribute>
 				<xsl:value-of select="$result_export"/>
 			</button>
 		</div>
@@ -154,7 +181,12 @@
 				<xsl:value-of select="$result_pagination_show" />
 				<select class="show-select meta-small">
 					<xsl:attribute name="onchange">
-						<xsl:text>Whitelab.explore.ngram.update({number : $(this).val(), sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+						<xsl:text>window.location.href=&quot;</xsl:text>
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=10&amp;from=6&amp;number=&quot;+$(this).val()+&quot;&amp;group=</xsl:text>
+						<xsl:value-of select="$group_by_name" />
+						<xsl:text>&amp;sort=</xsl:text>
+						<xsl:value-of select="$sort_by" /><xsl:text>&quot;;</xsl:text>
 					</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="$resultsPerPage = 200">
@@ -191,8 +223,14 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.explore.ngram.update({first:0, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=10&amp;from=6&amp;first=0&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;&lt;'" />
 								</a>
@@ -208,10 +246,16 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.explore.ngram.update({first:</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=10&amp;from=6&amp;first=</xsl:text>
 										<xsl:value-of select="($currentPage - 2) * $resultsPerPage" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+										<xsl:text>&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&lt;'" />
 								</a>
@@ -243,10 +287,16 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.explore.ngram.update({first:</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=10&amp;from=6&amp;first=</xsl:text>
 										<xsl:value-of select="($currentPage * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+										<xsl:text>&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;'" />
 								</a>
@@ -262,10 +312,16 @@
 						<xsl:otherwise>
 							<li>
 								<a>
-									<xsl:attribute name="onclick">
-										<xsl:text>Whitelab.explore.ngram.update({first:</xsl:text>
+									<xsl:attribute name="href">
+										<xsl:value-of select="$query_result_url" />
+										<xsl:text>&amp;view=10&amp;from=6&amp;first=</xsl:text>
 										<xsl:value-of select="(($numberOfPages - 1) * $resultsPerPage)" />
-										<xsl:text>, number:</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+										<xsl:text>&amp;number=</xsl:text>
+										<xsl:value-of select="$resultsPerPage"/>
+										<xsl:text>&amp;group=</xsl:text>
+										<xsl:value-of select="$group_by_name" />
+										<xsl:text>&amp;sort=</xsl:text>
+										<xsl:value-of select="$sort_by" />
 									</xsl:attribute>
 									<xsl:value-of select="'&gt;&gt;'" />
 								</a>
@@ -277,7 +333,7 @@
 			<div class="small-text large-3 medium-3 small-4 columns">
 				<xsl:value-of select="$result_page" />
 				<input type="hidden" class="max-results"><xsl:attribute name="value"><xsl:value-of select="$resultsPerPage" /></xsl:attribute></input>
-				<input class="page-select meta-small" type="number" min="1">
+				<input id="page-select" class="page-select meta-small" type="number" min="1">
 					<xsl:attribute name="max"><xsl:value-of select="$numberOfPages" /></xsl:attribute>
 					<xsl:attribute name="value"><xsl:value-of select="$currentPage" /></xsl:attribute>
 				</input>
@@ -285,7 +341,16 @@
 				<xsl:value-of select="$numberOfPages" /><xsl:text> </xsl:text>
 				<button class="small go">
 					<xsl:attribute name="onclick">
-						<xsl:text>Whitelab.explore.ngram.goToPage(this,</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>,'</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>')</xsl:text>
+						<xsl:text>var value = ($('#page-select').val() - 1) *</xsl:text><xsl:value-of select="$resultsPerPage"/><xsl:text>;</xsl:text>
+						<xsl:text>document.location.href='</xsl:text>
+						<xsl:value-of select="$query_result_url" />
+						<xsl:text>&amp;view=10&amp;from=6&amp;first='+value+'&amp;number=</xsl:text>
+						<xsl:value-of select="$resultsPerPage"/>
+						<xsl:text>&amp;group=</xsl:text>
+						<xsl:value-of select="$group_by_name" />
+						<xsl:text>&amp;sort=</xsl:text>
+						<xsl:value-of select="$sort_by" />
+						<xsl:text>';</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$result_go" />
 				</button>
@@ -310,10 +375,16 @@
 			<xsl:otherwise>
 				<li>
 					<a>
-						<xsl:attribute name="onclick">
-							<xsl:text>Whitelab.explore.ngram.update({first:</xsl:text>
+						<xsl:attribute name="href">
+							<xsl:value-of select="$query_result_url" />
+							<xsl:text>&amp;view=10&amp;from=6&amp;first=</xsl:text>
 							<xsl:value-of select="($start - 1) * $perpage" />
-							<xsl:text>, number:</xsl:text><xsl:value-of select="$perpage"/><xsl:text>, sort : '</xsl:text><xsl:value-of select="$sort_by" /><xsl:text>'})</xsl:text>
+							<xsl:text>&amp;number=</xsl:text>
+							<xsl:value-of select="$perpage"/>
+							<xsl:text>&amp;group=</xsl:text>
+							<xsl:value-of select="$group_by_name" />
+							<xsl:text>&amp;sort=</xsl:text>
+							<xsl:value-of select="$sort_by" />
 						</xsl:attribute>
 						<xsl:value-of select="$start" />
 					</a>

@@ -218,9 +218,20 @@ public class ResultHandler {
 		if (sort.length() > 0)
 			transformer.addParameter("sort_by", sort);
 
-		transformer.addParameter("query_result_url",query.getUrl("search/results", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
-		transformer.addParameter("query_document_url",query.getUrl("search/document", null, false, new String[] { "pattern", "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
-		transformer.addParameter("query_export_url",query.getUrl("page/export", null, true, new String[] {}));
+		int from = query.getFrom();
+		if (from <= 4) {
+			transformer.addParameter("query_result_url",query.getUrl("search/results", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
+			transformer.addParameter("query_document_url",query.getUrl("search/document", null, false, new String[] { "pattern", "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
+			transformer.addParameter("query_export_url",query.getUrl("page/export", null, true, new String[] {}));
+		} else if (from == 5) {
+			transformer.addParameter("query_result_url",query.getUrl("explore/statistics", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
+			transformer.addParameter("query_document_url",query.getUrl("explore/document", null, false, new String[] { "pattern", "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
+			transformer.addParameter("query_export_url",query.getUrl("page/export", "&from=5", true, new String[] {}));
+		} else if (from == 6) {
+			transformer.addParameter("query_result_url",query.getUrl("explore/ngrams", null, false, new String[] { "view", "group", "sort", "first", "number", "docpid", "start", "end" }));
+			transformer.addParameter("query_document_url",query.getUrl("explore/document", null, false, new String[] { "pattern", "view", "group", "sort", "first", "number", "docpid", "start", "end", "from" }));
+			transformer.addParameter("query_export_url",query.getUrl("page/export", "&from=6", true, new String[] {}));
+		}
 		
 		transformer.addParameter("per_hit",labels.getString("result.per_hit"));
 		transformer.addParameter("per_doc",labels.getString("result.per_doc"));
