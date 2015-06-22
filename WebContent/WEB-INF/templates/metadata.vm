@@ -16,8 +16,9 @@
 			<div class="row rules large-offset-1 medium-offset-1 small-offset-1">
 				#if($queryRules)
 					$queryRules
+				#else
+					$metaRule
 				#end
-				$metaRule
 			</div>
 			<div class="meta-footer large-16 medium-16 small-16">
 				#if($showMetaOptions && $showMetaOptions == "yes")

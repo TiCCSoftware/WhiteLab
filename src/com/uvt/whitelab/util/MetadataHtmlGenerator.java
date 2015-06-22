@@ -142,6 +142,47 @@ public class MetadataHtmlGenerator {
 		return selectFields;
 	}
 	
+	public String loadSelectField(ResourceBundle labels, String metaLabel, String metaValue) {
+		this.servlet.log("METAVALUE: '"+metaValue+"'");
+		String select = "";
+		for (MetadataField dataField : this.servlet.getMetadataFields()) {
+			if (dataField.getName().equals(metaLabel)) {
+				if (dataField.numberOfValues() > 0) {
+					List<String> vals = new ArrayList<String>();
+					Map<String,String> fdOptions = new HashMap<String,String>();
+					for (String value : dataField.getValues()) {
+						vals.add(value);
+						if (value.equals(metaValue))
+							fdOptions.put(value, "<option value=\""+value+"\" selected>"+value+"</option>");
+						else
+							fdOptions.put(value, "<option value=\""+value+"\">"+value+"</option>");
+					}
+	
+					if (metaValue.length() == 0)
+						select = "<select class=\"metaInput\"><option value=\"\" selected></option>";
+					else
+						select = "<select class=\"metaInput\"><option value=\"\"></option>";
+					
+					SortedSet<String> keys = new TreeSet<String>(vals);
+					for (String fieldValue : keys) {
+						select = select+fdOptions.get(fieldValue);
+					}
+					if (!dataField.isComplete()) {
+						if (metaValue.equals("other"))
+							select = select+"<option value=\"other\" selected>"+labels.getString("other")+"</option>";
+						else
+							select = select+"<option value=\"other\">"+labels.getString("other")+"</option>";
+					}
+					
+					select = select+"</select>";
+				} else {
+					select = "<input class=\"metaInput\" type=\"text\" value=\""+metaValue+"\" />";
+				}
+			}
+		}
+		return select;
+	}
+	
 	public Map<String,String> generateOptions(ResourceBundle labels) {
 		Map<String,String> options = new HashMap<String,String>();
 		for (MetadataField dataField : this.servlet.getMetadataFields()) {
@@ -177,7 +218,7 @@ public class MetadataHtmlGenerator {
 		return option;
 	}
 	
-	public String generateQueryRules(ResourceBundle labels, Query query) {
+	public String generateQueryRules(ResourceBundle labels, SortedSet<String> filters, Map<String, String> options, Query query) {
 		if (query == null)
 			return "";
 		List<String> queryRules = new ArrayList<String>();
@@ -185,36 +226,49 @@ public class MetadataHtmlGenerator {
 		for (String filter : queryFilters.keySet()) {
 			if (queryFilters.get(filter).containsKey("is")) {
 				for (String value : queryFilters.get(filter).get("is"))
-					queryRules.add(generateRule(labels,filter,"is",value));
+					queryRules.add(generateRule(labels,filters,options,filter,"is",value));
 			}
 			if (queryFilters.get(filter).containsKey("isnot")) {
 				for (String value : queryFilters.get(filter).get("isnot"))
-					queryRules.add(generateRule(labels,filter,"isnot",value));
+					queryRules.add(generateRule(labels,filters,options,filter,"isnot",value));
 			}
 		}
 		return StringUtils.join(queryRules.toArray(),"");
 	}
 
-	public String generateRule(ResourceBundle labels, String metaLabel, String operator, String metaValue) {
+	public String generateRule(ResourceBundle labels, SortedSet<String> filters, Map<String, String> options, String metaLabel, String operator, String metaValue) {
+		metaValue = metaValue.replaceAll("\"", "");
 		String rule = "<div class=\"rule row large-16 medium-16 small-16\">"
 				+ "<div class=\"large-4 medium-4 small-4 columns\">"
 				+ "<select class=\"metaLabel switchable\">"
-				+ "<option value=\""+metaLabel+"\" selected=\"true\">"+metaLabel+"</option>"
-				+ "</select>"
+				+ "<option value=\"\" disabled=\"true\"></option>";
+			
+			Iterator<String> it = filters.iterator();
+			while (it.hasNext()) {
+				String option = options.get(it.next());
+				if (option.contains("value=\"field:"+metaLabel)) {
+					option = option.substring(0, option.indexOf(">")) + " selected=\"true\"" + option.substring(option.indexOf(">"));
+				}
+				rule = rule + option;
+			}
+				
+			rule = rule + "</select>"
 				+ "</div>"
 				+ "<div class=\"large-3 medium-3 small-3 columns\">"
 				+ "<select class=\"metaOperator\">";
-		
-		if (operator.equals("is"))
-			rule = rule + "<option value=\"is\" selected=\"true\">"+labels.getString("meta.is")+"</option>";
-		else
-			rule = rule + "<option value=\"not\" selected=\"true\">"+labels.getString("meta.not")+"</option>";
-				
-		rule = rule + "</select>"
+			
+			if (operator.equals("is"))
+				rule = rule + "<option value=\"is\" selected=\"true\">"+labels.getString("meta.is")+"</option><option value=\"not\">"+labels.getString("meta.not")+"</option>";
+			else
+				rule = rule + "<option value=\"is\">"+labels.getString("meta.is")+"</option><option value=\"not\" selected=\"true\">"+labels.getString("meta.not")+"</option>";
+			
+			rule = rule + "</select>"
 				+ "</div>"
-				+ "<div class=\"large-7 medium-7 small-7 columns\">"
-				+ "<input class=\"metaInput\" type=\"text\" value=\""+metaValue+"\">"
-				+ "</div>"
+				+ "<div class=\"large-7 medium-7 small-7 columns\">";
+			
+			rule = rule + loadSelectField(labels, metaLabel, metaValue);
+			
+			rule = rule + "</div>"
 				+ "<div class=\"large-2 medium-2 small-2 columns\">"
 				+ "<a class=\"meta-min\" onclick=\"Whitelab.meta.removeRule(this)\">"
 				+ "<img src=\"../web/img/minus.png\">"
