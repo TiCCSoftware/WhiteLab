@@ -111,6 +111,8 @@ public abstract class BaseResponse {
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
 		
+		this.servlet.log("QUERY VIEW: "+view);
+		
 		if (id.length() > 0 && view != 9 && view != 17) {
 			query = SessionManager.getQuery(session, id, from);
 			if (query == null || (from <= 4 && patt.length() > 0 && !query.equalPattern(patt,within)))

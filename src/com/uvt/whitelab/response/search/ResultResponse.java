@@ -19,7 +19,7 @@ public class ResultResponse extends BaseResponse {
 	@Override
 	protected void completeRequest() {
 		
-		int view = 1;
+		int view = this.getParameter("view", 1);
 		
 		if (query != null) {
 			view = query.getView();

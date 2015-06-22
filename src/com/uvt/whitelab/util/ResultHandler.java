@@ -3,6 +3,7 @@ package com.uvt.whitelab.util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,18 +26,6 @@ public class ResultHandler {
 	private WhiteLab servlet;
 	private XslTransformer transformer = null;
 	private ResourceBundle labels;
-//	private String query_id = null;
-//	private String query = null;
-//	private String group = null;
-//	private String sort = null;
-//	private Query query;
-	
-//	public ResultHandler(WhiteLab s, String qid, String q) {
-//		servlet = s;
-//		query_id = qid;
-//		query = q;
-//		transformer = new XslTransformer();
-//	}
 	
 	public ResultHandler(WhiteLab s, ResourceBundle l) {
 		servlet = s;
@@ -57,10 +46,6 @@ public class ResultHandler {
 			if (view == 2 || view == 16 || view == 17)
 				trail = "/docs";
 		}
-		if (view == 9)
-			query.setView(1);
-		else if (view == 17)
-			query.setView(2);
 		
 		if (view >= 8 && view != 9 && view != 17 && query.getGroup().length() == 0)
 			html = parseResult(resp,this.labels,query);
@@ -185,6 +170,7 @@ public class ResultHandler {
 	}
 
 	private String getStylesheet(Integer view, boolean check) throws IOException {
+		this.servlet.log("STYLESHEET VIEW: "+view);
 		String stylesheet = "";
 		if (view == 1) {
 			return loadStylesheet("perhitresults.xsl");
@@ -236,6 +222,11 @@ public class ResultHandler {
 		
 		if (query != null) {
 			transformer.addParameter("query", query.getPattern());
+			try {
+				transformer.addParameter("query_filter", query.getFilterUrlParameters(false));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 
 		transformer.addParameter("query_id",query.getId());
@@ -243,7 +234,8 @@ public class ResultHandler {
 		String group = query.getGroup();
 		if (group.length() > 0) {
 			transformer.addParameter("group_by_name", group);
-			transformer.addParameter("group_by_name_clean", group.replaceAll("field:", ""));
+			String cleanGroup = group.replaceAll("field:", "").replaceAll("hit:", "");
+			transformer.addParameter("group_by_name_clean", cleanGroup);
 		}
 		
 		String sort = query.getSort();

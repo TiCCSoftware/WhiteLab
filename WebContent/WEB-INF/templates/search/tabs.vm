@@ -10,17 +10,19 @@
 #set($advancedUrl="/whitelab/search/advanced")
 #set($expertUrl="/whitelab/search/expert")
 #set($emptyArray=[])
-#if($query && $query.getFrom() == 1)
-	#set($simpleUrl=$query.getUrl("search/simple",null,true,$emptyArray))
-#end
-#if($query && $query.getFrom() <= 2)
-	#set($extendedUrl=$query.getUrl("search/extended",null,true,$emptyArray))
-#end
-#if($query && $query.getFrom() <= 3)
-	#set($advancedUrl=$query.getUrl("search/advanced",null,true,$emptyArray))
-#end
-#if($query && $query.getFrom() <= 4)
-	#set($expertUrl=$query.getUrl("search/expert",null,true,$emptyArray))
+#if ($tab != "results" && $tab != "document")
+	#if($query && $query.getFrom() == 1)
+		#set($simpleUrl=$query.getUrl("search/simple",null,true,$emptyArray))
+	#end
+	#if($query && $query.getFrom() <= 2)
+		#set($extendedUrl=$query.getUrl("search/extended",null,true,$emptyArray))
+	#end
+	#if($query && $query.getFrom() <= 3)
+		#set($advancedUrl=$query.getUrl("search/advanced",null,true,$emptyArray))
+	#end
+	#if($query && $query.getFrom() <= 4)
+		#set($expertUrl=$query.getUrl("search/expert",null,true,$emptyArray))
+	#end
 #end
 
 <div class="row" id="subnav">

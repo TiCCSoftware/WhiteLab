@@ -5,6 +5,7 @@
 	<xsl:param name="query_result_url" select="''"/>
 	<xsl:param name="query_document_url" select="''"/>
 	<xsl:param name="query_export_url" select="''"/>
+	<xsl:param name="query_filter" select="''"/>
 	
 	<xsl:param name="sort_by" select="''"/>
 	<xsl:param name="options" select="''" />
@@ -135,6 +136,9 @@
 								<xsl:variable name="width" select="size * 100 div /blacklabResponse/summary/largestGroupSize" />
 								<xsl:variable name="rowId" select="generate-id()" />
 								<xsl:variable name="gr" select="identityDisplay" />
+								<xsl:if test="string-length($gr) &lt; 1">
+									<xsl:variable name="gr" select="'unknown'" />
+								</xsl:if>
 								<xsl:variable name="apos">'</xsl:variable>
 								<tr>
 									<td>
@@ -145,11 +149,21 @@
 											<xsl:attribute name="data-target"><xsl:value-of
 												select="'.'" /><xsl:value-of select="$rowId" /></xsl:attribute>
 											<xsl:attribute name="onclick">
-												<xsl:text>Whitelab.search.result.toggleHitGroupContent('.</xsl:text>
+												<xsl:text>var cql = Whitelab.search.simpleStringToCQL_withGroup('</xsl:text>
+												<xsl:value-of select="$gr" />
+												<xsl:text>','</xsl:text>
+												<xsl:value-of select="$group_by_name" />
+												<xsl:text>','</xsl:text>
+												<xsl:value-of select="$query" />
+												<xsl:text>',true); Whitelab.search.result.toggleHitGroupContent('.</xsl:text>
 												<xsl:value-of select="$rowId" />
 												<xsl:text>','</xsl:text>
 												<xsl:value-of select="$gr" />
-												<xsl:text>');</xsl:text>
+												<xsl:text>','</xsl:text>
+												<xsl:value-of select="$group_by_name" />
+												<xsl:text>','</xsl:text>
+												<xsl:value-of select="$query_filter" />
+												<xsl:text>',cql);</xsl:text>
 											</xsl:attribute>
 											
 											<div class="meter">
@@ -179,20 +193,36 @@
 											<div class="inline-concordance">
 												<button class="btn btn-link">
 													<xsl:attribute name="onclick">
-														<xsl:text>var cql = Whitelab.search.simpleStringToCQL('</xsl:text>
+														<xsl:text>var cql = Whitelab.search.simpleStringToCQL_withGroup('</xsl:text>
 														<xsl:value-of select="$gr" />
-														<xsl:text>',true); document.location.href = '/whitelab/search/results?query='+cql+'&amp;view=1&amp;from=4';</xsl:text>
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$group_by_name" />
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$query" />
+														<xsl:text>',true); document.location.href = '/whitelab/search/results?query='+cql+'&amp;view=1&amp;from=4&amp;</xsl:text>
+														<xsl:value-of select="$query_filter" />
+														<xsl:text>';</xsl:text>
 													</xsl:attribute>
 													<xsl:value-of select="$detailed_conc"/>
 												</button>
 												-
 												<button class="btn btn-link nolink">
 													<xsl:attribute name="onclick">
-														<xsl:text>Whitelab.search.result.hitGroupContent('#</xsl:text>
+														<xsl:text>var cql = Whitelab.search.simpleStringToCQL_withGroup('</xsl:text>
+														<xsl:value-of select="$gr" />
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$group_by_name" />
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$query" />
+														<xsl:text>',true); Whitelab.search.result.hitGroupContent('#</xsl:text>
 														<xsl:value-of select="$rowId" />
 														<xsl:text>','</xsl:text>
 														<xsl:value-of select="$gr" />
-														<xsl:text>',null);</xsl:text>
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$group_by_name" />
+														<xsl:text>','</xsl:text>
+														<xsl:value-of select="$query_filter" />
+														<xsl:text>',cql);</xsl:text>
 													</xsl:attribute>
 													<xsl:value-of select="$load_more"/>
 												</button>

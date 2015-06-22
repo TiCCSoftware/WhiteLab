@@ -302,23 +302,43 @@ Whitelab.search.result = {
 		$(target).toggleClass("hide");
 	},
 	
-	toggleHitGroupContent : function(target,term) {
+	toggleDocGroupContent : function(target,term,group,filter,cql) {
 		$(target).toggleClass("hide");
 		if ($(target).hasClass("first") || $(target).find(".row-fluid").length == 0) {
 			$(target).removeClass("first");
-			Whitelab.search.result.hitGroupContent(target.replace(/\./,'#'),term,0);
+			Whitelab.search.result.docGroupContent(target.replace(/\./,'#'),term,group,filter,cql);
 		}
 	},
 	
-	hitGroupContent : function(target,term,first) {
-		if (!first)
-			first = $(target).find("input.start").first().val();
+	toggleHitGroupContent : function(target,term,group,filter,cql) {
+		$(target).toggleClass("hide");
+		if ($(target).hasClass("first") || $(target).find(".row-fluid").length == 0) {
+			$(target).removeClass("first");
+			Whitelab.search.result.hitGroupContent(target.replace(/\./,'#'),term,group,filter,cql);
+		}
+	},
+	
+	docGroupContent : function(target,term,group,filter,cql) {
+		var first = $(target).find("input.start").first().val();
 		var max = $(target).find("input.count").first().val();
 		max = +max;
 		first = +first;
 		if (first < max) {
-			var cql = Whitelab.search.simpleStringToCQL(term,true);
-			Whitelab.getData("/whitelab/search/results", "query="+cql+"&view=9&first="+first, Whitelab.search.result.displayGroupContent, target+'_content', null);
+//			var cql = Whitelab.search.simpleStringToCQL(term,true);
+			Whitelab.getData("/whitelab/search/results", "query="+cql+"&view=17&number=20&first="+first+"&"+filter, Whitelab.search.result.displayGroupContent, target+'_content', null);
+			first = first + 20;
+			$(target).find("input.start").first().val(first);
+		}
+	},
+	
+	hitGroupContent : function(target,term,group,filter,cql) {
+		var first = $(target).find("input.start").first().val();
+		var max = $(target).find("input.count").first().val();
+		max = +max;
+		first = +first;
+		if (first < max) {
+//			var cql = Whitelab.search.simpleStringToCQL(term,true);
+			Whitelab.getData("/whitelab/search/results", "query="+cql+"&view=9&number=20&first="+first+"&"+filter, Whitelab.search.result.displayGroupContent, target+'_content', null);
 			first = first + 20;
 			$(target).find("input.start").first().val(first);
 		}

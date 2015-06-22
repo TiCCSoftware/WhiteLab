@@ -92,6 +92,44 @@ Whitelab.search = {
 		return query;
 	},
 	
+	simpleStringToCQL_withGroup : function(str,group,orig,caseSensitive) {
+		var def = ["hit:word","hit:lemma","hit:pos","word","lemma","pos"];
+		if (def.indexOf(group) > -1 || group.indexOf("word") == 0) {
+			var terms = str.split(" ");
+			var query = "";
+			var c = "";
+			if (caseSensitive)
+				c = "(?c)";
+			for (var i = 0; i < terms.length; i++) {
+				if (terms[i].length > 0) {
+					var sub = terms[i].substring(0,2);
+					if (sub === '[]') {
+						if (terms[i].indexOf('{,') > -1) {
+							terms[i] = terms[i].replace('{,','{1,');
+						}
+						query = query + terms[i];
+					} else if (group.indexOf("word") == 0) {
+						var p = group.split(":");
+						var t = def[def.indexOf(p[1])];
+						query = query + "["+t+"=\""+c+terms[i].replace(/\(/g,"\\(").replace(/\)/g,"\\)")+"\"]";
+						if (p[0] == "wordleft")
+							query = query+orig;
+						else
+							query = orig+query;
+					} else {
+						var t = def[def.indexOf(group)];
+						t = t.replace("hit:","");
+						query = query + "["+t+"=\""+c+terms[i].replace(/\(/g,"\\(").replace(/\)/g,"\\)")+"\"]";
+					}
+				}
+			}
+			return query;
+		} else {
+			group = group.replace("field:","");
+			return orig+"&"+group+"=\""+str+"\"";
+		}
+	},
+	
 	execute : function(tab) {
 		Whitelab.search.setDefaults();
 		if (typeof tab === 'undefined')
