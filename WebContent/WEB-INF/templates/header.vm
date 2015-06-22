@@ -84,8 +84,8 @@
 					<ul id="navLeft" class="left">
 						<li class="leftspaced langli">
 							<form method="get" action="" name="langform">
-								<a class="langlink" id="nl" onclick="Whitelab.switchLanguage('nl')"><img class="$nl" src="../web/img/lang/nl.png" /></a>
-								<a class="langlink" id="en" onclick="Whitelab.switchLanguage('en')"><img class="$en"  src="../web/img/lang/en.png" /></a>
+								<a class="langlink" id="nl" href="${requestUrlNL}"><img class="$nl" src="../web/img/lang/nl.png" /></a>
+								<a class="langlink" id="en" href="${requestUrlEN}"><img class="$en"  src="../web/img/lang/en.png" /></a>
 							</form>
 						</li>
 						<li class="leftspaced">

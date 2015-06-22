@@ -1,7 +1,6 @@
 package com.uvt.whitelab.response.search;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +18,6 @@ public class ResultResponse extends BaseResponse {
 
 	@Override
 	protected void completeRequest() {
-		
-		this.getContext().put("startTime", this.startTime);
-//		try {
-//			this.getContext().put("memUsageStart", this.servlet.getCurrentMemUsage());
-//		} catch (MalformedObjectNameException | AttributeNotFoundException
-//				| InstanceNotFoundException | MBeanException
-//				| ReflectionException e1) {
-//			e1.printStackTrace();
-//		}
 		
 		int view = 1;
 		
@@ -87,15 +77,6 @@ public class ResultResponse extends BaseResponse {
 		this.getContext().put("qlBefore", ql - 5);
 		this.getContext().put("qlStart", ql + 1);
 		this.getContext().put("qlEnd", ql + 5);
-		
-//		try {
-//			this.getContext().put("memUsageEnd", this.servlet.getCurrentMemUsage());
-//		} catch (MalformedObjectNameException | AttributeNotFoundException
-//				| InstanceNotFoundException | MBeanException
-//				| ReflectionException e1) {
-//			e1.printStackTrace();
-//		}
-		this.getContext().put("endTime", new Date().getTime());
 		
 		this.displayHtmlTemplate(this.servlet.getTemplate("search/results"));
 	}

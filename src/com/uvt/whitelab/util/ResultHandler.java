@@ -431,7 +431,7 @@ public class ResultHandler {
 		return getBlackLabResponse(url);
 	}
 
-	protected String getBlackLabResponse(String url) {
+	public String getBlackLabResponse(String url) {
 		QueryServiceHandler webservice = new QueryServiceHandler(url, 1);
 		try {
 			String response = webservice.makeRequest(new HashMap<String, String[]>());

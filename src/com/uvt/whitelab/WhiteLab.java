@@ -6,10 +6,8 @@
  */
 package com.uvt.whitelab;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
-//import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,26 +33,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-//import javax.xml.xpath.XPath;
-//import javax.xml.xpath.XPathConstants;
-//import javax.xml.xpath.XPathExpressionException;
-//import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.w3c.dom.Document;
-//import org.w3c.dom.Element;
-//import org.w3c.dom.Node;
-//import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.uvt.whitelab.response.DocumentResponse;
 import com.uvt.whitelab.response.ErrorResponse;
 import com.uvt.whitelab.response.ExportResponse;
 import com.uvt.whitelab.response.HomeResponse;
-import com.uvt.whitelab.response.QueryResponse;
 import com.uvt.whitelab.response.TreemapResponse;
 import com.uvt.whitelab.response.explore.CorpusResponse;
 import com.uvt.whitelab.response.explore.ExploreDocumentResponse;
@@ -69,7 +58,7 @@ import com.uvt.whitelab.response.search.SimpleResponse;
 import com.uvt.whitelab.util.FieldDescriptor;
 import com.uvt.whitelab.util.MetadataField;
 import com.uvt.whitelab.util.MetadataHtmlGenerator;
-import com.uvt.whitelab.util.QueryServiceHandler;
+import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.WhitelabDocument;
 
 /**
@@ -85,9 +74,6 @@ public class WhiteLab extends HttpServlet {
 	private Logger logger;
 	private XMLConfiguration xmlConfig;
 	private Map<String,LinkedList<WhitelabDocument>> documents = new HashMap<String,LinkedList<WhitelabDocument>>();
-	
-//	private List<MetadataField> filterFields = null;
-//	private LinkedList<FieldDescriptor> searchFields = null;
 	private String contextRoot;
 	private MetadataHtmlGenerator generator;
 
@@ -130,10 +116,7 @@ public class WhiteLab extends HttpServlet {
 		}
 
 		// initialise responses
-//		responses.put(contextRoot + "/explore", new ExploreResponse());
 		responses.put(contextRoot + "/page/treemap", new TreemapResponse("explore"));
-//		responses.put(contextRoot + "/search", new SearchResponse());
-		responses.put(contextRoot + "/page/document", new DocumentResponse("search"));
 		responses.put(contextRoot + "/page/export", new ExportResponse("home"));
 		responses.put(contextRoot + "/page/home", new HomeResponse("home"));
 		responses.put(contextRoot + "/page/error", new ErrorResponse("error"));
@@ -141,21 +124,18 @@ public class WhiteLab extends HttpServlet {
 		responses.put("error", new ErrorResponse("error"));
 
 		// initialise Explore responses
-//		responses.put(contextRoot + "/explore", new CorpusResponse());
 		responses.put(contextRoot + "/explore/corpus", new CorpusResponse("explore"));
 		responses.put(contextRoot + "/explore/statistics", new StatisticsResponse("explore"));
 		responses.put(contextRoot + "/explore/ngrams", new NgramsResponse("explore"));
 		responses.put(contextRoot + "/explore/document", new ExploreDocumentResponse("explore"));
 		
 		// initialise Search response
-//		responses.put(contextRoot + "/search", new SimpleResponse());
 		responses.put(contextRoot + "/search/simple", new SimpleResponse("search"));
 		responses.put(contextRoot + "/search/extended", new ExtendedResponse("search"));
 		responses.put(contextRoot + "/search/advanced", new AdvancedResponse("search"));
 		responses.put(contextRoot + "/search/expert", new ExpertResponse("search"));
 		responses.put(contextRoot + "/search/results", new ResultResponse("search"));
 		responses.put(contextRoot + "/search/document", new SearchDocumentResponse("search"));
-		responses.put(contextRoot + "/search/query", new QueryResponse("search"));
 		
 		try {
 			log("Done initializing Whitelab, Memory usage: "+getCurrentMemUsage());
@@ -167,56 +147,10 @@ public class WhiteLab extends HttpServlet {
 	private void loadFields() {
 		generator = new MetadataHtmlGenerator(this);
 		ResourceBundle labels = ResourceBundle.getBundle("WhitelabBundle", new Locale("nl"));
-		String resp = getBlackLabResponse(labels.getString("blsUrlInternal") + "/" + labels.getString("corpus"));
+		ResultHandler resultHandler = new ResultHandler(this, labels);
+		String resp = resultHandler.getBlackLabResponse(labels.getString("blsUrlInternal") + "/" + labels.getString("corpus"));
 		Document xml = convertStringToDocument(resp);
 		generator.init(labels, xml);
-		
-//		filterFields = new ArrayList<MetadataField>();
-//		searchFields = new LinkedList<FieldDescriptor>();
-//
-//		try {
-//			XPath xPath =  XPathFactory.newInstance().newXPath();
-//			String expr = "//metadataField/fieldName";
-//			NodeList nodeList = (NodeList) xPath.compile(expr).evaluate(xml, XPathConstants.NODESET);
-//			for (int n = 0; n < nodeList.getLength(); n++) {
-//				Node node = nodeList.item(n);
-//				if (node.getNodeType() == Node.ELEMENT_NODE) {
-//					Element el = (Element) node;
-//					String field = el.getTextContent();
-//					if (labels.containsKey("metadataFields."+field)) {
-//						MetadataField dataField = new MetadataField(field,labels);
-//						log("Loading field "+field);
-//						dataField.load(true);
-//						filterFields.add(dataField);
-//					}
-//				}
-//			}
-//			
-//			String[] fields = labels.getString("searchfields").split(",");
-//			for (String fieldName : fields) {
-//				expr = "//basicProperties/property[@name=\""+fieldName+"\"]";
-//				Node node = (Node) xPath.compile(expr).evaluate(xml, XPathConstants.NODE);
-//				if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-//					Element el = (Element) node;
-//					boolean isSensitive = false;
-//					if (el.getElementsByTagName("sensitivity").item(0).getTextContent().equals("SENSITIVE_AND_INSENSITIVE"))
-//						isSensitive = true;
-//					FieldDescriptor searchField = new FieldDescriptor(fieldName, isSensitive, fieldName, fieldName);
-//					
-//					int l = 1;
-//					
-//					while (labels.containsKey(fieldName+"."+l+".value")) {
-//						searchField.addValidValue(labels.getString(fieldName+"."+l+".value"), labels.getString(fieldName+"."+l+".name"));
-//						l++;
-//					}
-//					
-//					searchFields.add(searchField);
-//				}
-//			}
-//			
-//		} catch (XPathExpressionException e) {
-//			e.printStackTrace();
-//		}
 	}
 	
 	public MetadataHtmlGenerator getMetadataHtmlGenerator() {
@@ -229,21 +163,6 @@ public class WhiteLab extends HttpServlet {
 	
 	public LinkedList<FieldDescriptor> getSearchFields() {
 		return generator.getSearchFields();
-	}
-	
-	// TODO refactor: put in QueryServiceHandler
-	protected String getBlackLabResponse(String url) {
-		log("URL: "+url);
-		
-		QueryServiceHandler webservice = new QueryServiceHandler(url, 1);
-		try {
-			String response = webservice.makeRequest(new HashMap<String, String[]>());
-			System.out.println("Response received");
-			return response;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
  
     private static Document convertStringToDocument(String xmlStr) {

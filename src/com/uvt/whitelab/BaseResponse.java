@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.SortedSet;
 //import java.util.TreeSet;
 
+
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -36,6 +37,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 //import com.uvt.whitelab.util.MetadataField;
 import com.uvt.whitelab.util.Query;
@@ -307,23 +309,21 @@ public abstract class BaseResponse {
 	 * Calls the completeRequest and logRequest implementations
 	 */
 	final public void processRequest() {
+		this.getContext().put("startTime", this.startTime);
+		try {
+			this.getContext().put("memUsageStart", this.servlet.getCurrentMemUsage());
+		} catch (MalformedObjectNameException | AttributeNotFoundException
+				| InstanceNotFoundException | MBeanException
+				| ReflectionException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			this.servlet.log("("+this.getClass()+", patt="+this.getParameter("query", "")+") Start memory usage: "+this.servlet.getCurrentMemUsage());
 		} catch (MalformedObjectNameException | AttributeNotFoundException | InstanceNotFoundException | MBeanException | ReflectionException e) {
 			e.printStackTrace();
 		}
-		this.locale = request.getLocale();
-		this.lang = this.request.getParameter("lang");
 		
-		if (this.lang != null && !this.lang.equals(this.locale)) {
-			this.locale = new Locale(this.lang);
-		} else if (this.lang == null) {
-			this.lang = this.locale.getLanguage();
-		}
-		this.labels = ResourceBundle.getBundle("WhitelabBundle", this.locale);
-		
-		this.getContext().put("lang", this.lang);
-		this.getContext().put("labels", this.labels);
+		this.setLocale();
 		
 		this.initQuery();
 		
@@ -331,11 +331,57 @@ public abstract class BaseResponse {
 		
 		logRequest();
 		
-//		this.params = getQueryParameters();
-//		if (this.params.keySet().size() > 0)
-//			this.servlet.log("Query parameters given: "+StringUtils.join(params.keySet().toArray(),", "));
-		
 		completeRequest();
+		
+		try {
+			this.getContext().put("memUsageEnd", this.servlet.getCurrentMemUsage());
+		} catch (MalformedObjectNameException | AttributeNotFoundException
+				| InstanceNotFoundException | MBeanException
+				| ReflectionException e1) {
+			e1.printStackTrace();
+		}
+		this.getContext().put("endTime", new Date().getTime());
+	}
+	
+	protected void setLocale() {
+		this.locale = (Locale) session.getAttribute("locale");
+		if (this.locale == null) {
+			this.locale = request.getLocale();
+			session.setAttribute("locale", this.locale);
+		}
+		
+		this.lang = this.request.getParameter("lang");
+		
+		if (this.lang != null && !this.lang.equals(this.locale)) {
+			this.locale = new Locale(this.lang);
+			session.setAttribute("locale", this.locale);
+		} else if (this.lang == null) {
+			this.lang = this.locale.getLanguage();
+		}
+		this.labels = ResourceBundle.getBundle("WhitelabBundle", this.locale);
+		
+		this.getContext().put("lang", this.lang);
+		this.getContext().put("labels", this.labels);
+		this.getContext().put("requestUrlNL", this.getURL("lang=nl"));
+		this.getContext().put("requestUrlEN", this.getURL("lang=en"));
+	}
+	
+	protected String getURL(String params) {
+	    String contextPath = this.request.getContextPath();
+	    String servletPath = this.request.getServletPath();
+	    String pathInfo = this.request.getPathInfo();
+
+	    StringBuffer url =  new StringBuffer();
+
+	    url.append(contextPath).append(servletPath);
+
+	    if (pathInfo != null) {
+	        url.append(pathInfo);
+	    }
+	    
+	    url.append("?").append(params);
+	    
+	    return url.toString();
 	}
 	
 	protected void updateQueryCount() {
