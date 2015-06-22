@@ -3,7 +3,7 @@
 #if($maintab == 'explore')
 	#set($src='../web/img/minus.png')
 	#set($metaActive="active")
-#elseif($query && $tab != "simple")
+#elseif($query && $tab != "simple" && $metaFrom >= $query.getFrom())
 	#set($metaActive="active")
 #end
 <dl class="accordion large-16 medium-16 small-16" id="accordion" data-accordion>

@@ -12,8 +12,11 @@ public class ExpertResponse extends BaseResponse {
 	protected void completeRequest() {
 		if (query == null)
 			loadMetaDataComponents(false);
-		else
+		else {
+			this.getContext().put("query", query);
 			loadMetaDataComponents(true);
+		}
+		
 		loadCQLInfoBox();
 		
 		this.getContext().put("showMetaOptions", "yes");

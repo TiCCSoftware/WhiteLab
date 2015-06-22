@@ -18,8 +18,10 @@ public class ExtendedResponse extends BaseResponse {
 		loadProperties();
 		if (query == null)
 			loadMetaDataComponents(false);
-		else
+		else {
+			this.getContext().put("query", query);
 			loadMetaDataComponents(true);
+		}
 		
 		this.getContext().put("showMetaOptions", "yes");
 		this.displayHtmlTemplate(this.servlet.getTemplate("search/extended"));

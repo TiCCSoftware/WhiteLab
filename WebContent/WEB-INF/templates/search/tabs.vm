@@ -4,27 +4,46 @@
 #set($expert = $labels.getString("expert"))
 #set($result = $labels.getString("result"))
 #set($document = $labels.getString("document"))
+
+#set($simpleUrl="/whitelab/search/simple")
+#set($extendedUrl="/whitelab/search/extended")
+#set($advancedUrl="/whitelab/search/advanced")
+#set($expertUrl="/whitelab/search/expert")
+#set($emptyArray=[])
+#if($query && $query.getFrom() == 1)
+	#set($simpleUrl=$query.getUrl("search/simple",null,true,$emptyArray))
+#end
+#if($query && $query.getFrom() <= 2)
+	#set($extendedUrl=$query.getUrl("search/extended",null,true,$emptyArray))
+#end
+#if($query && $query.getFrom() <= 3)
+	#set($advancedUrl=$query.getUrl("search/advanced",null,true,$emptyArray))
+#end
+#if($query && $query.getFrom() <= 4)
+	#set($expertUrl=$query.getUrl("search/expert",null,true,$emptyArray))
+#end
+
 <div class="row" id="subnav">
 	<dl id="search-nav" class="sub-nav">
 	#if($tab == "simple")
 		<dd id="simple_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$simple</a></dd>
 	#else
-		<dd id="simple_link"><a class="tablink" href="/whitelab/search/simple">$simple</a></dd>
+		<dd id="simple_link"><a class="tablink" href="$simpleUrl">$simple</a></dd>
 	#end
 	#if($tab == "extended")
 		<dd id="extended_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$extended</a></dd>
 	#else
-		<dd id="extended_link"><a class="tablink" href="/whitelab/search/extended">$extended</a></dd>
+		<dd id="extended_link"><a class="tablink" href="$extendedUrl">$extended</a></dd>
 	#end
 	#if($tab == "advanced")
 		<dd id="advanced_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$advanced</a></dd>
 	#else
-		<dd id="advanced_link"><a class="tablink" href="/whitelab/search/advanced">$advanced</a></dd>
+		<dd id="advanced_link"><a class="tablink" href="$advancedUrl">$advanced</a></dd>
 	#end
 	#if($tab == "expert")
 		<dd id="expert_link" class="active"><a class="tablink" href="#" onclick="event.preventDefault();">$expert</a></dd>
 	#else
-		<dd id="expert_link"><a class="tablink" href="/whitelab/search/expert">$expert</a></dd>
+		<dd id="expert_link"><a class="tablink" href="$expertUrl">$expert</a></dd>
 	#end
 	#if($tab == "results" || $tab == "document" || $queryCount > 0)
 		<dd id="link-spacer">||</dd>

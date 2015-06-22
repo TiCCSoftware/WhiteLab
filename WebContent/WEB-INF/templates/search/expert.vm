@@ -5,6 +5,7 @@
 
 <div class="row tabs-content" id="search">
 	<div id="metadata">
+		#set($metaFrom=4)
 		#parse("metadata.vm")
 	</div>
 	<div id="expert" class="large-16 medium-16 small-16 content active">
@@ -27,5 +28,11 @@
 		if (q)
 			window.location.href = '/whitelab/search/results?'+q;
 	}
+	
+	#if($query && $query.getFrom() <= 4)
+		$(function() {
+			$("#querybox").val('$query.getPatternWithin()');
+		});
+	#end
 </script>
 #parse("footer.vm")

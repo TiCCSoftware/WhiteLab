@@ -13,8 +13,11 @@ public class AdvancedResponse extends BaseResponse {
 	protected void completeRequest() {
 		if (query == null)
 			loadMetaDataComponents(false);
-		else
+		else {
+			this.getContext().put("query", query);
 			loadMetaDataComponents(true);
+		}
+		
 		loadAdvancedComponents();
 		
 		this.getContext().put("showMetaOptions", "yes");
