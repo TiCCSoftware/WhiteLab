@@ -127,6 +127,38 @@ public class ResultHandler {
 		}
 	}
 
+	public void loadDocument(WhitelabDocument document, String lang, int start, int end) {
+		Map<String,Object> params = new HashMap<String,Object>();
+
+		ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
+		String response = resultHandler.getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+document.getId()+"/contents", params);
+
+		try {
+			setTransformerDisplayParameters(document.getId(), "", lang);
+			String documentStylesheet = loadStylesheet("article_folia.xsl");
+			String htmlResult = transformer.transformArticle(response, documentStylesheet, start, end);
+			document.setContent(htmlResult);
+			document.setXml(response);
+			document.start = start;
+			document.end = end;
+			document.count();
+		} catch (IOException | TransformerException e) {
+			e.printStackTrace();
+		}
+		
+		String meta = resultHandler.getBlackLabResponse(this.labels.getString("corpus"), "/docs/"+document.getId(), params);
+		
+		try {
+			setTransformerDisplayParameters(document.getId(), "", lang);
+			String metadataStylesheet = loadStylesheet("article_metadata.xsl");
+			String metaResult = transformer.transform(meta, metadataStylesheet);
+			document.setMetadata(metaResult);
+			document.setMetaXml(meta);
+		} catch (IOException | TransformerException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public String parseResult(String response,ResourceBundle labels,Query query) {
 		try {
 			String stylesheet = getStylesheet(query.getView(),false);

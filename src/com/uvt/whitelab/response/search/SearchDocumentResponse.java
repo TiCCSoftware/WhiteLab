@@ -1,20 +1,15 @@
 package com.uvt.whitelab.response.search;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.TransformerException;
-
 import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.WhitelabDocument;
-import com.uvt.whitelab.util.XslTransformer;
 
 public class SearchDocumentResponse extends BaseResponse {
-	private XslTransformer transformer = new XslTransformer();
 	
 	public SearchDocumentResponse(String ns) {
 		super(ns);

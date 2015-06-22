@@ -1,8 +1,14 @@
-#set($except=["first","from","group","sort","filters","number"])
-#set($textUrl=$query.getUrl("$maintab/document","&tab=text",false,$except))
-#set($metadataUrl=$query.getUrl("$maintab/document","&tab=metadata",false,$except))
-#set($statisticsUrl=$query.getUrl("$maintab/document","&tab=statistics",false,$except))
-#set($wordcloudUrl=$query.getUrl("$maintab/document","&tab=wordcloud",false,$except))
+#set($textUrl="document?tab=text&docpid=$docpid")
+#set($metadataUrl="document?tab=metadata&docpid=$docpid")
+#set($statisticsUrl="document?tab=statistics&docpid=$docpid")
+#set($wordcloudUrl="document?tab=wordcloud&docpid=$docpid")
+#if($query)
+	#set($except=["first","from","group","sort","filters","number"])
+	#set($textUrl=$query.getUrl("$maintab/document","&tab=text",false,$except))
+	#set($metadataUrl=$query.getUrl("$maintab/document","&tab=metadata",false,$except))
+	#set($statisticsUrl=$query.getUrl("$maintab/document","&tab=statistics",false,$except))
+	#set($wordcloudUrl=$query.getUrl("$maintab/document","&tab=wordcloud",false,$except))
+#end
 <ul class="nav nav-tabs" id="docContentTabs">
 	#if(!$doctab || $doctab == "text")
 		<li id="text_link" class="doc_link active disabled">

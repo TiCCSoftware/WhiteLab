@@ -13,14 +13,24 @@
 		<div id="document" class="content $doc_active large-16 medium-16 small-16 active">
 			<div id="doc-input" class="large-16 medium-16 small-16" align="center">
 				<div id="simple-input">
-					<input id="docpid" type="text" class="biginput" placeholder="$labels.getString("explore.document.placeholder")" />
+					#set($docpid="")
+					#if($document)
+						#set($docpid=$document.getId())
+					#end
+					<input id="docpid" type="text" class="biginput" placeholder="$labels.getString("explore.document.placeholder")" value="$docpid" />
 				</div>
 				<div id="simple-buttons">
-					<button onclick="Whitelab.explore.document.load($('#docpid').val(),'')" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.explore.document.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button>
+					<button onclick="validateForm();" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.explore.document.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button>
 				</div>
 			</div>
 			#parse("document/display.vm")
 		</div>
 	</div>
 </div>
+<script>
+	function validateForm() {
+		var val = $('#docpid').val();
+		window.location.href = '/whitelab/explore/document?docpid='+val;
+	}
+</script>
 #parse("footer.vm")
