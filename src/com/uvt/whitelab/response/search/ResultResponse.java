@@ -35,6 +35,8 @@ public class ResultResponse extends BaseResponse {
 			}
 		}
 		
+		updateQueryCount();
+		
 		if (query != null) {
 			view = query.getView();
 			if (delete.equals("true")) {
@@ -89,6 +91,9 @@ public class ResultResponse extends BaseResponse {
 			sendResponse(output);
 		}
 		
+		this.servlet.log("QUERY COUNT: "+queryCount);
+		if (query == null)
+			this.servlet.log("QUERY IS NULL");
 		if (query == null && queryCount > 0)
 			query = SessionManager.setCurrentQuery(session, null);
 		else if (query == null && queryCount == 0) {
@@ -97,7 +102,9 @@ public class ResultResponse extends BaseResponse {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else {
+		}
+		
+		if (query != null) {
 			@SuppressWarnings("unchecked")
 			List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
 			this.getContext().put("query", query);

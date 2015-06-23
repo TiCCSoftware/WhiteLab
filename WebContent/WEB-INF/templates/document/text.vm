@@ -9,6 +9,11 @@
 				<b>$labels.getString("document.hit.next") &raquo;</b>
 			</a>
 		</div>
+		<script>
+			$(function() {
+				Whitelab.search.document.initialiseAnchors();
+			});
+		</script>
 	#end
 	<div class="gradient"></div>
 	#if($content)

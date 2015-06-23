@@ -5,10 +5,10 @@ Whitelab.search.document = {
 	
 	display : function(response) {
 		if (response != null && response.hasOwnProperty("data") && response.data != null) {
-			$("#document").html(response.data);
+			$("#doc-display").html(response.data);
 			Whitelab.search.document.initialiseAnchors();
 		} else {
-			$("#document").html("<p>ERROR - Could not process request.</p>");
+			$("#doc-display").html("<p>ERROR - Could not process request.</p>");
 		}
 	},
 	
@@ -61,18 +61,18 @@ Whitelab.search.document = {
 		Whitelab.search.document.anchors = new Array();
 		Whitelab.search.document.position = -1;
 		
-		$("#document a.anchor.hl").each(function() {
+		$("#doc-display a.anchor.hl").each(function() {
 			Whitelab.search.document.anchors.push($(this).attr("name"));
 		});
 		
 		if(Whitelab.search.document.anchors.length == 0)
-			$("#document .hitscroll").hide();
+			$("#doc-display .hitscroll").hide();
 	},
 	
 	load : function(pid,query) {
 		var params = "docpid="+pid+"&query="+query;
 		params = params.replace(/ /g,"%20");
-		$("#document").html("<p>Loading document "+pid+"...</p>");
+		$("#doc-display").html("<p>Loading document "+pid+"...</p>");
 		Whitelab.search.switchTab("document");
 		
 		var xhr = Whitelab.createRequest('POST', Whitelab.baseUrl+"document");
@@ -91,7 +91,7 @@ Whitelab.search.document = {
 		};
 
 		xhr.onerror = function() {
-			$("#document").html("<p>ERROR - Could not connect to server.</p>");
+			$("#doc-display").html("<p>ERROR - Could not connect to server.</p>");
 		};
 
 		xhr.send(params);
@@ -99,10 +99,10 @@ Whitelab.search.document = {
 	
 	switchTab : function(target) {
 		Whitelab.debug("switching tab");
-		$("#document .doc_link").removeClass("active");
-		$("#document .doc-pane").removeClass("active");
-		$("#document #"+target+"_link").addClass("active");
-		$("#document #"+target+"_tab").addClass("active");
+		$("#doc-display .doc_link").removeClass("active");
+		$("#doc-display .doc-pane").removeClass("active");
+		$("#doc-display #"+target+"_link").addClass("active");
+		$("#doc-display #"+target+"_tab").addClass("active");
 
 		if (target === "cloud") {
 			generateCloud("#docCloudDisplay", $("#docCloudSettings > input.split").is(':checked'));
