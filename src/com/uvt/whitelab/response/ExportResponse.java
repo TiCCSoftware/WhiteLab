@@ -192,6 +192,7 @@ public class ExportResponse extends BaseResponse {
 		response.setContentType("application/octet-stream");
         response.setContentLength(contents.length());
         response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
+        response.setCharacterEncoding("utf-8");
         
         ServletOutputStream outStream = null;
 		try {

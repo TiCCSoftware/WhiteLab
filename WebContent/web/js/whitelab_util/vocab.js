@@ -92,11 +92,11 @@ function displayGrowth(data,title,target,url) {
 
     var chart = new google.visualization.LineChart(container);
     chart.draw(d, options);
-	var toolbar = document.createElement('div');
-	$(toolbar).addClass("toolbar");
-	$(toolbar).attr("id","growth_toolbar");
-	$(target).append(toolbar);
-    drawToolbar(toolbar,url);
+//	var toolbar = document.createElement('div');
+//	$(toolbar).addClass("toolbar");
+//	$(toolbar).attr("id","growth_toolbar");
+//	$(target).append(toolbar);
+//    drawToolbar(toolbar,url);
 }
 
 function displayPosPie(data,title,target,url) {
@@ -124,11 +124,11 @@ function displayPosPie(data,title,target,url) {
 
     var chart = new google.visualization.PieChart(container);
     chart.draw(d, options);
-	var toolbar = document.createElement('div');
-	$(toolbar).addClass("toolbar");
-	$(toolbar).attr("id",target.substring(1)+"_toolbar");
-	$(target).append(toolbar);
-    drawToolbar(toolbar,url);
+//	var toolbar = document.createElement('div');
+//	$(toolbar).addClass("toolbar");
+//	$(toolbar).attr("id",target.substring(1)+"_toolbar");
+//	$(target).append(toolbar);
+//    drawToolbar(toolbar,url);
 }
 
 function loadPosData(target,p,freqdata,histdata,url) {
@@ -200,11 +200,11 @@ function createPosFreqlist(target, d, p, color, url) {
 		        };
 		var chart = new google.visualization.BarChart(container);
 	    chart.draw(data, options);
-		var toolbar = document.createElement('div');
-		$(toolbar).addClass("toolbar");
-		$(toolbar).attr("id",target.substring(1)+"_toolbar");
-		$(target).append(toolbar);
-	    drawToolbar(toolbar,url);
+//		var toolbar = document.createElement('div');
+//		$(toolbar).addClass("toolbar");
+//		$(toolbar).attr("id",target.substring(1)+"_toolbar");
+//		$(target).append(toolbar);
+//	    drawToolbar(toolbar,url);
 	}
 }
 
@@ -230,10 +230,10 @@ function createPosHistogram(target, d, p, color, url) {
 		        };
 		var chart = new google.visualization.Histogram(container);
 	    chart.draw(data, options);
-		var toolbar = document.createElement('div');
-		$(toolbar).addClass("toolbar");
-		$(toolbar).attr("id",target.substring(1)+"_toolbar");
-		$(target).append(toolbar);
-	    drawToolbar(toolbar,url);
+//		var toolbar = document.createElement('div');
+//		$(toolbar).addClass("toolbar");
+//		$(toolbar).attr("id",target.substring(1)+"_toolbar");
+//		$(target).append(toolbar);
+//	    drawToolbar(toolbar,url);
 	}
 }
