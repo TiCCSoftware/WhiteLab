@@ -47,7 +47,8 @@ public class Query implements Serializable {
 	private String xml = "";
 	private String result = "";
 	
-	private List<String> lemmas;
+	private List<String> lemmas = new ArrayList<String>();
+	private List<String> types = new ArrayList<String>();
 	private JSONArray growthData;
 	
 	public Query(Query q, Map<String,Object> replace) {
@@ -282,6 +283,22 @@ public class Query implements Serializable {
 	
 	public int getView() {
 		return view;
+	}
+	
+	public void setLemmas(List<String> l) {
+		lemmas = l;
+	}
+	
+	public List<String> getLemmas() {
+		return lemmas;
+	}
+	
+	public void setTypes(List<String> t) {
+		types = t;
+	}
+	
+	public List<String> getTypes() {
+		return types;
 	}
 	
 	public void setFrom(int f) {

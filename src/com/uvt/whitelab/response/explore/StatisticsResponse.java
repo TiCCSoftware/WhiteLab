@@ -31,6 +31,8 @@ public class StatisticsResponse extends BaseResponse {
 				String docPid = resultHandler.getNextDocumentPid(query);
 				query.setDocPid(docPid);
 				WhitelabDocument document = new WhitelabDocument(docPid);
+				document.setLemmas(query.getLemmas());
+				document.setTypes(query.getTypes());
 				resultHandler.loadDocument(document, query, this.lang);
 				JSONArray qdata = query.getGrowthData();
 				if (qdata.length() == 0) {
@@ -49,6 +51,8 @@ public class StatisticsResponse extends BaseResponse {
 					}
 				}
 				query.setGrowthData(qdata);
+				query.setLemmas(document.getLemmas());
+				query.setTypes(document.getTypes());
 				
 				query.setDocument(document);
 				this.getContext().put("data", query.getGrowthData().toString());

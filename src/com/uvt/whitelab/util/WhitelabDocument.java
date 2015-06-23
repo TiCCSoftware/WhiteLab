@@ -95,8 +95,16 @@ public class WhitelabDocument {
 		return tokenCount;
 	}
 	
+	public void setLemmas(List<String> l) {
+		lemmas = l;
+	}
+	
 	public List<String> getLemmas() {
 		return lemmas;
+	}
+	
+	public void setTypes(List<String> t) {
+		types = t;
 	}
 	
 	public List<String> getTypes() {
