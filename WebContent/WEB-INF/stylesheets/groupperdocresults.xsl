@@ -156,7 +156,7 @@
 												<xsl:value-of select="$group_by_name" />
 												<xsl:text>','</xsl:text>
 												<xsl:value-of select="$query" />
-												<xsl:text>',true); Whitelab.search.result.toggleDocGroupContent('.</xsl:text>
+												<xsl:text>',true); console.log('CQL: '+cql); Whitelab.search.result.toggleDocGroupContent('.</xsl:text>
 												<xsl:value-of select="$rowId" />
 												<xsl:text>','</xsl:text>
 												<xsl:value-of select="$gr" />
@@ -180,6 +180,16 @@
 												select="$rowId" /></xsl:attribute>
 											<xsl:attribute name="data-group"><xsl:value-of
 												select="identityDisplay" /></xsl:attribute>
+											<input type="hidden" class="start" value="0" />
+											<input type="hidden" class="count">
+												<xsl:attribute name="value">
+													<xsl:value-of select="size" />
+												</xsl:attribute>
+											</input>
+											<div>
+												<xsl:attribute name="id"><xsl:value-of
+												select="$rowId" /><xsl:text>_content</xsl:text></xsl:attribute>
+											</div>
 											<div class="inline-concordance">
 												<button class="btn btn-link">
 													<xsl:attribute name="onclick">
