@@ -59,7 +59,7 @@
 					<div class="content">
 						<span>
 							<label for="#ngram-query">Query</label>
-							<div id="ngram-query">$query.getPattern()</div>
+							<div id="ngram-query">$query.getPrintPattern()</div>
 						</span>
 						<span>
 							<label for="#ngram-filter">Filter</label>

@@ -60,6 +60,7 @@ public class Query implements Serializable {
 			pattern = (String) replace.get("pattern");
 		else
 			pattern = q.getPattern();
+		pattern = pattern.replaceAll("&", "%26");
 		if (replace.containsKey("within"))
 			within = (String) replace.get("within");
 		else
@@ -117,6 +118,7 @@ public class Query implements Serializable {
 			id = UUID.randomUUID().toString();
 			from = br.getParameter("from", 0);
 			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			pattern = pattern.replaceAll("&", "%26");
 			view = br.getParameter("view", 1);
 			group = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
 			sort = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
@@ -147,6 +149,7 @@ public class Query implements Serializable {
 	public Query updateQuery(BaseResponse br) {
 		try {
 			String p = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			p = p.replaceAll("&", "%26");
 			String w = br.getParameter("within", "");
 			int v = br.getParameter("view", 1);
 //			int f = br.getParameter("from", 0);
@@ -244,6 +247,10 @@ public class Query implements Serializable {
 	
 	public String getPattern() {
 		return pattern;
+	}
+	
+	public String getPrintPattern() {
+		return pattern.replaceAll("%26", "&");
 	}
 	
 	public String getPatternWithin() {

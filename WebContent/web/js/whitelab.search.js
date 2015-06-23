@@ -111,7 +111,7 @@ Whitelab.search = {
 					} else if (group.indexOf("word") == 0) {
 						var p = group.split(":");
 						var t = def[def.indexOf(p[1])];
-						query = query + "["+t+"=\""+c+terms[i].replace(/\(/g,"\\(").replace(/\)/g,"\\)")+"\"]";
+						query = query + "["+t+"=\""+c+terms[i].replace(/\(/g,"\\(").replace(/\)/g,"\\)").replace(/\./g,"\\.")+"\"]";
 						if (p[0] == "wordleft")
 							query = query+orig;
 						else
@@ -119,7 +119,7 @@ Whitelab.search = {
 					} else {
 						var t = def[def.indexOf(group)];
 						t = t.replace("hit:","");
-						query = query + "["+t+"=\""+c+terms[i].replace(/\(/g,"\\(").replace(/\)/g,"\\)")+"\"]";
+						query = query + "["+t+"=\""+c+terms[i].replace(/\(/g,"\\(").replace(/\)/g,"\\)").replace(/\./g,"\\.")+"\"]";
 					}
 				}
 			}

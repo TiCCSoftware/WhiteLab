@@ -23,7 +23,7 @@
 			#set($i = $i + 1)
 			<tr class="active query-row">
 				<td class="r">$i</td>
-				<td class="q">$tourQuery.getPattern()</td>
+				<td class="q">$tourQuery.getPrintPattern()</td>
 				<td class="w">$tourQuery.getWithinString()</td>
 				<td class="m">$tourQuery.getFilter()</td>
 				<td class="g">$tourQuery.getGroupClean()</td>
@@ -45,7 +45,7 @@
 				#if($q.isCurrent())
 					<tr class="active query-row">
 					<td class="r">$i</td>
-					<td class="q">$q.getPattern()</td>
+					<td class="q">$q.getPrintPattern()</td>
 					<td class="w">$q.getWithinString()</td>
 					<td class="m">$q.getFilter()</td>
 					<td class="g">$q.getGroupClean()</td>
@@ -55,7 +55,7 @@
 				#else
 					<tr class="query-row">
 					<td onclick="document.location.href='$url'" class="r">$i</td>
-					<td onclick="document.location.href='$url'" class="q">$q.getPattern()</td>
+					<td onclick="document.location.href='$url'" class="q">$q.getPrintPattern()</td>
 					<td onclick="document.location.href='$url'" class="w">$q.getWithinString()</td>
 					<td onclick="document.location.href='$url'" class="m">$q.getFilter()</td>
 					<td onclick="document.location.href='$url'" class="g">$q.getGroup()</td>
