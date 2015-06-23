@@ -84,5 +84,13 @@
 			Whitelab.search.advanced.parseQueryToInterface('$query.getPattern()');
 		});
 	#end
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','advanced',$tour,'$lang','/whitelab/search/expert?tour=1');
+			#end
+		});
+	#end
 </script>
 #parse("footer.vm")

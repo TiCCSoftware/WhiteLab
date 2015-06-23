@@ -63,6 +63,7 @@ public abstract class BaseResponse {
 	protected Query query;
 	protected int queryCount = 0;
 	protected String namespace;
+	protected int tour = 0;
 	
 	protected long startTime = new Date().getTime();
 
@@ -107,6 +108,8 @@ public abstract class BaseResponse {
 		String within = this.getParameter("within", "");
 		int view = this.getParameter("view", 1);
 		int from = this.getParameter("from", 1);
+		if (tour > 0 && from < 5)
+			from = 0;
 		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
@@ -135,8 +138,10 @@ public abstract class BaseResponse {
 				SessionManager.addQuery(session, query);
 		}
 		
-		if (query != null && view != 9 && view != 17 && namespace.equals("search"))
+		if (query != null && view != 9 && view != 17 && namespace.equals("search") && from > 0)
 			SessionManager.setCurrentQuery(session, query.getId());
+		else if (from == 0)
+			this.getContext().put("tourQuery", query);
 	}
 
 //	protected Map<String, Object> getQueryParameters() {
@@ -327,8 +332,11 @@ public abstract class BaseResponse {
 		
 		this.setLocale();
 		
+		tour = this.getParameter("tour", 0);
+		if (tour > 0)
+			this.getContext().put("tour", tour);
+
 		this.initQuery();
-		
 		this.updateQueryCount();
 		
 		logRequest();

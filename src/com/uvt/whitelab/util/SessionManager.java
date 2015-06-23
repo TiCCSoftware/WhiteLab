@@ -8,7 +8,9 @@ import javax.servlet.http.HttpSession;
 public class SessionManager {
 	
 	public static void addQuery(HttpSession session, Query query) {
-		if (query.getFrom() <= 4) {
+		if (query.getFrom() == 0) {
+			session.setAttribute("tourQuery", query);
+		} else if (query.getFrom() <= 4) {
 			@SuppressWarnings("unchecked")
 			List<Query> queries = (List<Query>) session.getAttribute("queries");
 			if (queries == null)
@@ -40,7 +42,9 @@ public class SessionManager {
 	}
 
 	public static Query getQuery(HttpSession session, String queryId, int from) {
-		if (from <= 4) { // search
+		if (from == 0) { // tour
+			return null;
+		} else if (from <= 4) { // search
 			@SuppressWarnings("unchecked")
 			List<Query> queries = (List<Query>) session.getAttribute("queries");
 			if (queries != null) {
@@ -116,6 +120,10 @@ public class SessionManager {
 			}
 		}
 		return false;
+	}
+
+	public static void deleteTourQuery(HttpSession session) {
+		session.removeAttribute("tourQuery");
 	}
 
 }

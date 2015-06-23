@@ -20,13 +20,37 @@ public class ResultResponse extends BaseResponse {
 	protected void completeRequest() {
 		
 		int view = this.getParameter("view", 1);
+		String delete = this.getParameter("delete", "false");
+		
+		if (query == null && delete.equals("true")) {
+			String endTour = this.getParameter("endtour", "false");
+			if (endTour.equals("true")) {
+				SessionManager.deleteTourQuery(session);
+				this.getContext().remove("tourQuery");
+				try {
+					response.sendRedirect("/whitelab/search/simple");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		
 		if (query != null) {
 			view = query.getView();
-			String delete = this.getParameter("delete", "false");
 			if (delete.equals("true")) {
-				SessionManager.deleteQuery(session, query.getId());
-				updateQueryCount();
+				String endTour = this.getParameter("endtour", "false");
+				if (endTour.equals("true")) {
+					SessionManager.deleteTourQuery(session);
+					this.getContext().remove("tourQuery");
+					try {
+						response.sendRedirect("/whitelab/search/simple");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					SessionManager.deleteQuery(session, query.getId());
+					updateQueryCount();
+				}
 				query = null;
 				if (queryCount == 0) {
 					try {
@@ -34,10 +58,12 @@ public class ResultResponse extends BaseResponse {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				} else {
+					query = SessionManager.setCurrentQuery(session, null);
 				}
 			}
 			
-			if (query.getStatus() < 2) {
+			if (query != null && query.getStatus() < 2) {
 				ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
 				String batch = this.getParameter("batch", "false");
 				if (batch.equals("true")) {
@@ -65,18 +91,25 @@ public class ResultResponse extends BaseResponse {
 		
 		if (query == null && queryCount > 0)
 			query = SessionManager.setCurrentQuery(session, null);
-		
-		@SuppressWarnings("unchecked")
-		List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
-		this.getContext().put("query", query);
-		this.getContext().put("queries", queries);
-		this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
-		this.getContext().put("requestUrl", query.getUrl("search/results", null, true, new String[]{}));
-		int ql = this.getParameter("ql", 0);
-		this.getContext().put("ql", ql);
-		this.getContext().put("qlBefore", ql - 5);
-		this.getContext().put("qlStart", ql + 1);
-		this.getContext().put("qlEnd", ql + 5);
+		else if (query == null && queryCount == 0) {
+			try {
+				response.sendRedirect("/whitelab/search/simple");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			@SuppressWarnings("unchecked")
+			List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
+			this.getContext().put("query", query);
+			this.getContext().put("queries", queries);
+			this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
+			this.getContext().put("requestUrl", query.getUrl("search/results", null, true, new String[]{}));
+			int ql = this.getParameter("ql", 0);
+			this.getContext().put("ql", ql);
+			this.getContext().put("qlBefore", ql - 5);
+			this.getContext().put("qlStart", ql + 1);
+			this.getContext().put("qlEnd", ql + 5);
+		}
 		
 		this.displayHtmlTemplate(this.servlet.getTemplate("search/results"));
 	}

@@ -32,6 +32,7 @@ public class NgramsResponse extends BaseResponse {
 			loadMetaDataComponents(true);
 			this.getContext().put("query", query);
 			this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
+			this.getContext().put("requestUrl", query.getUrl("explore/ngrams", "&from=6", true, new String[]{}));
 		}
 
 		this.getContext().put("size", nsize);

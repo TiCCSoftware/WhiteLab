@@ -6,4 +6,19 @@
 <div class="row tabs-content" id="search">
 	#parse("document/display.vm")
 </div>
+#if($tour)
+	<script>
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','document',$tour,'$lang','/whitelab/search/document?tour=2&query=[word="de"][word="gebeten"][word="hond"]&docpid=WR-P-E-A-0000797656&tab=metadata');
+			#elseif($tour==2)
+				Whitelab.tour.start('search','document',$tour,'$lang','/whitelab/search/document?tour=3&query=[word="de"][word="gebeten"][word="hond"]&docpid=WR-P-E-A-0000797656&tab=statistics');
+			#elseif($tour==3)
+				Whitelab.tour.start('search','document',$tour,'$lang','/whitelab/search/document?tour=4&query=[word="de"][word="gebeten"][word="hond"]&docpid=WR-P-E-A-0000797656&tab=wordcloud');
+			#elseif($tour==4)
+				Whitelab.tour.start('search','document',$tour,'$lang',null);
+			#end
+		});
+	</script>
+#end
 #parse("footer.vm")

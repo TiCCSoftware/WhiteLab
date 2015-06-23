@@ -89,8 +89,10 @@
 							</form>
 						</li>
 						<li class="leftspaced">
-							#if($maintab && ($maintab == "explore" or $maintab == "search"))
-								<a id="tour-icon" onclick="Whitelab.tour.start();"><img src="../web/img/info_icon.png"/></a>
+							#if($maintab && $maintab == "explore")
+								<a id="tour-icon" onclick="document.location.href = '/whitelab/explore/corpus?tour=1';"><img src="../web/img/info_icon.png"/></a>
+							#elseif($maintab && $maintab == "search")
+								<a id="tour-icon" onclick="document.location.href = '/whitelab/search/simple?tour=1';"><img src="../web/img/info_icon.png"/></a>
 							#else
 								<div style="width: 30px;">&nbsp;</div>
 							#end

@@ -19,6 +19,25 @@
 			<tr class="ql up" onclick="document.location.href='$url'"><td colspan="9">...</td></tr>
 		#end
 		#set($i = 0)
+		#if($tourQuery)
+			#set($i = $i + 1)
+			<tr class="active query-row">
+				<td class="r">$i</td>
+				<td class="q">$tourQuery.getPattern()</td>
+				<td class="w">$tourQuery.getWithinString()</td>
+				<td class="m">$tourQuery.getFilter()</td>
+				<td class="g">$tourQuery.getGroupClean()</td>
+				<td class="status">$tourQuery.getStatusString()</td>
+				<td class="h">$tourQuery.getHits()</td>
+				<td class="control">$tourQuery.getDocs()</td>
+				<td>
+					#set($fromString=$tourQuery.getFromString("search"))
+					#set($deleteUrl=$tourQuery.getUrl("search/results","&delete=true&endtour=true&ql=${ql}",true,$except))
+					<button onclick="event.preventDefault();" class="edit">EDIT</button>
+					<button onclick="document.location.href='$deleteUrl'" class="remove">X</button>
+				</td>
+			</tr>
+		#end
 		#foreach($q in $queries)
 			#set($i = $i + 1)
 			#if($qlStart <= $i && $i <= $qlEnd)

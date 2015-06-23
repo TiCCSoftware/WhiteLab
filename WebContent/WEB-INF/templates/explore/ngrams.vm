@@ -107,5 +107,15 @@
 			Whitelab.explore.ngram.cqlToInterface('$query.getPattern()',$size,'$query.getGroup()');
 		});
 	#end
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('explore','ngrams',$tour,'$lang','/whitelab/explore/ngrams?tour=2&query=[lemma="de"][][lemma="van"][lemma="de"][]&size=5&from=6&view=10&sort=&first=0&group=hit:lemma&number=50');
+			#elseif($tour==2)
+				Whitelab.tour.start('explore','ngrams',$tour,'$lang','/whitelab/explore/document?tour=1');
+			#end
+		});
+	#end
 </script>
 #parse("footer.vm")

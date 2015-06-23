@@ -93,5 +93,13 @@
 			Whitelab.search.extended.parseQueryToInterface('$query.getPattern()');
 		});
 	#end
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','extended',$tour,'$lang','/whitelab/search/advanced?tour=1');
+			#end
+		});
+	#end
 </script>
 #parse("footer.vm")

@@ -29,5 +29,11 @@
 		var val = $("#treemap input[name=field]:checked").val();
 		Whitelab.explore.getTreemapData(val);
 	});
+	
+	#if($tour)
+		$(function() {
+			Whitelab.tour.start('explore','corpus',$tour,'$lang','/whitelab/explore/statistics?tour=1');
+		});
+	#end
 </script>
 #parse("footer.vm")

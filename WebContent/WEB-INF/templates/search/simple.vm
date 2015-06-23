@@ -27,5 +27,13 @@
 		if (q)
 			window.location.href = '/whitelab/search/results?'+q;
 	}
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','simple',$tour,'$lang','/whitelab/search/extended?tour=1');
+			#end
+		});
+	#end
 </script>
 #parse("footer.vm")

@@ -64,6 +64,7 @@ public class StatisticsResponse extends BaseResponse {
 			this.getContext().put("statstab", tab);
 			this.getContext().put("query", query);
 			this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
+			this.getContext().put("requestUrl", query.getUrl("explore/statistics", "&from=5", true, new String[]{}));
 		}
 
 		this.getContext().put("showMetaOptions", "no");

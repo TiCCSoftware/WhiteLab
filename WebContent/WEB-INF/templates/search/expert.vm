@@ -34,5 +34,11 @@
 			$("#querybox").val('$query.getPatternWithin()');
 		});
 	#end
+	
+	#if($tour)
+		$(function() {
+			Whitelab.tour.start('search','expert',$tour,'$lang','/whitelab/search/results?tour=1&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=1');
+		});
+	#end
 </script>
 #parse("footer.vm")
