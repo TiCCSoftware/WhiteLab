@@ -92,11 +92,11 @@ function displayGrowth(data,title,target,url) {
 
     var chart = new google.visualization.LineChart(container);
     chart.draw(d, options);
-//	var toolbar = document.createElement('div');
-//	$(toolbar).addClass("toolbar");
-//	$(toolbar).attr("id","growth_toolbar");
-//	$(target).append(toolbar);
-//    drawToolbar(toolbar,url);
+	var toolbar = document.createElement('div');
+	$(toolbar).addClass("toolbar");
+	$(toolbar).attr("id","growth_toolbar");
+	$(target).append(toolbar);
+    drawToolbar(toolbar,url);
 }
 
 function displayPosPie(data,title,target,url) {
@@ -124,14 +124,14 @@ function displayPosPie(data,title,target,url) {
 
     var chart = new google.visualization.PieChart(container);
     chart.draw(d, options);
-//	var toolbar = document.createElement('div');
-//	$(toolbar).addClass("toolbar");
-//	$(toolbar).attr("id",target.substring(1)+"_toolbar");
-//	$(target).append(toolbar);
-//    drawToolbar(toolbar,url);
+	var toolbar = document.createElement('div');
+	$(toolbar).addClass("toolbar");
+	$(toolbar).attr("id",target.substring(1)+"_toolbar");
+	$(target).append(toolbar);
+    drawToolbar(toolbar,url);
 }
 
-function loadPosData(target,p,freqdata,histdata,url) {
+function loadPosData(target,p,freqdata,histdata,url1,url2) {
 //	for (var i = 0; i < pos.length; i++) {
 //		var p = pos[i];
 		var c = colorScale(p);
@@ -171,8 +171,8 @@ function loadPosData(target,p,freqdata,histdata,url) {
 		
 //		var params1 = "freqlist&max=10&pos="+p+"&docpid="+doc;
 //		var params2 = "histogram&pos="+p+"&docpid="+doc;
-		createPosFreqlist("#"+p+"_right_top10",freqdata,p,c,"");
-		createPosHistogram("#"+p+"_right_hist",histdata,p,c,"");
+		createPosFreqlist("#"+p+"_right_top10",freqdata,p,c,url1);
+		createPosHistogram("#"+p+"_right_hist",histdata,p,c,url2);
 //		getPosData("document", params1, createPosFreqlist, "#"+p+"_right_top10", p, c);
 //		getPosData("document", params2, createPosHistogram, "#"+p+"_right_hist", p, c);
 //	}
@@ -200,11 +200,11 @@ function createPosFreqlist(target, d, p, color, url) {
 		        };
 		var chart = new google.visualization.BarChart(container);
 	    chart.draw(data, options);
-//		var toolbar = document.createElement('div');
-//		$(toolbar).addClass("toolbar");
-//		$(toolbar).attr("id",target.substring(1)+"_toolbar");
-//		$(target).append(toolbar);
-//	    drawToolbar(toolbar,url);
+		var toolbar = document.createElement('div');
+		$(toolbar).addClass("toolbar");
+		$(toolbar).attr("id",target.substring(1)+"_toolbar");
+		$(target).append(toolbar);
+	    drawToolbar(toolbar,url);
 	}
 }
 

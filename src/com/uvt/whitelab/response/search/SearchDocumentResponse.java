@@ -1,5 +1,7 @@
 package com.uvt.whitelab.response.search;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.WhitelabDocument;
 
 public class SearchDocumentResponse extends BaseResponse {
+	private SecureRandom random = new SecureRandom();
 	
 	public SearchDocumentResponse(String ns) {
 		super(ns);
@@ -18,7 +21,9 @@ public class SearchDocumentResponse extends BaseResponse {
 	@Override
 	protected void completeRequest() {
 
+		String corpus = this.labels.getString("corpus");
 		String tab = this.getParameter("tab", "text");
+		String export = this.getParameter("export", "false");
 		if (query != null) {
 			WhitelabDocument document = query.getDocument();
 			if (document != null) {
@@ -32,19 +37,49 @@ public class SearchDocumentResponse extends BaseResponse {
 					this.getContext().put("content", document.getMetadata());
 				} else if (tab.equals("statistics")) {
 					if (this.request.getParameterMap().containsKey("growth")) {
-						this.getContext().put("data", document.getGrowthDataString(this.lang, "json", false, 0,0,0));
-						this.getContext().put("statType", "growth");
+						if (export.equals("true")) {
+							String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+							sendFileResponse(document.getGrowthDataString(this.lang, "csv", false, 0,0,0), fileName);
+						} else {
+							this.getContext().put("growthExportUrl", query.getUrl("search/document", "&tab=statistics&growth&export=true", false, new String[] {}));
+							this.getContext().put("data", document.getGrowthDataString(this.lang, "json", false, 0,0,0));
+							this.getContext().put("statType", "growth");
+						}
 					} else if (this.request.getParameterMap().containsKey("posdata")) {
-						this.getContext().put("freqlist", document.getPosFreqList(this.getParameter("pos", "ADJ"), "json"));
-						this.getContext().put("histogram", document.getPosHistogram(this.getParameter("pos", "ADJ"), "json"));
-						this.getContext().put("statType", "posdata");
-						this.getContext().put("posSelected", this.getParameter("pos", "ADJ"));
-						this.getContext().put("posLabels", loadPosLabels());
-						this.getContext().put("posColors", loadPosColors());
+						if (export.equals("true")) {
+							String charttype = this.getParameter("chart", "freqlist");
+							String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+							if (charttype.equals("freqlist")) {
+								sendFileResponse(document.getPosFreqList(this.getParameter("pos", "ADJ"), "csv"), fileName);
+							} else if (charttype.equals("histogram")) {
+								sendFileResponse(document.getPosHistogram(this.getParameter("pos", "ADJ"), "csv"), fileName);
+							}
+						} else {
+							this.getContext().put("freqlistExportUrl", query.getUrl("search/document", "&tab=statistics&posdata&chart=freqlist&export=true", false, new String[] {}));
+							this.getContext().put("histogramExportUrl", query.getUrl("search/document", "&tab=statistics&posdata&chart=histogram&export=true", false, new String[] {}));
+							this.getContext().put("freqlist", document.getPosFreqList(this.getParameter("pos", "ADJ"), "json"));
+							this.getContext().put("histogram", document.getPosHistogram(this.getParameter("pos", "ADJ"), "json"));
+							this.getContext().put("statType", "posdata");
+							this.getContext().put("posSelected", this.getParameter("pos", "ADJ"));
+							this.getContext().put("posLabels", loadPosLabels());
+							this.getContext().put("posColors", loadPosColors());
+						}
 					} else if (this.request.getParameterMap().containsKey("pospie")) {
-						this.getContext().put("tokenpie", document.getPosTotals("token", "json"));
-						this.getContext().put("lemmapie", document.getPosTotals("lemma", "json"));
-						this.getContext().put("statType", "pospie");
+						if (export.equals("true")) {
+							String charttype = this.getParameter("chart", "token");
+							String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+							if (charttype.equals("token")) {
+								sendFileResponse((String) document.getPosTotals("token", "csv"), fileName);
+							} else if (charttype.equals("lemma")) {
+								sendFileResponse((String) document.getPosTotals("lemma", "csv"), fileName);
+							}
+						} else {
+							this.getContext().put("tokenExportUrl", query.getUrl("search/document", "&tab=statistics&pospie&chart=token&export=true", false, new String[] {}));
+							this.getContext().put("lemmaExportUrl", query.getUrl("search/document", "&tab=statistics&pospie&chart=lemma&export=true", false, new String[] {}));
+							this.getContext().put("tokenpie", document.getPosTotals("token", "json"));
+							this.getContext().put("lemmapie", document.getPosTotals("lemma", "json"));
+							this.getContext().put("statType", "pospie");
+						}
 					} else {
 						this.getContext().put("data", document.getDocStats(this.lang));
 					}
@@ -55,9 +90,11 @@ public class SearchDocumentResponse extends BaseResponse {
 			}
 		}
 		
-		this.getContext().put("doctab", tab);
-		this.getContext().put("query", query);
-		this.displayHtmlTemplate(this.servlet.getTemplate("search/document"));
+		if (export.equals("false")) {
+			this.getContext().put("doctab", tab);
+			this.getContext().put("query", query);
+			this.displayHtmlTemplate(this.servlet.getTemplate("search/document"));
+		}
 	}
 	
 	private List<String> loadPosLabels() {

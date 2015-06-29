@@ -24,11 +24,13 @@ import java.util.SortedSet;
 //import java.util.TreeSet;
 
 
+
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,6 +39,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 
 //import com.uvt.whitelab.util.MetadataField;
@@ -623,6 +626,26 @@ public abstract class BaseResponse {
 			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 		    writer.append(csv);
 		    writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void sendFileResponse(String contents, String fileName) {
+        // Set HTTP headers
+		response.setContentType("application/octet-stream");
+        response.setContentLength(contents.length());
+        response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
+        response.setCharacterEncoding("utf-8");
+        
+        ServletOutputStream outStream = null;
+		try {
+			outStream = response.getOutputStream();
+			try {
+				outStream.write(contents.getBytes("utf-8"));
+			} finally {
+		        outStream.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

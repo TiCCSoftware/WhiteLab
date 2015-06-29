@@ -60,12 +60,12 @@
 <script>
 	$(function() {
 		#if($statType=="growth")
-			displayGrowth($data,'$labels.getString("document.growth.title")',"#docGrowthDisplay");
+			displayGrowth($data,'$labels.getString("document.growth.title")',"#docGrowthDisplay","$growthExportUrl");
 		#elseif($statType=="posdata")
-			loadPosData("#docPosDisplay","$posSelected",$freqlist,$histogram,"$statisticsUrl"+"&posdata");
+			loadPosData("#docPosDisplay","$posSelected",$freqlist,$histogram,"$freqlistExportUrl","$histogramExportUrl");
 		#elseif($statType=="pospie")
-			displayPosPie($tokenpie,'$labels.getString("document.tokenpospie.title")',"#docTokenPosPieDisplay","");
-			displayPosPie($lemmapie,'$labels.getString("document.lemmapospie.title")',"#docLemmaPosPieDisplay","");
+			displayPosPie($tokenpie,'$labels.getString("document.tokenpospie.title")',"#docTokenPosPieDisplay","$tokenExportUrl");
+			displayPosPie($lemmapie,'$labels.getString("document.lemmapospie.title")',"#docLemmaPosPieDisplay","$lemmaExportUrl");
 		#else
 			displayStats($data,'$labels.getString("document.stats.title")',"#docStatsDisplay");
 		#end
