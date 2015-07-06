@@ -7,7 +7,6 @@
 package com.uvt.whitelab.response;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -72,11 +71,7 @@ public class ExportResponse extends BaseResponse {
 				}
 			}
 			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
-			try {
-				sendFileResponse(result.toString(), fileName);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			sendFileResponse(result.toString(), fileName);
 		} else {
 			this.servlet.log("NO QUERY");
 		}

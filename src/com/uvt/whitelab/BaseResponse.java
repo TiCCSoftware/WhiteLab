@@ -634,24 +634,29 @@ public abstract class BaseResponse {
 		}
 	}
 
-	protected void sendFileResponse(String contents, String fileName) throws UnsupportedEncodingException {
+	protected void sendFileResponse(String contents, String fileName) {
         // Set HTTP headers
-		final byte[] bytes = contents.getBytes("UTF-8");
-		response.setContentType("application/octet-stream");
-        response.setContentLength(bytes.length);
-        response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
-        response.setCharacterEncoding("UTF-8");
-        
-        ServletOutputStream outStream = null;
+		byte[] bytes;
 		try {
-			outStream = response.getOutputStream();
+			bytes = contents.getBytes("UTF-8");
+			response.setContentType("application/octet-stream");
+	        response.setContentLength(bytes.length);
+	        response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
+	        response.setCharacterEncoding("UTF-8");
+	        
+	        ServletOutputStream outStream = null;
 			try {
-				outStream.write(bytes);
-			} finally {
-		        outStream.close();
+				outStream = response.getOutputStream();
+				try {
+					outStream.write(bytes);
+				} finally {
+			        outStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
 		}
 	}
 	
