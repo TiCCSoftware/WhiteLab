@@ -414,7 +414,7 @@ public abstract class BaseResponse {
 		Map<String,String> options = this.servlet.getMetadataHtmlGenerator().generateOptions(labels);
 		Map<String,String> selectFields = this.servlet.getMetadataHtmlGenerator().loadSelectFields(labels);
 		SortedSet<String> filters = this.servlet.getMetadataHtmlGenerator().loadFilters(labels);
-		if (includeQueryData)
+		if (includeQueryData && query.getFilters().size() > 0)
 			this.getContext().put("queryRules", this.servlet.getMetadataHtmlGenerator().generateQueryRules(labels, filters, options, query));
 		this.getContext().put("metaRule", this.servlet.getMetadataHtmlGenerator().generateEmptyRule(labels, filters, options));
 		this.getContext().put("filters", filters);
