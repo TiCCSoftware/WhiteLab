@@ -782,6 +782,13 @@ button.search > span, button.reset > span {
 	max-height: 44px;
 }
 
+#simple-doc-input {
+	min-width: 60%;
+	max-width: 80%;
+	display:inline-block;
+	max-height: 44px;
+}
+
 /* Search.extended */
 
 /* Search.advanced */
