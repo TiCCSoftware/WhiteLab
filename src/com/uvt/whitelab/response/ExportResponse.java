@@ -7,6 +7,7 @@
 package com.uvt.whitelab.response;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -40,19 +41,18 @@ public class ExportResponse extends BaseResponse {
 			
 			StringBuilder result = new StringBuilder();
 			if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
-				int n = 50000;
-				if (n > max)
-					n = max;
 				int prev_n = query.getNumber();
 				int prev_f = query.getFirst();
 				query.setNumber(2500);
 				
-				for (int f = 0; f < n; f = f + 2500) {
+				for (int f = 0; f < max; f = f + 2500) {
 					query.setFirst(f);
+					this.servlet.log("First: "+f+", number: "+query.getNumber()+", max: "+max);
+					
 					try {
 						String resp = resultHandler.getBlackLabResponse(corpus, trail, query.getParameters());
 						String stylesheet = this.getExportStylesheet(view);
-						this.setTransformerDisplayParameters(f == 0,n);
+						this.setTransformerDisplayParameters(f == 0,max);
 						result.append(transformer.transform(resp, stylesheet));
 					} catch (IOException | TransformerException e) {
 						e.printStackTrace();
@@ -72,7 +72,11 @@ public class ExportResponse extends BaseResponse {
 				}
 			}
 			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
-			sendFileResponse(result.toString(), fileName);
+			try {
+				sendFileResponse(result.toString(), fileName);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		} else {
 			this.servlet.log("NO QUERY");
 		}

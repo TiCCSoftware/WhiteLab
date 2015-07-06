@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 //import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 //import java.util.TreeSet;
+
 
 
 
@@ -39,6 +41,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 
 
@@ -631,18 +634,19 @@ public abstract class BaseResponse {
 		}
 	}
 
-	protected void sendFileResponse(String contents, String fileName) {
+	protected void sendFileResponse(String contents, String fileName) throws UnsupportedEncodingException {
         // Set HTTP headers
+		final byte[] bytes = contents.getBytes("UTF-8");
 		response.setContentType("application/octet-stream");
-        response.setContentLength(contents.length());
+        response.setContentLength(bytes.length);
         response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
-        response.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("UTF-8");
         
         ServletOutputStream outStream = null;
 		try {
 			outStream = response.getOutputStream();
 			try {
-				outStream.write(contents.getBytes("utf-8"));
+				outStream.write(bytes);
 			} finally {
 		        outStream.close();
 			}
