@@ -3,15 +3,6 @@ Whitelab.search.document = {
 	position : -1,
 	anchors : new Array(),
 	
-	display : function(response) {
-		if (response != null && response.hasOwnProperty("data") && response.data != null) {
-			$("#doc-display").html(response.data);
-			Whitelab.search.document.initialiseAnchors();
-		} else {
-			$("#doc-display").html("<p>ERROR - Could not process request.</p>");
-		}
-	},
-	
 	getCurrentAnchorName : function() {
 		return Whitelab.search.document.anchors[Whitelab.search.document.position];
 	},
@@ -67,45 +58,5 @@ Whitelab.search.document = {
 		
 		if(Whitelab.search.document.anchors.length == 0)
 			$("#doc-display .hitscroll").hide();
-	},
-	
-	load : function(pid,query) {
-		var params = "docpid="+pid+"&query="+query;
-		params = params.replace(/ /g,"%20");
-		$("#doc-display").html("<p>Loading document "+pid+"...</p>");
-		Whitelab.search.switchTab("document");
-		
-		var xhr = Whitelab.createRequest('POST', Whitelab.baseUrl+"document");
-		if (!xhr) {
-			return;
-		}
-		
-		Whitelab.debug(params);
-		
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
-		
-		xhr.onload = function() {
-			Whitelab.search.document.id = pid;
-			var resp = JSON.parse(xhr.responseText);
-			Whitelab.search.document.display(resp);
-		};
-
-		xhr.onerror = function() {
-			$("#doc-display").html("<p>ERROR - Could not connect to server.</p>");
-		};
-
-		xhr.send(params);
-	},
-	
-	switchTab : function(target) {
-		Whitelab.debug("switching tab");
-		$("#doc-display .doc_link").removeClass("active");
-		$("#doc-display .doc-pane").removeClass("active");
-		$("#doc-display #"+target+"_link").addClass("active");
-		$("#doc-display #"+target+"_tab").addClass("active");
-
-		if (target === "cloud") {
-			generateCloud("#docCloudDisplay", $("#docCloudSettings > input.split").is(':checked'));
-		}
 	}
 };

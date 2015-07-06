@@ -94,7 +94,7 @@
 						</div>
 						<script>
 							$(function() {
-								displayGrowth($data,'$labels.getString("document.growth.title")',"#docGrowthDisplay","");
+								displayGrowth($data,'$labels.getString("document.growth.title")',"#docGrowthDisplay","$growthExportUrl");
 							});
 						</script>
 					#elseif($statstab=="wordcloud")

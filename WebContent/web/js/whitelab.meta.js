@@ -61,25 +61,6 @@ Whitelab.meta = {
 		return filterQuery;
 	},
 	
-	parseQueryToInterface : function(q) {
-		$("#"+Whitelab.tab+"-meta .rules").html("");
-		
-		var vals = meta.split('&amp;');
-		while (vals.length > 0) {
-			var val = vals.shift();
-			var v = val.split('=');
-			var op = "is";
-			if (input.indexOf("-") == 0) {
-				input = input.substring(1); 
-				op = "not";
-			}
-			$("#"+Whitelab.tab+"-meta .rules").append(Whitelab.meta.rule);
-			$("#"+Whitelab.tab+"-meta").find(".metaLabel").last().val(v[0]);
-			$("#"+Whitelab.tab+"-meta").find(".metaInput").last().val(v[1]);
-			$("#"+Whitelab.tab+"-meta").find(".metaOperator").last().val(op);
-		}
-	},
-	
 	switchState : function(item) {
 		if ($(item).parent().find("div.content-meta").hasClass("active"))
 			$(item).find("img").attr("src","../web/img/plus.png");

@@ -3,16 +3,16 @@ var Whitelab = {
 	blsUrl : null,
 	language : null,
 	tab : null,
-	doDebug : true,
+	doDebug : false,
 	doDebugXhrResponse : false, // log full XHR responses? (long)
-	exportLimit : 50000,
-	
-	confirmExport : function() {
-		if (Whitelab.language === "en")
-			return confirm("Your query exceeds the maximum export size. Only the first "+Whitelab.exportLimit+" results will be exported.\n\nDo you want to continue?\n");
-		else
-			return confirm("Uw zoekopdracht overschrijdt de export limiet. Alleen de eerste "+Whitelab.exportLimit+" resultaten worden geëxporteerd.\n\nWilt u doorgaan?\n");
-	},
+//	exportLimit : 50000,
+//	
+//	confirmExport : function() {
+//		if (Whitelab.language === "en")
+//			return confirm("Your query exceeds the maximum export size. Only the first "+Whitelab.exportLimit+" results will be exported.\n\nDo you want to continue?\n");
+//		else
+//			return confirm("Uw zoekopdracht overschrijdt de export limiet. Alleen de eerste "+Whitelab.exportLimit+" resultaten worden geëxporteerd.\n\nWilt u doorgaan?\n");
+//	},
 	
 	cookies : {
 		accept : function() {
@@ -60,43 +60,6 @@ var Whitelab = {
 		if (Whitelab.doDebug && Whitelab.doDebugXhrResponse) {
 			console.log(msg);
 		}
-	},
-	
-	getBlacklabData : function(type, params, callback, target) {
-		var xhr = Whitelab.createRequest('GET', Whitelab.blsUrl + type);
-		if (!xhr) {
-			return;
-		}
-		
-		if (params != null && params.indexOf("outputformat=") == -1) {
-			params = params + "&outputformat=json";
-		} else if (params == null || params.length == 0) {
-			params = "outputformat=json";
-		}
-
-		Whitelab.debug(Whitelab.blsUrl + type + "?" + params);
-		
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
-		
-		xhr.onload = function() {
-//			if (/^[\],:{}\s]*$/.test(xhr.responseText.replace(/\\["\\\/bfnrtu]/g, '@').
-//					replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-//					replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-				Whitelab.debugXhrResponse(xhr.responseText);
-				var resp = JSON.parse(xhr.responseText);
-				Whitelab.debugXhrResponse("response:");
-				Whitelab.debugXhrResponse(resp);
-				callback(resp,target);
-//			} else {
-//				Whitelab.debug("invalid JSON");
-//			}
-		};
-
-		xhr.onerror = function() {
-			Whitelab.debug("Failed to proces request.");
-		};
-
-		xhr.send(params);
 	},
 	
 	getData : function(url, params, callback, target, update) {
@@ -147,53 +110,7 @@ var Whitelab = {
 	    }
 	},
 	
-//	switchTab : function(target) {
-//		if (target !== Whitelab.tab) {
-//			if (Whitelab.language != null) {
-//				window.location = window.location.protocol+target+"?lang="+Whitelab.language;
-//			} else {
-//				window.location = window.location.protocol+target;
-//			}
-//		}
-//	},
-	
-	switchLanguage : function(lang) {
-		Whitelab.language = lang;
-		if (Whitelab.tab === "search" && Whitelab.search.tab !== "result" && Whitelab.search.tab !== "document") {
-			window.location = window.location.protocol+Whitelab.tab+"?lang="+Whitelab.language+"&tab="+Whitelab.search.tab;
-		} else {
-			window.location = window.location.protocol+Whitelab.tab+"?lang="+Whitelab.language;
-		}
-	},
-	
-	transform : function(xml, xslSheet) {	
-		// get stylesheet
-		xhttp = new XMLHttpRequest();
-		xhttp.open("GET", xslSheet, false);
-		xhttp.send("");
-		
-		var parser = new DOMParser();
-		var sheet = parser.parseFromString( xhttp.responseText, "text/xml");
-		
-		// apply translation
-		var result = "";
-		if(window.ActiveXObject) {
-			// Internet Explorer has to be the special child of the class -_-
-			sheet = new ActiveXObject("Microsoft.XMLDOM");
-			sheet.async = false;
-			sheet.loadXML(xhttp.responseText);
-			result = xml.transformNode(sheet);
-		} else {
-			var processor = new XSLTProcessor();
-			processor.importStylesheet(sheet);
-			result = processor.transformToFragment(xml, document);
-		}
-		
-		return result;
-	},
-	
 	home : {
-		
 		setSizes : function() {
 			var h = $(window).innerHeight() - 135;
 			$("#homepage").css("height",h+"px");
