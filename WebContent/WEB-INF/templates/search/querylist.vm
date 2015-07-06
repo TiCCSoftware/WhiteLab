@@ -15,7 +15,7 @@
 	</thead>
 	<tbody>
 		#if($qlBefore > -1)
-			#set($url=$query.getUrl("search/results","&ql=$qlBefore",false,null))
+			#set($url=$query.getUrl("search/results","&ql=${qlBefore}",false,$except))
 			<tr class="ql up" onclick="document.location.href='$url'"><td colspan="9">...</td></tr>
 		#end
 		#set($i = 0)
