@@ -93,25 +93,10 @@ public class MetadataHtmlGenerator {
 		SortedSet<String> filters = new TreeSet<String>();
 		for (MetadataField dataField : this.servlet.getMetadataFields()) {
 			String fieldName = dataField.getName();
-//			if (labels.containsKey("metadataFields."+fieldName))
-//				fieldName = labels.getString("metadataFields."+fieldName);
-			
 			filters.add(fieldName);
 		}
 		return filters;
 	}
-	
-//	public Map<String,String> loadFilterIds(ResourceBundle labels) {
-//		Map<String,String> filterIds = new HashMap<String,String>();
-//		for (MetadataField dataField : this.servlet.getMetadataFields()) {
-//			String fieldName = dataField.getName();
-//			if (labels.containsKey("metadataFields."+fieldName))
-//				fieldName = labels.getString("metadataFields."+fieldName);
-//			
-//			filterIds.put(fieldName, dataField.getName());
-//		}
-//		return filterIds;
-//	}
 	
 	public Map<String,String> loadSelectFields(ResourceBundle labels) {
 		Map<String,String> selectFields = new HashMap<String,String>();
@@ -195,19 +180,6 @@ public class MetadataHtmlGenerator {
 		}
 		return options;
 	}
-	
-//	public String generateOption(ResourceBundle labels, String fieldName, boolean selected, String classLabel) {
-//		String fieldLabel = fieldName;
-//		if (labels.containsKey("metadataFields."+fieldName))
-//			fieldLabel = labels.getString("metadataFields."+fieldName);
-//		String option = "<option value=\""+fieldName+"\"";
-//		if (classLabel != null)
-//			option = option+" class=\""+classLabel+"\"";
-//		if (selected)
-//			option = option+" selected=\"true\"";
-//		option = option+">"+fieldLabel+"</option>";
-//		return option;
-//	}
 	
 	public String generateOption(String fieldName, String fieldLabel, boolean selected, String classLabel) {
 		String option = "<option value=\""+fieldName+"\" class=\""+classLabel+"\"";

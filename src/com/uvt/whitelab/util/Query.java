@@ -135,7 +135,6 @@ public class Query implements Serializable {
 				wordsAroundHit = 0;
 			else
 				wordsAroundHit = -1;
-//			setPattern(br.getParameter("query", "").replaceAll("&", "%26"));
 			generateFilterStringFromInput(br,true);
 			
 			if (from == 5) {
@@ -208,16 +207,6 @@ public class Query implements Serializable {
 	public String getId() {
 		return id;
 	}
-	
-//	public void setPattern(String p) {
-//		if (p.contains("within")) {
-//			pattern = p.split(" within")[0];
-//			setWithin("within"+p.split(" within")[1]);
-//		} else {
-//			pattern = p;
-//			within = "";
-//		}
-//	}
 	
 	public String getSimplePattern() {
 		String patt = pattern.replaceAll("\"", "QT\"QT");
@@ -504,8 +493,6 @@ public class Query implements Serializable {
 	
 	public void resetStatus() {
 		setStatus(0);
-//		setHits(0);
-//		setDocs(0);
 		setResult("");
 	}
 
@@ -657,7 +644,6 @@ public class Query implements Serializable {
 		
 		if (update) {
 			filters = filters_;
-//			filterStrings = filterStrings_;
 			filter = filter_;
 		}
 		

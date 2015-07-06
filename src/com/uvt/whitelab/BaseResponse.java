@@ -13,19 +13,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-//import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-//import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
-//import java.util.TreeSet;
-
-
-
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -42,10 +36,6 @@ import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
-
-//import com.uvt.whitelab.util.MetadataField;
 import com.uvt.whitelab.util.Query;
 import com.uvt.whitelab.util.SessionManager;
 
@@ -63,7 +53,6 @@ public abstract class BaseResponse {
 	protected ResourceBundle labels;
 	protected Locale locale;
 	protected String lastUrl = null;
-//	protected Map<String,Object> params;
 	protected String lang;
 	protected HttpSession session;
 	protected Query query;
@@ -149,131 +138,6 @@ public abstract class BaseResponse {
 		else if (from == 0)
 			this.getContext().put("tourQuery", query);
 	}
-
-//	protected Map<String, Object> getQueryParameters() {
-//		Map<String, Object> params = new HashMap<String,Object>();
-//		String query = this.getParameter("query", "");
-//		query = query.replaceAll("&", "%26");
-//		
-//		int view = this.getParameter("view", 1);
-//		
-//		if (query.length() > 0) {
-//			try {
-//
-//				params.put("patt", query);
-//				
-//				String groupBy = this.getParameter("group_by", "");
-//				if (groupBy.length() > 0)
-//					params.put("group", URLDecoder.decode(groupBy, "UTF-8"));
-//				
-//				String sort = this.getParameter("sort", "");
-//				if (sort.length() > 0) {
-//					params.put("sort", URLDecoder.decode(sort, "UTF-8"));
-//				}
-//				
-//				Integer start = this.getParameter("start", -1);
-//				if (start > -1)
-//					params.put("start", start);
-//				
-//				Integer end = this.getParameter("end", -1);
-//				if (end > -1)
-//					params.put("end", end);
-//				
-//				Integer first = this.getParameter("first", 0);
-//				if (first > 0)
-//					params.put("first", first);
-//				
-//				Integer number = this.getParameter("number", 50);
-//				String docPid = this.getParameter("docpid", "");
-//				if (docPid.length() == 0)
-//					params.put("number", number);
-//				
-//				String filter = getFilterString();
-//				if (filter.length() > 0) {
-//					params.put("filter", filter);
-//				}
-//				
-//				if (view == 12)
-//					params.put("wordsaroundhit", 0);
-//				
-//			} catch (UnsupportedEncodingException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//		return params;
-//	}
-	
-//	private String getFilterString() {
-//		Map<String,Map<String,List<String>>> filters = new HashMap<String,Map<String,List<String>>>();
-//		
-//		for (MetadataField dataField : this.servlet.getMetadataFields()) {
-//			String[] filterValues = this.getParameterValues(dataField.getName(), null);
-//			if (filterValues != null && filterValues.length > 0) {
-//				Map<String,List<String>> vals = new HashMap<String,List<String>>();
-//				List<String> is = new ArrayList<String>();
-//				List<String> isnot = new ArrayList<String>();
-//				vals.put("is", is);
-//				vals.put("isnot", isnot);
-//				
-//				for (int i = 0; i < filterValues.length; i++) {
-//					String filterValue = "";
-//					try {
-//						filterValue = URLDecoder.decode(filterValues[i], "UTF-8");
-//					} catch (UnsupportedEncodingException e) {
-//						e.printStackTrace();
-//					}
-//					
-//					if (filterValue.startsWith("-") || filterValue.startsWith("\"-")) {
-//						filterValue = filterValue.replaceFirst("-", "");
-//						vals.get("isnot").add(filterValue);
-//					} else {
-//						vals.get("is").add(filterValue);
-//					}
-//				}
-//				
-//				if (vals.get("isnot").size() > 0 && vals.get("is").size() == 0) {
-//					for (String filterValue : dataField.getValues()) {
-//						filterValue = "\""+filterValue+"\"";
-//						if (!vals.get("isnot").contains(filterValue) && !vals.get("is").contains(filterValue))
-//							vals.get("is").add(filterValue);
-//					}
-//				} else {
-//					vals.remove("isnot");
-//				}
-//				
-//				filters.put(dataField.getName(), vals);
-//			}
-//		}
-//
-//		List<String> filterStrings = new ArrayList<String>();
-//		String filter = "";
-//		if (filters.keySet().size() > 0) {
-//			for (String field : filters.keySet()) {
-//				filterStrings.add(field+":("+StringUtils.join(filters.get(field).get("is").toArray(), " OR ").replaceAll("&", "%26")+")");
-//			}
-//			filter = "("+StringUtils.join(filterStrings.toArray()," AND ")+")";
-//		}
-//		return filter;
-//	}
-
-//	protected String getParameterStringExcept(String[] except) {
-//		String parameters = "";
-//		
-//		if (params != null && params.keySet().size() > 0) {
-//			for (String key : params.keySet()) {
-//				if (!Arrays.asList(except).contains(key)) {
-//					if (parameters.length() > 0)
-//						parameters = parameters + "&" + key + "=" + params.get(key);
-//					else
-//						parameters = key + "=" +params.get(key);
-//				}
-//			}
-//		}
-//		
-//		parameters = parameters.replaceAll(" ", "%20");
-//		return parameters;
-//	}
 
 	/**
 	 * Display a specific template, with specific mime type
@@ -503,91 +367,13 @@ public abstract class BaseResponse {
 	}
 
 	protected void loadMetaDataComponents(boolean includeQueryData) {
-//		Map<String,String> options = new HashMap<String,String>();
-//		Map<String,String> selectFields = new HashMap<String,String>();
-//		SortedSet<String> filters = new TreeSet<String>();
-//		Map<String,String> filterIds = new HashMap<String,String>();
-//			
-//		for (MetadataField dataField : this.servlet.getMetadataFields()) {
-//			
-//			//Get display name for field
-//			String fieldName = dataField.getName();
-//			if (this.labels.containsKey("metadataFields."+fieldName))
-//				fieldName = this.labels.getString("metadataFields."+fieldName);
-//			
-//			filters.add(fieldName);
-//			filterIds.put(fieldName, dataField.getName());
-//			
-//			//Generate option HTML
-//			String option = "<option value=\"field:"+dataField.getName()+"\">"+fieldName+"</option>";
-//			options.put(fieldName, option);
-//			
-//			if (dataField.numberOfValues() > 0) {
-//				
-//				List<String> vals = new ArrayList<String>();
-//				Map<String,String> fdOptions = new HashMap<String,String>();
-//				for (String value : dataField.getValues()) {
-//					vals.add(value);
-//					fdOptions.put(value, "<option value=\""+value+"\">"+value+"</option>");
-//				}
-//
-//				String select = "<select class=\"metaInput\"><option value=\"\" selected></option>";
-//				SortedSet<String> keys = new TreeSet<String>(vals);
-//				for (String fieldValue : keys) {
-//					select = select+fdOptions.get(fieldValue);
-//				}
-//				if (!dataField.isComplete())
-//					select = select+"<option value=\"other\">"+this.labels.getString("other")+"</option>";
-//				
-//				select = select+"</select>";
-//				selectFields.put(dataField.getName(), select);
-//			} else {
-//				String select = "<input class=\"metaInput\" type=\"text\" />";
-//				selectFields.put(dataField.getName(), select);
-//			}
-//		}
-//		
-//		String rule = "<div class=\"rule row large-16 medium-16 small-16\">"
-//			+ "<div class=\"large-4 medium-4 small-4 columns\">"
-//			+ "<select class=\"metaLabel\">"
-//			+ "<option value=\"\" disabled=\"true\" selected=\"true\"></option>";
-//		
-//		Iterator<String> it = filters.iterator();
-//		while (it.hasNext()) {
-//			rule = rule + options.get(it.next());
-//		}
-//			
-//		rule = rule + "</select>"
-//			+ "</div>"
-//			+ "<div class=\"large-3 medium-3 small-3 columns\">"
-//			+ "<select class=\"metaOperator\">"
-//			+ "<option value=\"is\" selected=\"true\">"+this.labels.getString("meta.is")+"</option>"
-//			+ "<option value=\"not\">"+this.labels.getString("meta.not")+"</option>"
-//			+ "</select>"
-//			+ "</div>"
-//			+ "<div class=\"large-7 medium-7 small-7 columns\">"
-//			+ "<input class=\"metaInput\" type=\"text\">"
-//			+ "</div>"
-//			+ "<div class=\"large-2 medium-2 small-2 columns\">"
-//			+ "<a class=\"meta-min\" onclick=\"Whitelab.meta.removeRule(this)\">"
-//			+ "<img src=\"../web/img/minus.png\">"
-//			+ "</a>"
-//			+ "<a class=\"meta-plus\" onclick=\"Whitelab.meta.addRule()\">"
-//			+ "<img src=\"../web/img/plus.png\">"
-//			+ "</a>"
-//			+ "</div>"
-//			+ "</div>";
-//
-
 		Map<String,String> options = this.servlet.getMetadataHtmlGenerator().generateOptions(labels);
 		Map<String,String> selectFields = this.servlet.getMetadataHtmlGenerator().loadSelectFields(labels);
 		SortedSet<String> filters = this.servlet.getMetadataHtmlGenerator().loadFilters(labels);
-//		Map<String,String> filterIds = this.servlet.getMetadataHtmlGenerator().loadFilterIds(labels);
 		if (includeQueryData)
 			this.getContext().put("queryRules", this.servlet.getMetadataHtmlGenerator().generateQueryRules(labels, filters, options, query));
 		this.getContext().put("metaRule", this.servlet.getMetadataHtmlGenerator().generateEmptyRule(labels, filters, options));
 		this.getContext().put("filters", filters);
-//		this.getContext().put("filterIds", filterIds);
 		this.getContext().put("metaOptions",options);
 		this.getContext().put("metaSelect",selectFields);
 		this.getContext().put("generator", this.servlet.getMetadataHtmlGenerator());

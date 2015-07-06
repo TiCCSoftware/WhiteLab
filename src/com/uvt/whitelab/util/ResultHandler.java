@@ -448,17 +448,14 @@ public class ResultHandler {
 	protected String getParameterStringExcept(String[] except, Map<String,Object> params) {
 		String parameters = "";
 		
-//		if (query != null) {
-//			Map<String,Object> params = query.getParameters();
-			for (String key : params.keySet()) {
-				if (!Arrays.asList(except).contains(key)) {
-					if (parameters.length() > 0)
-						parameters = parameters + "&" + key + "=" + params.get(key);
-					else
-						parameters = key + "=" +params.get(key);
-				}
+		for (String key : params.keySet()) {
+			if (!Arrays.asList(except).contains(key)) {
+				if (parameters.length() > 0)
+					parameters = parameters + "&" + key + "=" + params.get(key);
+				else
+					parameters = key + "=" +params.get(key);
 			}
-//		}
+		}
 		
 		parameters = parameters.replaceAll(" ", "%20");
 		return parameters;
