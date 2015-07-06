@@ -89,36 +89,36 @@ public class ResultResponse extends BaseResponse {
 			Map<String,Object> output = new HashMap<String,Object>();
 			output.put("html", query.getResult());
 			sendResponse(output);
-		}
-		
-		this.servlet.log("QUERY COUNT: "+queryCount);
-		if (query == null)
-			this.servlet.log("QUERY IS NULL");
-		if (query == null && queryCount > 0)
-			query = SessionManager.setCurrentQuery(session, null);
-		else if (query == null && queryCount == 0) {
-			try {
-				response.sendRedirect("/whitelab/search/simple");
-			} catch (IOException e) {
-				e.printStackTrace();
+		} else {
+			this.servlet.log("QUERY COUNT: "+queryCount);
+			if (query == null)
+				this.servlet.log("QUERY IS NULL");
+			if (query == null && queryCount > 0)
+				query = SessionManager.setCurrentQuery(session, null);
+			else if (query == null && queryCount == 0) {
+				try {
+					response.sendRedirect("/whitelab/search/simple");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			
+			if (query != null) {
+				@SuppressWarnings("unchecked")
+				List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
+				this.getContext().put("query", query);
+				this.getContext().put("queries", queries);
+				this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
+				this.getContext().put("requestUrl", query.getUrl("search/results", null, true, new String[]{}));
+				int ql = this.getParameter("ql", 0);
+				this.getContext().put("ql", ql);
+				this.getContext().put("qlBefore", ql - 5);
+				this.getContext().put("qlStart", ql + 1);
+				this.getContext().put("qlEnd", ql + 5);
+			}
+			
+			this.displayHtmlTemplate(this.servlet.getTemplate("search/results"));
 		}
-		
-		if (query != null) {
-			@SuppressWarnings("unchecked")
-			List<Map<String,Object>> queries = (List<Map<String,Object>>) session.getAttribute("queries");
-			this.getContext().put("query", query);
-			this.getContext().put("queries", queries);
-			this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
-			this.getContext().put("requestUrl", query.getUrl("search/results", null, true, new String[]{}));
-			int ql = this.getParameter("ql", 0);
-			this.getContext().put("ql", ql);
-			this.getContext().put("qlBefore", ql - 5);
-			this.getContext().put("qlStart", ql + 1);
-			this.getContext().put("qlEnd", ql + 5);
-		}
-		
-		this.displayHtmlTemplate(this.servlet.getTemplate("search/results"));
 	}
 
 	@Override

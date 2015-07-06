@@ -316,7 +316,7 @@ Whitelab.tour = {
 							steps: [
 				                    {
 				                    	// 15
-				                    	element: "#doc-input",
+				                    	element: "#document",
 				                    	intro: "<p>In het <b>document</b> overzicht kunt u een specifieke ID invoeren om dat document te bekijken.</p>",
 				                    	position: "bottom"
 				                    }
@@ -327,7 +327,7 @@ Whitelab.tour = {
 							steps: [
 				                    {
 				                    	// 15
-				                    	element: "#doc-input",
+				                    	element: "#document",
 				                    	intro: "<p>In the <b>document</b> view, a single document identifier can be submitted to retrieve that document from the corpus.</p>",
 				                    	position: "bottom"
 				                    }
@@ -1007,12 +1007,12 @@ Whitelab.tour = {
 			else if (ns === "explore")
 				window.location.href = "/whitelab/explore/corpus";
 			else
-				window.location.href = "/whitelab/search/results?delete=true&endtour=true";
+				window.location.href = "/whitelab/search/simple";
 		}).onexit(function() {
 			if (ns === "explore")
 				window.location.href = "/whitelab/explore/corpus";
 			else
-				window.location.href = "/whitelab/search/results?delete=true&endtour=true";
+				window.location.href = "/whitelab/search/simple";
 		});
 		
 		Whitelab.intro.start();

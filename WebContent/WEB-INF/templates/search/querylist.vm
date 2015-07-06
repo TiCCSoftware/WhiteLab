@@ -37,40 +37,41 @@
 					<button onclick="document.location.href='$deleteUrl'" class="remove">X</button>
 				</td>
 			</tr>
-		#end
-		#foreach($q in $queries)
-			#set($i = $i + 1)
-			#if($qlStart <= $i && $i <= $qlEnd)
-				#set($url=$q.getUrl("search/results","&ql=${ql}",false,$except))
-				#if($q.isCurrent())
-					<tr class="active query-row">
-					<td class="r">$i</td>
-					<td class="q">$q.getPrintPattern()</td>
-					<td class="w">$q.getWithinString()</td>
-					<td class="m">$q.getFilter()</td>
-					<td class="g">$q.getGroupClean()</td>
-					<td class="status">$q.getStatusString()</td>
-					<td class="h">$q.getHits()</td>
-					<td class="control">$q.getDocs()</td>
-				#else
-					<tr class="query-row">
-					<td onclick="document.location.href='$url'" class="r">$i</td>
-					<td onclick="document.location.href='$url'" class="q">$q.getPrintPattern()</td>
-					<td onclick="document.location.href='$url'" class="w">$q.getWithinString()</td>
-					<td onclick="document.location.href='$url'" class="m">$q.getFilter()</td>
-					<td onclick="document.location.href='$url'" class="g">$q.getGroup()</td>
-					<td onclick="document.location.href='$url'" class="status">$q.getStatusString()</td>
-					<td onclick="document.location.href='$url'" class="h">$q.getHits()</td>
-					<td onclick="document.location.href='$url'" class="control">$q.getDocs()</td>
+		#else
+			#foreach($q in $queries)
+				#set($i = $i + 1)
+				#if($qlStart <= $i && $i <= $qlEnd)
+					#set($url=$q.getUrl("search/results","&ql=${ql}",false,$except))
+					#if($q.isCurrent())
+						<tr class="active query-row">
+						<td class="r">$i</td>
+						<td class="q">$q.getPrintPattern()</td>
+						<td class="w">$q.getWithinString()</td>
+						<td class="m">$q.getFilter()</td>
+						<td class="g">$q.getGroupClean()</td>
+						<td class="status">$q.getStatusString()</td>
+						<td class="h">$q.getHits()</td>
+						<td class="control">$q.getDocs()</td>
+					#else
+						<tr class="query-row">
+						<td onclick="document.location.href='$url'" class="r">$i</td>
+						<td onclick="document.location.href='$url'" class="q">$q.getPrintPattern()</td>
+						<td onclick="document.location.href='$url'" class="w">$q.getWithinString()</td>
+						<td onclick="document.location.href='$url'" class="m">$q.getFilter()</td>
+						<td onclick="document.location.href='$url'" class="g">$q.getGroup()</td>
+						<td onclick="document.location.href='$url'" class="status">$q.getStatusString()</td>
+						<td onclick="document.location.href='$url'" class="h">$q.getHits()</td>
+						<td onclick="document.location.href='$url'" class="control">$q.getDocs()</td>
+					#end
+						<td>
+							#set($fromString=$q.getFromString("search"))
+							#set($editUrl=$q.getUrl("search/$fromString","&edit=true&ql=${ql}",true,$except))
+							#set($deleteUrl=$q.getUrl("search/results","&delete=true&ql=${ql}",true,$except))
+							<button onclick="document.location.href='$editUrl'" class="edit">EDIT</button>
+							<button onclick="document.location.href='$deleteUrl'" class="remove">X</button>
+						</td>
+					</tr>
 				#end
-					<td>
-						#set($fromString=$q.getFromString("search"))
-						#set($editUrl=$q.getUrl("search/$fromString","&edit=true&ql=${ql}",true,$except))
-						#set($deleteUrl=$q.getUrl("search/results","&delete=true&ql=${ql}",true,$except))
-						<button onclick="document.location.href='$editUrl'" class="edit">EDIT</button>
-						<button onclick="document.location.href='$deleteUrl'" class="remove">X</button>
-					</td>
-				</tr>
 			#end
 		#end
 		#if($qlEnd < $i)

@@ -58,7 +58,6 @@ public abstract class BaseResponse {
 	protected Query query;
 	protected int queryCount = 0;
 	protected String namespace;
-	protected int tour = 0;
 	
 	protected long startTime = new Date().getTime();
 
@@ -103,8 +102,6 @@ public abstract class BaseResponse {
 		String within = this.getParameter("within", "");
 		int view = this.getParameter("view", 1);
 		int from = this.getParameter("from", 1);
-		if (tour > 0 && from < 5)
-			from = 0;
 		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
@@ -133,10 +130,52 @@ public abstract class BaseResponse {
 				SessionManager.addQuery(session, query);
 		}
 		
-		if (query != null && view != 9 && view != 17 && namespace.equals("search") && from > 0)
+		if (query != null && view != 9 && view != 17 && namespace.equals("search"))
 			SessionManager.setCurrentQuery(session, query.getId());
-		else if (from == 0)
+	}
+	
+	protected void initTourQuery() {
+		query = null;
+		
+		String id = this.getParameter("id", "");
+		String patt = this.getParameter("query", "").replaceAll("&", "%26");
+		String within = this.getParameter("within", "");
+		int view = this.getParameter("view", 1);
+		int from = 0;
+		
+		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
+		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
+		boolean updateQuery = true;
+
+		this.servlet.log("TOUR QUERY VIEW: "+view);
+		this.servlet.log("TOUR QUERY FROM: "+this.getParameter("from", 0));
+		
+		if (id.length() > 0 && view != 9 && view != 17) {
+			query = SessionManager.getQuery(session, id, from);
+			if (query == null || (patt.length() > 0 && !query.equalPattern(patt,within)))
+				id = "";
+			else if (query != null && patt.length() == 0)
+				updateQuery = false;
+		}
+		
+		if (id.length() == 0 && patt.length() > 0) {
+			this.servlet.log("NEW TOUR QUERY");
+			query = new Query(this);
+			id = query.getId();
+		}
+		
+		if (query != null && !editQuery && !deleteQuery && updateQuery) {
+			query = query.updateQuery(this);
+			query.setFrom(0);
+		} else if (deleteQuery) {
+			SessionManager.setTour(session, 0);
+			query = null;
+		}
+		
+		if (query != null) {
+			SessionManager.addQuery(session, query);
 			this.getContext().put("tourQuery", query);
+		}
 	}
 
 	/**
@@ -202,11 +241,16 @@ public abstract class BaseResponse {
 		
 		this.setLocale();
 		
-		tour = this.getParameter("tour", 0);
-		if (tour > 0)
-			this.getContext().put("tour", tour);
+		SessionManager.setTour(session, this.getParameter("tour", 0));
 
-		this.initQuery();
+		if (SessionManager.isOnTour(session)) {
+			this.initTourQuery();
+			if (query != null)
+				SessionManager.setCurrentQuery(session, query.getId());
+			this.getContext().put("tour", SessionManager.getTourStep(session));
+		} else
+			this.initQuery();
+
 		this.updateQueryCount();
 		
 		logRequest();

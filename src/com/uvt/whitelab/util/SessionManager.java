@@ -42,8 +42,8 @@ public class SessionManager {
 	}
 
 	public static Query getQuery(HttpSession session, String queryId, int from) {
-		if (from == 0) { // tour
-			return null;
+		if (from == 0 && SessionManager.isOnTour(session)) { // tour
+			return (Query) session.getAttribute("tourQuery");
 		} else if (from <= 4) { // search
 			@SuppressWarnings("unchecked")
 			List<Query> queries = (List<Query>) session.getAttribute("queries");
@@ -124,6 +124,33 @@ public class SessionManager {
 
 	public static void deleteTourQuery(HttpSession session) {
 		session.removeAttribute("tourQuery");
+	}
+	
+	public static boolean isOnTour(HttpSession session) {
+		if (session.getAttribute("onTour") != null)
+			return (boolean) session.getAttribute("onTour");
+		return false;
+	}
+	
+	public static int getTourStep(HttpSession session) {
+		if (SessionManager.isOnTour(session) && session.getAttribute("tourStep") != null)
+			return (int) session.getAttribute("tourStep");
+		return 0;
+	}
+
+	public static void setTour(HttpSession session, int tour) {
+		if (SessionManager.isOnTour(session) && tour == 0) {
+			System.out.println("*** Info, closing site tour");
+			session.setAttribute("onTour", false);
+			session.removeAttribute("tourStep");
+			session.removeAttribute("tourQuery");
+		} else if (!SessionManager.isOnTour(session) && tour > 0) {
+			session.setAttribute("onTour", true);
+			session.setAttribute("tourStep", 0);
+		}
+		if (SessionManager.isOnTour(session) && tour != (int) session.getAttribute("tourStep")) {
+			session.setAttribute("tourStep", tour);
+		}
 	}
 
 }
