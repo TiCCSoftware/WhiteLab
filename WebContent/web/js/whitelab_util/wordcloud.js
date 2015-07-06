@@ -17,6 +17,15 @@ var noLegend = false;
 var cloud = null;
 var container = null;
 
+
+function loadCloudData(target,s,data,o) {
+	for (var i = 0; i < data.length; i++) {
+		var item = data[i];
+		addNode(item.lemma,item.freq,item.pos,item.clean);
+	}
+	generateCloud(target, s, o);
+}
+
 function clearCloud() {
 	nodes = new Array();
 	min = 0, max = 0;

@@ -1,0 +1,135 @@
+#set($maintab = "explore")
+#parse("header.vm")
+#set($treemap = $labels.getString("explore.treemap"))
+#set($ngram = $labels.getString("explore.ngram"))
+#set($stats = $labels.getString("explore.statistics"))
+#set($doc = $labels.getString("explore.document"))
+<div id="explorepage">
+	#set($tab="stats")
+	#parse("explore/tabs.vm")
+	
+	<div class="large-16 medium-16 small-16 row tabs-content" id="explore">
+		<div id="metadata">
+			#parse("metadata.vm")
+		</div>
+		<div id="stats" class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1 content active">
+			<div class="large-16 medium-16 small-16 result-pane">
+				<div class="gradient"></div>
+				<table id="stats-table">
+					<tr>
+						<th align="left">
+							$labels.getString("explore.statistics.type") 
+							<select id="stats-groupSelect">
+								<option value="word" selected="selected">$labels.getString("word")</option>
+								<option value="lemma">$labels.getString("lemma")</option>
+								<option value="pos">$labels.getString("pos")</option>
+							</select>
+						</th>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td colspan="3" class="right-spaced">
+							<button onclick="validateForm();" class="search small">
+								<span>$labels.getString("search")</span>
+							</button>
+							<button onclick="Whitelab.explore.statistics.reset()" class="reset small secondary">
+								<span>$labels.getString("reset")</span>
+							</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			#if($query)
+				<div id="stats-info" class="info large-16 medium-16 small-16">
+					<div class="gradient"></div>
+					<div class="content">
+						#set($statsFilter="-")
+						#set($statsGroup="")
+						#set($statsCount="")
+						#set($statsHits="")
+						#set($statsDocs="")
+						#if($query)
+							#set($statsFilter=$query.getFilter())
+							#set($statsGroup=$query.getGroup())
+							#set($statsCount=$query.getGroups())
+							#set($statsHits=$query.getHits())
+							#set($statsDocs=$query.getDocs())
+						#end
+						<span>
+							<label for="#stats-filter">Filter</label>
+							<div id="stats-filter">$statsFilter</div>
+						</span>
+						<span>
+							<label for="#stats-group">$labels.getString("explore.statistics.type")</label>
+							<div id="stats-group">$statsGroup</div>
+						</span>
+						<span>
+							<label for="#stats-count">$labels.getString("explore.statistics.count")</label>
+							<div id="stats-count">$statsCount</div>
+						</span>
+						<span>
+							<label for="#stats-hits">$labels.getString("result.per_hit")</label>
+							<div id="stats-hits">$statsHits</div>
+						</span>
+						<span>
+							<label for="#stats-docs">$labels.getString("result.per_doc")</label>
+							<div id="stats-docs">$statsDocs</div>
+						</span>
+					</div>
+				</div>
+				<div id="result_status"></div>
+				<div id="result_statistics">
+					#parse("explore/statistics-tabs.vm")
+					#if($statstab=="freqlist" || $statstab=="doclist")
+						<div id="result_list" class="result-pane tab-pane active">
+							$query.getResult()
+						</div>
+					#elseif($statstab=="growth")
+						<div id="result_list" class="result-pane tab-pane active">
+							<div id="docGrowthDisplay" class="row"></div>
+							#set($docExceptArray=["group","view"])
+							#set($url=$query.getUrl("explore/statistics","&view=4&tab=growth",false,$docExceptArray))
+							<button class="more search small" onclick="document.location.href='${url}';">$labels.getString("result.loadmore")</button>
+						</div>
+						<script>
+							$(function() {
+								displayGrowth($data,'$labels.getString("document.growth.title")',"#docGrowthDisplay","$growthExportUrl");
+							});
+						</script>
+					#elseif($statstab=="wordcloud")
+						#set($data=$query.getCloud())
+						#set($m=0)
+						#set($omitLegend="true")
+						#parse("document/wordcloud.vm")
+					#end
+				</div>
+			#end
+		</div>
+	</div>
+</div>
+<script>
+	Whitelab.search.error = false;
+	function validateForm() {
+		var q = Whitelab.explore.statistics.composeQuery('hits');
+		if (q)
+			window.location.href = '/whitelab/explore/statistics?from=5&'+q;
+	}
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=2&query=[]&view=12&sort=&first=0&number=50&group=hit:word&CollectionName="Discussion lists"&Country="B"');
+			#elseif($tour==2)
+				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=3&query=[]&from=5&view=4&sort=&first=0&number=50&tab=doclist&CollectionName="Discussion lists"&Country="B"');
+			#elseif($tour==3)
+				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=4&query=[]&from=5&view=4&tab=growth&CollectionName="Discussion lists"&Country="B"');
+			#elseif($tour==4)
+				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=5&query=[]&from=5&view=12&tab=wordcloud&group=hit:lemma&CollectionName="Discussion lists"&Country="B"');
+			#elseif($tour==5)
+				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/ngrams?tour=1');
+			#end
+		});
+	#end
+</script>
+#parse("footer.vm")

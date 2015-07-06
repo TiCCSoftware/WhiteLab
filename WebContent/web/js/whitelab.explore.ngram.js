@@ -9,6 +9,52 @@ Whitelab.explore.ngram = {
 	params : "",
 	size : 5,
 	
+	cqlToInterface : function(cql,size,group) {
+		cql = cql.substr(1);
+		var parts = cql.split('[');
+		var k = 0;
+		var set = [];
+		if (parts.length == size) {
+			set = parts;
+		} else {
+			for (var i = 0; i < parts.length; i++) {
+				var part = parts[i];
+				var quant = part.substring(part.indexOf(']')+1);
+				if (quant.length > 0) {
+					var q = parseInt(quant.substring(1,2));
+					part = part.substring(0,part.indexOf(']')+1);
+					for (var k = 0; k < q; k++) {
+						set.push(part);
+					}
+				} else {
+					set.push(part);
+				}
+			}
+		}
+		for (var i = 0; i < set.length; i++) {
+			var part = set[i];
+			var val = part.substring(0,part.indexOf(']'))
+			var type = "word";
+			var input = "";
+			if (val.length > 0) {
+				var v = val.split('=');
+				type = v[0];
+				input = v[1].replace(/"/g,'');
+			}
+			var j = i + 1;
+			$("#n"+j+" select.type").val(type);
+			$("#n"+j+" input.input").val(input);
+		}
+		if (size < 5) {
+			for (var i = size+1; i <= 5; i++) {
+				$('#n'+i+' select.type').prop('disabled', 'disabled');
+				$('#n'+i+' input.input').prop('disabled', 'disabled');
+			}
+		}
+		group = group.replace(/hit:/,'');
+		$("#ngram-groupSelect").val(group);
+	},
+	
 	displayResult : function(response) {
 		if (response != null) {
 			if (response.hasOwnProperty("html") && response.html.indexOf("ERROR") > -1) {
@@ -35,25 +81,7 @@ Whitelab.explore.ngram = {
 		}
 	},
 	
-	doExport : function() {
-		Whitelab.explore.ngram.first = 0;
-		Whitelab.explore.ngram.number = $("#ngram-count").html();
-		Whitelab.explore.ngram.setSearchParams();
-		
-		var ask = false;
-		if (Whitelab.explore.statistics.number > Whitelab.exportLimit) {
-			ask = Whitelab.confirmExport();
-		} else {
-			ask = true;
-		}
-		
-		if (ask) {
-			var params = Whitelab.explore.ngram.params.replace(/ /g,"%20");
-			window.location = Whitelab.baseUrl + "export?"+params;
-		}
-	},
-	
-	execute : function() {
+	composeQuery : function() {
 		Whitelab.explore.ngram.setDefaults();
 		Whitelab.explore.ngram.query = Whitelab.explore.ngram.parseQuery();
 		Whitelab.explore.ngram.group_by = $("#ngram-groupSelect").val();
@@ -67,14 +95,7 @@ Whitelab.explore.ngram = {
 		}
 		Whitelab.explore.ngram.setQueryDetails();
 		Whitelab.explore.ngram.setSearchParams();
-		$("#result_ngram").html("<span class=\"loading\"><img class=\"icon spinner\" src=\"../web/img/spinner.gif\"> LOADING</span>");
-		Whitelab.getData(Whitelab.explore.ngram.params,Whitelab.explore.ngram.displayResult,"ngram");
-	},
-	
-	goToPage : function(element,number) {
-		var page = $(element).parent().find(".page-select").val();
-		var first = (page * number) - number;
-		Whitelab.explore.ngram.update({ first : first, number : number });
+		return Whitelab.explore.ngram.params;
 	},
 	
 	reset : function() {
@@ -170,33 +191,12 @@ Whitelab.explore.ngram = {
 		+ "&view=" + Whitelab.explore.ngram.view
 		+ "&sort=" + Whitelab.explore.ngram.sort
 		+ "&first=" + Whitelab.explore.ngram.first
-		+ "&group_by=hit:" + Whitelab.explore.ngram.group_by
+		+ "&group=hit:" + Whitelab.explore.ngram.group_by
 		+ "&number=" + Whitelab.explore.ngram.number;
 		
 		if (Whitelab.explore.ngram.filterQuery.length > 0)
 			Whitelab.explore.ngram.params = Whitelab.explore.ngram.params + "&" + Whitelab.explore.ngram.filterQuery;
 		
 		Whitelab.debug("search ngram params set to: "+Whitelab.explore.ngram.params);
-	},
-	
-	update : function(params) {
-		Whitelab.explore.ngram.setDefaults();
-		Whitelab.explore.ngram.query = $("#ngram-query").html().replace(/amp;/g,"");
-		Whitelab.debug("Updating ngram query: "+Whitelab.explore.ngram.query);
-		Whitelab.explore.ngram.filterQuery = $("#ngram-filter").html().replace(/field\:/g,"").replace(/amp;/g,"");
-		
-		Whitelab.debug("update ngram filter query: "+Whitelab.explore.ngram.filterQuery);
-		
-		Whitelab.explore.ngram.group_by = $("#ngram-group").html();
-		
-		$.each(params, function(k, v) {
-			if (Whitelab.explore.ngram.hasOwnProperty(k)) {
-				Whitelab.explore.ngram[k] = v;
-				Whitelab.debug("Whitelab.explore.ngram."+k+": "+Whitelab.explore.ngram[k]);
-			}
-		});
-		
-		Whitelab.explore.ngram.setSearchParams();
-		Whitelab.getData(Whitelab.explore.ngram.params,Whitelab.explore.ngram.displayResult,"ngram");
 	}
 };

@@ -740,7 +740,7 @@ select.meta-medium {
 }
 
 #simple > div > div {
-	display:table-row;
+	/*display:table-row;*/
 }
 
 #simple input {
@@ -772,13 +772,20 @@ button.search > span, button.reset > span {
 
 #simple-buttons {
 	width: 190px;
-	display:table-cell;
+	display:inline-block;
 	max-height: 44px;
 }
 
 #simple-input {
-	width: auto;
+	width: 100%;
 	display:table-cell;
+	max-height: 44px;
+}
+
+#simple-doc-input {
+	min-width: 60%;
+	max-width: 80%;
+	display:inline-block;
 	max-height: 44px;
 }
 
@@ -1472,11 +1479,6 @@ table#queries tbody tr td.control {
 	width: 75px;
 }
 
-table#queries tbody {
-	max-height: 200px;
-	overflow-y: scroll;
-}
-
 table#queries tbody tr:hover {
 	background: rgba(0,153,153,0.2);
 }
@@ -1484,6 +1486,17 @@ table#queries tbody tr:hover {
 table#queries tbody tr.active {
 	background: rgba(0,153,153,0.4);
 	cursor: auto;
+}
+
+table#queries tbody tr.ql {
+	background: #fff;
+	height: 5px;
+	border: 1px solid #ddd;
+}
+
+table#queries tbody tr.ql td {
+	text-align: center;
+	color: #999999;
 }
 
 button.edit, button.remove {

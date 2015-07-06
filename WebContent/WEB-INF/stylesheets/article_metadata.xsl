@@ -50,4 +50,7 @@
 		</table>
 	</xsl:template>
 	
+	<xsl:template match="docFields">
+	</xsl:template>
+	
 </xsl:stylesheet>

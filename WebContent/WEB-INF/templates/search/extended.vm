@@ -1,3 +1,14 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="extended")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	<div id="metadata">
+		#set($metaFrom=2)
+		#parse("metadata.vm")
+	</div>
+	<div id="extended" class="large-16 medium-16 small-16 content active">
 		<div class="large-8 large-offset-4 medium-8 medium-offset-4 small-8 small-offset-4">
 			#foreach($wordfield in $properties)
 				#set ($id = "extended_"+$wordfield.getSearchField())
@@ -63,7 +74,32 @@
 				</div>
 			#end
 			<div class="buttonrow large-14 medium-14 small-14">
-				<input class="splitcheck" type="checkbox"><span> Split batch queries</span></input><br />
-				<button onclick="Whitelab.search.execute()" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
+				<input id="splitcheck" class="splitcheck" type="checkbox" /><span> Split batch queries</span></input><br />
+				<button onclick="validateForm();" class="search small">$labels.getString("search")</button><button onclick="Whitelab.search.reset()" class="reset small secondary">$labels.getString("reset")</button>
 			</div>
 		</div>
+	</div>
+</div>
+<script>
+	Whitelab.search.error = false;
+	function validateForm() {
+		var q = Whitelab.search.composeQuery('extended');
+		if (q)
+			window.location.href = '/whitelab/search/results?'+q;
+	}
+	
+	#if($query && $query.getFrom() <= 2)
+		$(function() {
+			Whitelab.search.extended.parseQueryToInterface('$query.getPattern()');
+		});
+	#end
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','extended',$tour,'$lang','/whitelab/search/advanced?tour=1');
+			#end
+		});
+	#end
+</script>
+#parse("footer.vm")

@@ -44,7 +44,7 @@ Whitelab.meta = {
 				Whitelab.search.view = 2;
 			}
 			
-			if ($("#"+Whitelab.tab+"-meta #group-check").prop("checked") == true && Whitelab.search.group_by.length > 0) {
+			if ($("#"+Whitelab.tab+"-meta #group-check").prop("checked") == true) {
 				Whitelab.search.group_by = $("#"+Whitelab.tab+"-meta #group_by-select").val();
 				if (v === "hits") {
 					Whitelab.search.view = 8;
@@ -53,31 +53,12 @@ Whitelab.meta = {
 				}
 			}
 			Whitelab.search.within = $("#"+Whitelab.tab+"-meta #search-within").val();
-			if (Whitelab.search.within == null || Whitelab.search.within.length == 0) {
-				Whitelab.search.within = "document";
+			if (Whitelab.search.within == null) {
+				Whitelab.search.within = "";
 			}
 			$("#"+Whitelab.tab+"-meta #search-within").val("");
 		}
 		return filterQuery;
-	},
-	
-	parseQueryToInterface : function(q) {
-		$("#"+Whitelab.tab+"-meta .rules").html("");
-		
-		var vals = meta.split('&amp;');
-		while (vals.length > 0) {
-			var val = vals.shift();
-			var v = val.split('=');
-			var op = "is";
-			if (input.indexOf("-") == 0) {
-				input = input.substring(1); 
-				op = "not";
-			}
-			$("#"+Whitelab.tab+"-meta .rules").append(Whitelab.meta.rule);
-			$("#"+Whitelab.tab+"-meta").find(".metaLabel").last().val(v[0]);
-			$("#"+Whitelab.tab+"-meta").find(".metaInput").last().val(v[1]);
-			$("#"+Whitelab.tab+"-meta").find(".metaOperator").last().val(op);
-		}
 	},
 	
 	switchState : function(item) {

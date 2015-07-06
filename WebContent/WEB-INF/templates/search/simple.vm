@@ -1,0 +1,39 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="simple")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	<div id="metadata" hidden>
+	</div>
+	<div id="simple" class="large-16 medium-16 small-16 content active">
+		<div class="large-8 large-offset-4 medium-10 medium-offset-3 small-12 small-offset-2">
+			<div id="simple-input">
+				#set($value="")
+				#if($query && $query.getFrom() == 1)
+					#set($value=$query.getSimplePattern())
+				#end
+				<input type="text" class="biginput" placeholder="$labels.getString("simple.placeholder")" value="$value" />
+			</div><div id="simple-buttons">
+				<button onclick="validateForm();" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.search.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	Whitelab.search.error = false;
+	function validateForm() {
+		var q = Whitelab.search.composeQuery('simple');
+		if (q)
+			window.location.href = '/whitelab/search/results?'+q;
+	}
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','simple',$tour,'$lang','/whitelab/search/extended?tour=1');
+			#end
+		});
+	#end
+</script>
+#parse("footer.vm")

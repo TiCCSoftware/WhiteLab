@@ -1,0 +1,121 @@
+#set($maintab = "explore")
+#parse("header.vm")
+#set($treemap = $labels.getString("explore.treemap"))
+#set($ngram = $labels.getString("explore.ngram"))
+#set($stats = $labels.getString("explore.statistics"))
+#set($doc = $labels.getString("explore.document"))
+<div id="explorepage">
+	#set($tab="ngram")
+	#parse("explore/tabs.vm")
+	
+	<div class="large-16 medium-16 small-16 row tabs-content" id="explore">
+		<div id="metadata">
+			#parse("metadata.vm")
+		</div>
+		<div id="ngram" class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1 content active">
+			<div class="large-16 medium-16 small-16 result-pane">
+				<div class="gradient"></div>
+				<table id="ngram-table">
+					<tr><th align="left">$labels.getString("explore.ngram.size") <input style="margin-left: 10px;" id="nsize" type="number" min="1" max="5" value="$size" onchange="Whitelab.explore.ngram.setNgramBoxes();" /></th>
+					<th align="left">$labels.getString("explore.ngram.type") <select id="ngram-groupSelect"><option value="word" selected="selected">$labels.getString("word")</option><option value="lemma">$labels.getString("lemma")</option><option value="pos">$labels.getString("pos")</option></select></th>
+					<td colspan="3"></td></tr>
+					<tr><td id="n1" class="n">
+						<select class="type" onchange="Whitelab.explore.ngram.setInput($(this).parent());">
+							<option value="word" selected="selected">$labels.getString("word")</option>
+							<option value="lemma">$labels.getString("lemma")</option>
+							<option value="pos">$labels.getString("pos")</option>
+						</select><input class="input" type="text" placeholder="&lt;any&gt;" />
+					</td><td id="n2" class="n">
+						<select class="type" onchange="Whitelab.explore.ngram.setInput($(this).parent());">
+							<option value="word" selected="selected">$labels.getString("word")</option>
+							<option value="lemma">$labels.getString("lemma")</option>
+							<option value="pos">$labels.getString("pos")</option>
+						</select><input class="input" type="text" placeholder="&lt;any&gt;" />
+					</td><td id="n3" class="n">
+						<select class="type" onchange="Whitelab.explore.ngram.setInput($(this).parent());">
+							<option value="word" selected="selected">$labels.getString("word")</option>
+							<option value="lemma">$labels.getString("lemma")</option>
+							<option value="pos">$labels.getString("pos")</option>
+						</select><input class="input" type="text" placeholder="&lt;any&gt;" />
+					</td><td id="n4" class="n">
+						<select class="type" onchange="Whitelab.explore.ngram.setInput($(this).parent());">
+							<option value="word" selected="selected">$labels.getString("word")</option>
+							<option value="lemma">$labels.getString("lemma")</option>
+							<option value="pos">$labels.getString("pos")</option>
+						</select><input class="input" type="text" placeholder="&lt;any&gt;" />
+					</td><td id="n5" class="n">
+						<select class="type" onchange="Whitelab.explore.ngram.setInput($(this).parent());">
+							<option value="word" selected="selected">$labels.getString("word")</option>
+							<option value="lemma">$labels.getString("lemma")</option>
+							<option value="pos">$labels.getString("pos")</option>
+						</select><input class="input" type="text" placeholder="&lt;any&gt;" />
+					</td></tr>
+					<tr><td colspan="5" class="right-spaced"><button onclick="validateForm();" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.explore.ngram.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button></td></tr>
+				</table>
+			</div>
+			#if($query)
+				<div id="ngram-info" class="info large-16 medium-16 small-16">
+					<div class="gradient"></div>
+					<div class="content">
+						<span>
+							<label for="#ngram-query">Query</label>
+							<div id="ngram-query">$query.getPrintPattern()</div>
+						</span>
+						<span>
+							<label for="#ngram-filter">Filter</label>
+							<div id="ngram-filter">$query.getFilter()</div>
+						</span>
+						<span>
+							<label for="#ngram-size">$labels.getString("explore.ngram.size")</label>
+							<div id="ngram-size">$size</div>
+						</span>
+						<span>
+							<label for="#ngram-group">$labels.getString("explore.ngram.type")</label>
+							<div id="ngram-group">$query.getGroup()</div>
+						</span>
+						<span>
+							<label for="#ngram-count">$labels.getString("explore.ngram.count")</label>
+							<div id="ngram-count">$query.getGroups()</div>
+						</span>
+						<span>
+							<label for="#ngram-hits">$labels.getString("result.per_hit")</label>
+							<div id="ngram-hits">$query.getHits()</div>
+						</span>
+						<span>
+							<label for="#ngram-docs">$labels.getString("result.per_doc")</label>
+							<div id="ngram-docs">$query.getDocs()</div>
+						</span>
+					</div>
+				</div>
+				<div id="result_ngram" class="large-16 medium-16 small-16">
+					$query.getResult()
+				</div>
+			#end
+		</div>
+	</div>
+</div>
+<script>
+	Whitelab.explore.options = '$posValues';
+	function validateForm() {
+		var q = Whitelab.explore.ngram.composeQuery();
+		var v = $("#nsize").val();
+		if (q)
+			window.location.href = '/whitelab/explore/ngrams?from=6&'+q+'&size='+v;
+	}
+	#if($query)
+		$(function() {
+			Whitelab.explore.ngram.cqlToInterface('$query.getPattern()',$size,'$query.getGroup()');
+		});
+	#end
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('explore','ngrams',$tour,'$lang','/whitelab/explore/ngrams?tour=2&query=[lemma="de"][][lemma="van"][lemma="de"][]&size=5&from=6&view=10&sort=&first=0&group=hit:lemma&number=50');
+			#elseif($tour==2)
+				Whitelab.tour.start('explore','ngrams',$tour,'$lang','/whitelab/explore/document?tour=1');
+			#end
+		});
+	#end
+</script>
+#parse("footer.vm")

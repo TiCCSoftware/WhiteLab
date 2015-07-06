@@ -1,0 +1,35 @@
+#set($maintab = "search")
+#parse("header.vm")
+#set($tab="results")
+#parse("search/tabs.vm")
+
+<div class="row tabs-content" id="search">
+	<div id="result" class="large-16 medium-16 small-16 content active">
+		<div class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1">
+			<div><h4>$labels.getString("result.queries"):</h4></div>
+			<div class="large-16 medium-16 small-16 row">
+				#parse("search/querylist.vm")
+			</div>
+			<div><h4>$labels.getString("result.results"):</h4></div>
+			<div id="results" class="large-16 medium-16 small-16">
+				#if($query)
+					$query.getResult()
+				#end
+			</div>
+		</div>
+	</div>
+</div>
+#if($tour)
+	<script>
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('search','results',$tour,'$lang','/whitelab/search/results?tour=2&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=2');
+			#elseif($tour==2)
+				Whitelab.tour.start('search','results',$tour,'$lang','/whitelab/search/results?tour=3&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=8&group=hit:pos');
+			#elseif($tour==3)
+				Whitelab.tour.start('search','results',$tour,'$lang','/whitelab/search/document?tour=1&query=[word="de"][word="gebeten"][word="hond"]&docpid=WR-P-E-A-0000797656');
+			#end
+		});
+	</script>
+#end
+#parse("footer.vm")

@@ -1,0 +1,52 @@
+#set($maintab = "explore")
+#parse("header.vm")
+<script src="../web/js/d3.layout.cloud.js"></script>
+#set($treemap = $labels.getString("explore.treemap"))
+#set($ngram = $labels.getString("explore.ngram"))
+#set($stats = $labels.getString("explore.statistics"))
+#set($doc = $labels.getString("explore.document"))
+<div id="explorepage">
+	#set($tab="document")
+	#parse("explore/tabs.vm")
+	
+	<div class="large-16 medium-16 small-16 row tabs-content" id="explore">
+		<div id="document" class="content large-16 medium-16 small-16 active">
+			<div class="large-8 large-offset-4 medium-10 medium-offset-3 small-12 small-offset-2">
+				<div id="simple-doc-input">
+					#set($docpid="")
+					#if($document)
+						#set($docpid=$document.getId())
+					#end
+					<input id="docpid" type="text" class="biginput" placeholder="$labels.getString("explore.document.placeholder")" value="$docpid" />
+				</div>
+				<div id="simple-buttons">
+					<button onclick="validateForm();" class="search small"><span>$labels.getString("search")</span></button><button onclick="Whitelab.explore.document.reset()" class="reset small secondary"><span>$labels.getString("reset")</span></button>
+				</div>
+			</div>
+			#parse("document/display.vm")
+		</div>
+	</div>
+</div>
+<script>
+	function validateForm() {
+		var val = $('#docpid').val();
+		window.location.href = '/whitelab/explore/document?docpid='+val;
+	}
+	
+	#if($tour)
+		$(function() {
+			#if($tour==1)
+				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=2&docpid=WR-P-P-G-0000347486');
+			#elseif($tour==2)
+				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=3&docpid=WR-P-P-G-0000347486&tab=metadata');
+			#elseif($tour==3)
+				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=4&docpid=WR-P-P-G-0000347486&tab=statistics');
+			#elseif($tour==4)
+				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=5&docpid=WR-P-P-G-0000347486&tab=wordcloud');
+			#elseif($tour==5)
+				Whitelab.tour.start('explore','document',$tour,'$lang',null);
+			#end
+		});
+	#end
+</script>
+#parse("footer.vm")

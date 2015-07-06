@@ -7,9 +7,11 @@
   <servlet-mapping>
     <servlet-name>whitelab</servlet-name>
     <url-pattern>/page/*</url-pattern>
+    <url-pattern>/explore/*</url-pattern>
+    <url-pattern>/search/*</url-pattern>
   </servlet-mapping>
   <session-config>
-    <session-timeout>100</session-timeout>
+    <tracking-mode>COOKIE</tracking-mode>
   </session-config>
   <!--
   <security-constraint>

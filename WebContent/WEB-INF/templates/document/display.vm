@@ -1,0 +1,21 @@
+<script>
+	lang = "$lang";
+</script>
+#if($document)
+	<div id="doc-display" class="large-14 medium-14 small-14 large-offset-1 medium-offset-1 small-offset-1">
+		#if($doctab)
+			#parse("document/tabs.vm")
+			#if($doctab == "statistics")
+				#parse("document/statistics.vm")
+			#elseif($doctab == "wordcloud")
+				#set($m=-22)
+				#set($omitLegend="false")
+				#parse("document/wordcloud.vm")
+			#elseif($doctab == "metadata")
+				#parse("document/metadata.vm")
+			#else
+				#parse("document/text.vm")
+			#end
+		#end
+	</div>
+#end

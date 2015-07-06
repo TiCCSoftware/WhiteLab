@@ -14,6 +14,9 @@
         <meta http-equiv="cache-control" content="no-cache" />
         <meta http-equiv="expires" content="0" />
         <meta http-equiv="pragma" content="no-cache" />
+        #if($isStillCounting)
+        	<meta http-equiv="refresh" content="3; URL=${requestUrl}">
+        #end
 		<meta charset="utf-8">
 		<meta name="description" content="$!d">
 		<meta name="viewport" content="width=device-width">
@@ -81,34 +84,36 @@
 					<ul id="navLeft" class="left">
 						<li class="leftspaced langli">
 							<form method="get" action="" name="langform">
-								<a class="langlink" id="nl" onclick="Whitelab.switchLanguage('nl')"><img class="$nl" src="../web/img/lang/nl.png" /></a>
-								<a class="langlink" id="en" onclick="Whitelab.switchLanguage('en')"><img class="$en"  src="../web/img/lang/en.png" /></a>
+								<a class="langlink" id="nl" href="${requestUrlNL}"><img class="$nl" src="../web/img/lang/nl.png" /></a>
+								<a class="langlink" id="en" href="${requestUrlEN}"><img class="$en"  src="../web/img/lang/en.png" /></a>
 							</form>
 						</li>
 						<li class="leftspaced">
-							#if($maintab && ($maintab == "explore" or $maintab == "search"))
-								<a id="tour-icon" onclick="Whitelab.tour.start();"><img src="../web/img/info_icon.png"/></a>
+							#if($maintab && $maintab == "explore")
+								<a id="tour-icon" onclick="document.location.href = '/whitelab/explore/corpus?tour=1';"><img src="../web/img/info_icon.png"/></a>
+							#elseif($maintab && $maintab == "search")
+								<a id="tour-icon" onclick="document.location.href = '/whitelab/search/simple?tour=1';"><img src="../web/img/info_icon.png"/></a>
 							#else
 								<div style="width: 30px;">&nbsp;</div>
 							#end
 						</li>
 						#set($home = $labels.getString("home"))
-						#if($maintab && $maintab == "home")
-							<li id="main-home" class="leftspaced active"><a onclick="Whitelab.switchTab('home')">$home</a></li>
+						#if(!$maintab || $maintab == "home")
+							<li id="main-home" class="leftspaced active"><a href="#" onclick="event.preventDefault();">$home</a></li>
 						#else
-							<li id="main-home" class="leftspaced"><a onclick="Whitelab.switchTab('home')">$home</a></li>
+							<li id="main-home" class="leftspaced"><a href="/whitelab/page/home">$home</a></li>
 						#end
 						#set($explore = $labels.getString("explore"))
 						#if($maintab && $maintab == "explore")
-							<li id="main-explore" class="active"><a onclick="Whitelab.switchTab('explore')">$explore</a></li>
+							<li id="main-explore" class="active"><a href="#" onclick="event.preventDefault();">$explore</a></li>
 						#else
-							<li id="main-explore"><a onclick="Whitelab.switchTab('explore')">$explore</a></li>
+							<li id="main-explore"><a href="/whitelab/explore/corpus">$explore</a></li>
 						#end
 						#set($search = $labels.getString("search"))
 						#if($maintab && $maintab == "search")
-							<li id="main-search" class="active"><a onclick="Whitelab.switchTab('search')">$search</a></li>
+							<li id="main-search" class="active"><a href="#" onclick="event.preventDefault();">$search</a></li>
 						#else
-							<li id="main-search"><a onclick="Whitelab.switchTab('search')">$search</a></li>
+							<li id="main-search"><a href="/whitelab/search/simple">$search</a></li>
 						#end
 					</ul>
 

@@ -51,28 +51,6 @@ function getData(query, params, callback, target) {
 	xhr.send(params);
 }
 
-function getPosData(query, params, callback, target, pos, color) {
-	var url = Whitelab.baseUrl + query;
-//	console.log(url);
-	
-	var xhr = createCORSRequest('POST', url);
-	if (!xhr) {
-		return;
-	}
-	
-	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	
-	xhr.onload = function() {
-//		console.log(xhr.responseText);
-		callback(target, JSON.parse(xhr.responseText), pos, color, url+"?"+params);
-	};
-
-	xhr.onerror = function() {
-	};
-
-	xhr.send(params);
-}
-
 function createCORSRequest(method, url) {
 	var xhr = new XMLHttpRequest();
 	if ("withCredentials" in xhr) {

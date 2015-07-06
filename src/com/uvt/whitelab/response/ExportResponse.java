@@ -9,84 +9,132 @@ package com.uvt.whitelab.response;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.xml.transform.TransformerException;
 
 import com.uvt.whitelab.BaseResponse;
+import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.XslTransformer;
 
 public class ExportResponse extends BaseResponse {
-
-	private String corpus;
-	private String trail = "/hits";
-	private Integer view = 1;
 	private XslTransformer transformer = new XslTransformer();
 	private SecureRandom random = new SecureRandom();
+	
+	public ExportResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
 		
-		corpus = this.labels.getString("corpus");
-		
-		if (this.params.keySet().size() > 0 && params.containsKey("patt")) {
-			
-			view = this.getParameter("view", 1);
-			int number = this.getParameter("number", 1);
-			this.servlet.log("number: "+number);
-
-			if (view == 2 || view == 4 || view == 16)
+		if (query != null) {
+			ResultHandler resultHandler = new ResultHandler(this.servlet, labels);
+			String corpus = this.labels.getString("corpus");
+			Integer view = query.getView();
+			int max = query.getHits();
+			String trail = "/hits";
+			if (view == 2 || view == 16) {
 				trail = "/docs";
+				max = query.getDocs();
+			}
 			
-			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
-			
-			String result = this.jobToTSV();
-			
-			sendFileResponse(result, fileName);
-			
-		} else {
-			Map<String,Object> output = new HashMap<String,Object>();
-			output.put("html", "<p>ERROR: Insufficient parameters.</p>");
-			output.put("hits", 0);
-			output.put("docs", 0);
-			output.put("counting", "false");
-			sendResponse(output);
-		}
-	}
-
-	public String jobToTSV() {
-		StringBuilder result = new StringBuilder();
-		if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
-			int n = (int) this.params.get("number");
-			if (n > 50000)
-				n = 50000;
-			this.params.put("number", 2500);
-			
-			for (int f = 0; f < n; f = f + 2500) {
-				this.params.put("first", f);
+			StringBuilder result = new StringBuilder();
+			if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
+				int prev_n = query.getNumber();
+				int prev_f = query.getFirst();
+				query.setNumber(2500);
+				
+				for (int f = 0; f < max; f = f + 2500) {
+					query.setFirst(f);
+					this.servlet.log("First: "+f+", number: "+query.getNumber()+", max: "+max);
+					
+					try {
+						String resp = resultHandler.getBlackLabResponse(corpus, trail, query.getParameters());
+						String stylesheet = this.getExportStylesheet(view);
+						this.setTransformerDisplayParameters(f == 0,max);
+						result.append(transformer.transform(resp, stylesheet));
+					} catch (IOException | TransformerException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				query.setNumber(prev_n);
+				query.setFirst(prev_f);
+			} else {
 				try {
-					String resp = getBlackLabResponse(corpus, trail, this.params);
+					String resp = resultHandler.getBlackLabResponse(corpus, trail, query.getParameters());
 					String stylesheet = this.getExportStylesheet(view);
-					this.setTransformerDisplayParameters(f == 0,n);
+					this.setTransformerDisplayParameters(true,query.getNumber());
 					result.append(transformer.transform(resp, stylesheet));
 				} catch (IOException | TransformerException e) {
 					e.printStackTrace();
 				}
 			}
+			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+			sendFileResponse(result.toString(), fileName);
 		} else {
-			try {
-				String resp = getBlackLabResponse(corpus, trail, this.params);
-				String stylesheet = this.getExportStylesheet(view);
-				this.setTransformerDisplayParameters(true,(int) this.params.get("number"));
-				result.append(transformer.transform(resp, stylesheet));
-			} catch (IOException | TransformerException e) {
-				e.printStackTrace();
-			}
+			this.servlet.log("NO QUERY");
 		}
-		return result.toString();
+		
+//		corpus = this.labels.getString("corpus");
+//		Map<String,Object> params = query.getParameters();
+//		
+//		if (params.keySet().size() > 0 && params.containsKey("patt")) {
+//			
+//			view = this.getParameter("view", 1);
+//			int number = this.getParameter("number", 1);
+//			this.servlet.log("number: "+number);
+//
+//			if (view == 2 || view == 4 || view == 16)
+//				trail = "/docs";
+//			
+//			String fileName = corpus + "-" + new BigInteger(130, random).toString(32) + ".tsv";
+//			
+//			String result = this.jobToTSV(params);
+//			
+//			sendFileResponse(result, fileName);
+//			
+//		} else {
+//			Map<String,Object> output = new HashMap<String,Object>();
+//			output.put("html", "<p>ERROR: Insufficient parameters.</p>");
+//			output.put("hits", 0);
+//			output.put("docs", 0);
+//			output.put("counting", "false");
+//			sendResponse(output);
+//		}
 	}
+
+//	public String jobToTSV(Map<String,Object> params) {
+//		StringBuilder result = new StringBuilder();
+//		if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
+//			int n = (int) params.get("number");
+//			if (n > 50000)
+//				n = 50000;
+//			params.put("number", 2500);
+//			
+//			for (int f = 0; f < n; f = f + 2500) {
+//				params.put("first", f);
+//				try {
+//					String resp = getBlackLabResponse(corpus, trail, params);
+//					String stylesheet = this.getExportStylesheet(view);
+//					this.setTransformerDisplayParameters(f == 0,n);
+//					result.append(transformer.transform(resp, stylesheet));
+//				} catch (IOException | TransformerException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		} else {
+//			try {
+//				String resp = getBlackLabResponse(corpus, trail, params);
+//				String stylesheet = this.getExportStylesheet(view);
+//				this.setTransformerDisplayParameters(true,(int) params.get("number"));
+//				result.append(transformer.transform(resp, stylesheet));
+//			} catch (IOException | TransformerException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return result.toString();
+//	}
 
 	private void setTransformerDisplayParameters(boolean includeHeader, int n) {
 		this.servlet.log("setTransformerDisplayParameters");
@@ -133,25 +181,6 @@ public class ExportResponse extends BaseResponse {
 		return null;
 	}
 
-	private void sendFileResponse(String contents, String fileName) {
-        // Set HTTP headers
-		response.setContentType("application/octet-stream");
-        response.setContentLength(contents.length());
-        response.setHeader("Content-Disposition", "attachment; filename=\"whitelab_" + fileName + "\"");
-        
-        ServletOutputStream outStream = null;
-		try {
-			outStream = response.getOutputStream();
-			try {
-				outStream.write(contents.getBytes("utf-8"));
-			} finally {
-		        outStream.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	protected void logRequest() {
 		this.servlet.log("ExportResponse");
@@ -159,7 +188,7 @@ public class ExportResponse extends BaseResponse {
 
 	@Override
 	public ExportResponse duplicate() {
-		return new ExportResponse();
+		return new ExportResponse("home");
 	}
 
 }

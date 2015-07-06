@@ -144,7 +144,7 @@ Whitelab.search.extended = {
 						var sensitive = false;
 						if (term.indexOf('(?i)') > -1) {
 							term = term.substring(4);
-						} else if (term.indexOf('(?-i)') > -1) {
+						} else if (term.indexOf('(?c)') > -1) {
 							term = term.substring(5);
 							sensitive = true;
 							if (type === "word")

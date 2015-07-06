@@ -48,7 +48,7 @@ CqlField.prototype.addSubField = function(f) {
 
 CqlField.prototype.toCqlString = function() {
 	var query = "";
-	var sensitive = this.sensitive ? "(?-i)" : "(?i)";
+	var sensitive = this.sensitive ? "(?c)" : "";
 	if (this.value.length == 0 || this.value === "[]") {
 		query = "[]";
 	} else {
@@ -97,7 +97,7 @@ Cql.prototype.getQuery = function() {
 			q = queries.join("|");
 		if (q === "")
 			q = "[]";
-		return q;
+		return q.replace(/ /g,'');
 	} else {
 		return null;
 	}

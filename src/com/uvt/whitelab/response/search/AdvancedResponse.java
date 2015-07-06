@@ -1,33 +1,27 @@
-/**
- * Copyright (c) 2013, 2014 Tilburg University.
- * All rights reserved.
- *
- * @author MvdCamp
- */
-package com.uvt.whitelab.response;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
+package com.uvt.whitelab.response.search;
 
 import com.uvt.whitelab.BaseResponse;
 import com.uvt.whitelab.util.FieldDescriptor;
-import com.uvt.whitelab.util.FieldDescriptor.ValuePair;
 
-public class SearchResponse extends BaseResponse {
+public class AdvancedResponse extends BaseResponse {
+	
+	public AdvancedResponse(String ns) {
+		super(ns);
+	}
 
 	@Override
 	protected void completeRequest() {
-		loadProperties();
-		loadMetaDataComponents();
-		loadAdvancedComponents();
-		loadCQLInfoBox();
+		if (query == null)
+			loadMetaDataComponents(false);
+		else {
+			this.getContext().put("query", query);
+			loadMetaDataComponents(true);
+		}
 		
-		String tab = this.getParameter("tab", "simple");
-		this.getContext().put("maintab", "search");
+		loadAdvancedComponents();
+		
 		this.getContext().put("showMetaOptions", "yes");
-		this.getContext().put("tab", tab);
-		this.displayHtmlTemplate(this.servlet.getTemplate("search"));
-
+		this.displayHtmlTemplate(this.servlet.getTemplate("search/advanced"));
 	}
 	
 	private void loadAdvancedComponents() {
@@ -137,55 +131,14 @@ public class SearchResponse extends BaseResponse {
 		this.getContext().put("column", column);
 	}
 
-	private void loadCQLInfoBox() {
-		String box = "<div id=\"cql_info\">"
-				+ "<label>"+this.labels.getString("cql.info.header")+"</label>"
-				+ "<ul class=\"examples\">";
-		
-		int i = 1;
-		while (this.labels.containsKey("cql.info.query."+i+".text")) {
-			box = box+"<li><label>"+this.labels.getString("cql.info.query."+i+".text")+"</label>";
-			int j = 1;
-			while (this.labels.containsKey("cql.info.query."+i+".code."+j)) {
-				box = box+"<span class=\"cql\">"+this.labels.getString("cql.info.query."+i+".code."+j)+"</span>";
-				j++;
-			}
-			box = box+"</li>";
-			i++;
-		}
-		
-		box = box+"</ul></div>";
-		this.getContext().put("cqlinfo", box);
-	}
-
-	private void loadProperties() {
-		LinkedList<FieldDescriptor> fields = this.servlet.getSearchFields();
-		LinkedList<FieldDescriptor> props = new LinkedList<FieldDescriptor>();
-		
-		for (FieldDescriptor field : fields) {
-			if (field.getSearchField().equals("pos")) {
-				FieldDescriptor newField = field;
-				newField.setValidValues(new ArrayList<ValuePair>());
-				for (int i = 1; i <= 12; i++) {
-					newField.addValidValue(labels.getString("pos."+i+".value"),labels.getString("pos."+i+".name"));
-				}
-				props.add(newField);
-			} else {
-				props.add(field);
-			}
-		}
-		
-		this.getContext().put("properties", props);
-	}
-
 	@Override
 	protected void logRequest() {
-		this.servlet.log("SearchResponse");
+		this.servlet.log("AdvancedResponse");
 	}
 
 	@Override
-	public SearchResponse duplicate() {
-		return new SearchResponse();
+	public AdvancedResponse duplicate() {
+		return new AdvancedResponse("search");
 	}
 
 }
