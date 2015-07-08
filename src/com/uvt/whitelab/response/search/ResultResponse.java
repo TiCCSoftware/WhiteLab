@@ -109,7 +109,7 @@ public class ResultResponse extends BaseResponse {
 				this.getContext().put("query", query);
 				this.getContext().put("queries", queries);
 				this.getContext().put("isStillCounting", SessionManager.isStillCounting(session));
-				this.getContext().put("requestUrl", query.getUrl("search/results", null, true, new String[]{}));
+				this.getContext().put("requestUrl", query.getUrl("search/results", null, false, new String[]{}));
 				int ql = this.getParameter("ql", 0);
 				this.getContext().put("ql", ql);
 				this.getContext().put("qlBefore", ql - 5);
