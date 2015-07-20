@@ -37,7 +37,7 @@ in combination with the following parameters:
 
 - **query**: Your query formatted in Corpus Query Language.
 - **within**: Optional. String value indicating to limit the query to matches within a 'document' (default), 'paragraph' or 'sentence'.
-- **from**: Required to enable query editing. Integer value representing the original input screen (1=simple, 2=extended, 3=advanced, 4=expert). Queries can be edited in their original input screen or any screen with a higher identifier. Currently, if this parameter is not supplied, your query will not be added to the query list at the top of the result screen.
+- **from**: Required to enable query editing. Integer value representing the original input screen (1=simple, 2=extended, 3=advanced, 4=expert). Defaults to 'expert'. Queries can be edited in their original input screen or any screen with a higher identifier.
 - **number**: Optional. Integer value representing the number of results to show per page (default: 50).
 - **first**: Optional. Integer value representing the index of the first result to include in the list (default: 0).
 - **view**: Optional. Integer value representing the type of results to display (1=hits, 2=documents, 8=grouped hits, 16=grouped documents).
