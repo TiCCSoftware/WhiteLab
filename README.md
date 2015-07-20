@@ -70,7 +70,7 @@ in combination with the following parameters:
   - field:Translated
   - field:TranslatorName
   - * (only available when view=8)
-- metadata: Metadata filters are optional. Each field may be used multiple times and accepts literal values only. Prefix a value with '-' to exclude it (for example: 'CollectionName=-Newspapers'). Values consisting of multiple tokens should be surrounded with quotes ('CollectionName="Discussion lists"'). The following fields are defined:
+- metadata: Metadata filters are optional. Each field may be used multiple times and accepts literal values only. Prefix a value with '-' to exclude it (for example: CollectionName=-Newspapers). Values consisting of multiple tokens should be surrounded with quotes (CollectionName="Discussion lists"). The following fields are defined:
   - **Age**
   - **AuthorNameOrPseudonym**
   - **CollectionName**
