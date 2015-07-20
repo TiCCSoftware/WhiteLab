@@ -54,6 +54,7 @@
 				</table>
 			</div>
 			#if($query)
+				<div id="loading" class="hidden info large-16 medium-16 small-16"><p><img src="../web/img/spinner.gif" /> Loading...</p></div>
 				<div id="ngram-info" class="info large-16 medium-16 small-16">
 					<div class="gradient"></div>
 					<div class="content">
@@ -102,6 +103,8 @@
 		var q = Whitelab.explore.ngram.composeQuery();
 		var v = $("#nsize").val();
 		if (q) {
+			$("#ngram-info").addClass("hidden");
+			$("#result_ngram").addClass("hidden");
 			$("#loading").removeClass("hidden");
 			window.location.href = '/whitelab/explore/ngrams?from=6&'+q+'&size='+v;
 		}

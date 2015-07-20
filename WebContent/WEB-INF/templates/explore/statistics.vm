@@ -41,6 +41,7 @@
 				</table>
 			</div>
 			#if($query)
+				<div id="loading" class="hidden info large-16 medium-16 small-16"><p><img src="../web/img/spinner.gif" /> Loading...</p></div>
 				<div id="stats-info" class="info large-16 medium-16 small-16">
 					<div class="gradient"></div>
 					<div class="content">
@@ -115,6 +116,9 @@
 	function validateForm() {
 		var q = Whitelab.explore.statistics.composeQuery('hits');
 		if (q) {
+			$("#stats-info").addClass("hidden");
+			$("#result_status").addClass("hidden");
+			$("#result_statistics").addClass("hidden");
 			$("#loading").removeClass("hidden");
 			window.location.href = '/whitelab/explore/statistics?from=5&'+q;
 		}
