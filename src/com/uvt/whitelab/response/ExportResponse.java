@@ -37,6 +37,9 @@ public class ExportResponse extends BaseResponse {
 				trail = "/docs";
 				max = query.getDocs();
 			}
+			int maxExport = Integer.parseInt(this.labels.getString("maxExport"));
+			if (max > maxExport)
+				max = maxExport;
 			
 			StringBuilder result = new StringBuilder();
 			if (view == 1 || view == 2 || view == 4 || view == 10 || view == 12) {
