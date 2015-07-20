@@ -90,6 +90,8 @@
 				<div id="result_ngram" class="large-16 medium-16 small-16">
 					$query.getResult()
 				</div>
+			#else
+				<div id="loading" class="hidden info large-16 medium-16 small-16"><p><img src="../web/img/spinner.gif" /> Loading...</p></div>
 			#end
 		</div>
 	</div>
@@ -99,8 +101,10 @@
 	function validateForm() {
 		var q = Whitelab.explore.ngram.composeQuery();
 		var v = $("#nsize").val();
-		if (q)
+		if (q) {
+			$("#loading").removeClass("hidden");
 			window.location.href = '/whitelab/explore/ngrams?from=6&'+q+'&size='+v;
+		}
 	}
 	#if($query)
 		$(function() {

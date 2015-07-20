@@ -5,14 +5,14 @@ var Whitelab = {
 	tab : null,
 	doDebug : false,
 	doDebugXhrResponse : false, // log full XHR responses? (long)
-//	exportLimit : 50000,
-//	
-//	confirmExport : function() {
-//		if (Whitelab.language === "en")
-//			return confirm("Your query exceeds the maximum export size. Only the first "+Whitelab.exportLimit+" results will be exported.\n\nDo you want to continue?\n");
-//		else
-//			return confirm("Uw zoekopdracht overschrijdt de export limiet. Alleen de eerste "+Whitelab.exportLimit+" resultaten worden geëxporteerd.\n\nWilt u doorgaan?\n");
-//	},
+	exportLimit : 50000,
+	
+	confirmExport : function() {
+		if (Whitelab.language === "en")
+			return confirm("The export may take some time. Please do not close this window until the export is finished!\n\nN.B.: Only the first "+Whitelab.exportLimit+" results will be exported.\n\nContinue?");
+		else
+			return confirm("De export kan enige tijd in beslag nemen. Sluit dit scherm niet voordat de export afgerond is!\n\nN.B.: Alleen de eerste "+Whitelab.exportLimit+" resultaten worden geëxporteerd.\n\Doorgaan?");
+	},
 	
 	cookies : {
 		accept : function() {

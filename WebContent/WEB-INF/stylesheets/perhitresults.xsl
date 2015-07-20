@@ -351,9 +351,9 @@
 		<div class="export large-16 medium-16 small-16 row">
 			<button class="small">
 				<xsl:attribute name="onclick">
-					<xsl:text>document.location.href='</xsl:text>
+					<xsl:text>if (Whitelab.confirmExport()) { document.location.href='</xsl:text>
 					<xsl:value-of select="$query_export_url" />
-					<xsl:text>'</xsl:text>
+					<xsl:text>'; }</xsl:text>
 				</xsl:attribute>
 				<xsl:value-of select="$result_export"/>
 			</button>

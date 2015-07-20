@@ -104,6 +104,8 @@
 						#parse("document/wordcloud.vm")
 					#end
 				</div>
+			#else
+				<div id="loading" class="hidden info large-16 medium-16 small-16"><p><img src="../web/img/spinner.gif" /> Loading...</p></div>
 			#end
 		</div>
 	</div>
@@ -112,8 +114,10 @@
 	Whitelab.search.error = false;
 	function validateForm() {
 		var q = Whitelab.explore.statistics.composeQuery('hits');
-		if (q)
+		if (q) {
+			$("#loading").removeClass("hidden");
 			window.location.href = '/whitelab/explore/statistics?from=5&'+q;
+		}
 	}
 	
 	#if($tour)
