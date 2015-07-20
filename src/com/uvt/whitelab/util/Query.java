@@ -117,7 +117,7 @@ public class Query implements Serializable {
 	public Query(BaseResponse br) {
 		try {
 			id = UUID.randomUUID().toString();
-			from = br.getParameter("from", 0);
+			from = br.getParameter("from", 4);
 			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
 			pattern = pattern.replaceAll("&", "%26");
 			view = br.getParameter("view", 1);
