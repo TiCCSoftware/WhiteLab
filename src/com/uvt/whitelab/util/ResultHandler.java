@@ -219,6 +219,8 @@ public class ResultHandler {
 	private void setTransformerDisplayParameters(Query query,ResourceBundle labels) {
 		int view = query.getView();
 		transformer.clearParameters();
+
+		transformer.addParameter("context_root", this.servlet.contextRoot);
 		
 		if (query != null) {
 			transformer.addParameter("query", query.getPattern());

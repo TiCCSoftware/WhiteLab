@@ -23,11 +23,11 @@
 	<script>
 		$(function() {
 			#if($tour==1)
-				Whitelab.tour.start('search','results',$tour,'$lang','/whitelab/search/results?tour=2&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=2');
+				Whitelab.tour.start('search','results',$tour,'$lang',Whitelab.baseUrl+'search/results?tour=2&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=2');
 			#elseif($tour==2)
-				Whitelab.tour.start('search','results',$tour,'$lang','/whitelab/search/results?tour=3&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=8&group=hit:pos');
+				Whitelab.tour.start('search','results',$tour,'$lang',Whitelab.baseUrl+'search/results?tour=3&query=[word="de"][word="gebeten"][word="hond"]&from=1&view=8&group=hit:pos');
 			#elseif($tour==3)
-				Whitelab.tour.start('search','results',$tour,'$lang','/whitelab/search/document?tour=1&query=[word="de"][word="gebeten"][word="hond"]&docpid=WR-P-E-A-0000797656');
+				Whitelab.tour.start('search','results',$tour,'$lang',Whitelab.baseUrl+'search/document?tour=1&query=[word="de"][word="gebeten"][word="hond"]&docpid=WR-P-E-A-0000797656');
 			#end
 		});
 	</script>

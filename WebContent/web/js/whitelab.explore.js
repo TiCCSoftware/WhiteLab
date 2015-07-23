@@ -5,8 +5,8 @@ Whitelab.explore = {
 	
 	getTreemapData : function(field) {
 		var params = "field="+field;
-		Whitelab.debug(Whitelab.baseUrl+"treemap");
-		var xhr = Whitelab.createRequest('POST', Whitelab.baseUrl+"treemap");
+		Whitelab.debug(Whitelab.baseUrl+"page/treemap");
+		var xhr = Whitelab.createRequest('POST', Whitelab.baseUrl+"page/treemap");
 		if (!xhr) {
 			return;
 		}

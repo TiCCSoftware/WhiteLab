@@ -22,6 +22,7 @@ public class Query implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1481862859779413486L;
+	private final String contextRoot;
 	private String id;
 	private String pattern = "";
 	private String within = "";
@@ -51,8 +52,9 @@ public class Query implements Serializable {
 	private List<String> types = new ArrayList<String>();
 	private JSONArray growthData;
 	
-	public Query(Query q, Map<String,Object> replace) {
+	public Query(Query q, Map<String,Object> replace, String root) {
 		id = UUID.randomUUID().toString();
+		contextRoot = root;
 		if (replace.containsKey("from"))
 			from = (Integer) replace.get("from");
 		else
@@ -115,6 +117,7 @@ public class Query implements Serializable {
 	}
 	
 	public Query(BaseResponse br) {
+		contextRoot = br.getServlet().contextRoot;
 		try {
 			id = UUID.randomUUID().toString();
 			from = br.getParameter("from", 4);
@@ -530,7 +533,7 @@ public class Query implements Serializable {
 		List<String> except = new ArrayList<String>();
 		if (exceptArray != null)
 			except = exceptArray;
-		String url = "/whitelab/"+page+"?";
+		String url = contextRoot+"/"+page+"?";
 		url = url+"id="+getId();
 		if (!onlyId) {
 			try {

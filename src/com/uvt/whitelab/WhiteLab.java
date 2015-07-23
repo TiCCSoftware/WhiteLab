@@ -74,7 +74,7 @@ public class WhiteLab extends HttpServlet {
 	private Logger logger;
 	private XMLConfiguration xmlConfig;
 	private Map<String,LinkedList<WhitelabDocument>> documents = new HashMap<String,LinkedList<WhitelabDocument>>();
-	private String contextRoot;
+	public String contextRoot;
 	private MetadataHtmlGenerator generator;
 
 	/**

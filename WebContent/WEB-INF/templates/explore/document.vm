@@ -30,19 +30,19 @@
 <script>
 	function validateForm() {
 		var val = $('#docpid').val();
-		window.location.href = '/whitelab/explore/document?docpid='+val;
+		window.location.href = Whitelab.baseUrl+'explore/document?docpid='+val;
 	}
 	
 	#if($tour)
 		$(function() {
 			#if($tour==1)
-				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=2&docpid=WR-P-P-G-0000347486');
+				Whitelab.tour.start('explore','document',$tour,'$lang',Whitelab.baseUrl+'explore/document?tour=2&docpid=WR-P-P-G-0000347486');
 			#elseif($tour==2)
-				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=3&docpid=WR-P-P-G-0000347486&tab=metadata');
+				Whitelab.tour.start('explore','document',$tour,'$lang',Whitelab.baseUrl+'explore/document?tour=3&docpid=WR-P-P-G-0000347486&tab=metadata');
 			#elseif($tour==3)
-				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=4&docpid=WR-P-P-G-0000347486&tab=statistics');
+				Whitelab.tour.start('explore','document',$tour,'$lang',Whitelab.baseUrl+'explore/document?tour=4&docpid=WR-P-P-G-0000347486&tab=statistics');
 			#elseif($tour==4)
-				Whitelab.tour.start('explore','document',$tour,'$lang','/whitelab/explore/document?tour=5&docpid=WR-P-P-G-0000347486&tab=wordcloud');
+				Whitelab.tour.start('explore','document',$tour,'$lang',Whitelab.baseUrl+'explore/document?tour=5&docpid=WR-P-P-G-0000347486&tab=wordcloud');
 			#elseif($tour==5)
 				Whitelab.tour.start('explore','document',$tour,'$lang',null);
 			#end

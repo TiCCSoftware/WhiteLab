@@ -25,13 +25,13 @@
 	function validateForm() {
 		var q = Whitelab.search.composeQuery('simple');
 		if (q)
-			window.location.href = '/whitelab/search/results?'+q;
+			window.location.href = Whitelab.baseUrl+'search/results?'+q;
 	}
 	
 	#if($tour)
 		$(function() {
 			#if($tour==1)
-				Whitelab.tour.start('search','simple',$tour,'$lang','/whitelab/search/extended?tour=1');
+				Whitelab.tour.start('search','simple',$tour,'$lang',Whitelab.baseUrl+'search/extended?tour=1');
 			#end
 		});
 	#end

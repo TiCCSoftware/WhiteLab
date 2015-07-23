@@ -120,22 +120,22 @@
 			$("#result_status").addClass("hidden");
 			$("#result_statistics").addClass("hidden");
 			$("#loading").removeClass("hidden");
-			window.location.href = '/whitelab/explore/statistics?from=5&'+q;
+			window.location.href = Whitelab.baseUrl+'explore/statistics?from=5&'+q;
 		}
 	}
 	
 	#if($tour)
 		$(function() {
 			#if($tour==1)
-				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=2&query=[]&view=12&sort=&first=0&number=50&group=hit:word&CollectionName="Discussion lists"&Country="B"');
+				Whitelab.tour.start('explore','statistics',$tour,'$lang',Whitelab.baseUrl+'explore/statistics?tour=2&query=[]&view=12&sort=&first=0&number=50&group=hit:word&CollectionName="Discussion lists"&Country="B"');
 			#elseif($tour==2)
-				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=3&query=[]&from=5&view=4&sort=&first=0&number=50&tab=doclist&CollectionName="Discussion lists"&Country="B"');
+				Whitelab.tour.start('explore','statistics',$tour,'$lang',Whitelab.baseUrl+'explore/statistics?tour=3&query=[]&from=5&view=4&sort=&first=0&number=50&tab=doclist&CollectionName="Discussion lists"&Country="B"');
 			#elseif($tour==3)
-				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=4&query=[]&from=5&view=4&tab=growth&CollectionName="Discussion lists"&Country="B"');
+				Whitelab.tour.start('explore','statistics',$tour,'$lang',Whitelab.baseUrl+'explore/statistics?tour=4&query=[]&from=5&view=4&tab=growth&CollectionName="Discussion lists"&Country="B"');
 			#elseif($tour==4)
-				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/statistics?tour=5&query=[]&from=5&view=12&tab=wordcloud&group=hit:lemma&CollectionName="Discussion lists"&Country="B"');
+				Whitelab.tour.start('explore','statistics',$tour,'$lang',Whitelab.baseUrl+'explore/statistics?tour=5&query=[]&from=5&view=12&tab=wordcloud&group=hit:lemma&CollectionName="Discussion lists"&Country="B"');
 			#elseif($tour==5)
-				Whitelab.tour.start('explore','statistics',$tour,'$lang','/whitelab/explore/ngrams?tour=1');
+				Whitelab.tour.start('explore','statistics',$tour,'$lang',Whitelab.baseUrl+'explore/ngrams?tour=1');
 			#end
 		});
 	#end

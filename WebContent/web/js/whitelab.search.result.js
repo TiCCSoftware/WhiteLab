@@ -30,7 +30,7 @@ Whitelab.search.result = {
 		max = +max;
 		first = +first;
 		if (first < max) {
-			Whitelab.getData("/whitelab/search/results", "query="+cql+"&view=17&number=20&first="+first+"&"+filter, Whitelab.search.result.displayGroupContent, target+'_content', null);
+			Whitelab.getData(Whitelab.baseUrl+"search/results", "query="+cql+"&view=17&number=20&first="+first+"&"+filter, Whitelab.search.result.displayGroupContent, target+'_content', null);
 			first = first + 20;
 			$(target).find("input.start").first().val(first);
 		}
@@ -42,7 +42,7 @@ Whitelab.search.result = {
 		max = +max;
 		first = +first;
 		if (first < max) {
-			Whitelab.getData("/whitelab/search/results", "query="+cql+"&view=9&number=20&first="+first+"&"+filter, Whitelab.search.result.displayGroupContent, target+'_content', null);
+			Whitelab.getData(Whitelab.baseUrl+"search/results", "query="+cql+"&view=9&number=20&first="+first+"&"+filter, Whitelab.search.result.displayGroupContent, target+'_content', null);
 			first = first + 20;
 			$(target).find("input.start").first().val(first);
 		}

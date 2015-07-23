@@ -1005,14 +1005,14 @@ Whitelab.tour = {
 			if (nextPage != null)
 				window.location.href = nextPage;
 			else if (ns === "explore")
-				window.location.href = "/whitelab/explore/corpus";
+				window.location.href = Whitelab.baseUrl+"explore/corpus";
 			else
-				window.location.href = "/whitelab/search/simple";
+				window.location.href = Whitelab.baseUrl+"search/simple";
 		}).onexit(function() {
 			if (ns === "explore")
-				window.location.href = "/whitelab/explore/corpus";
+				window.location.href = Whitelab.baseUrl+"explore/corpus";
 			else
-				window.location.href = "/whitelab/search/simple";
+				window.location.href = Whitelab.baseUrl+"search/simple";
 		});
 		
 		Whitelab.intro.start();

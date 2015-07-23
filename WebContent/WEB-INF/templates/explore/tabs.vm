@@ -3,22 +3,22 @@
 	#if($tab == "treemap")
 		<dd class="active"><a id="corpus-link" href="#" onclick="event.preventDefault();"">$treemap</a></dd>
 	#else
-		<dd><a id="corpus-link" href="/whitelab/explore/corpus">$treemap</a></dd>
+		<dd><a id="corpus-link" href="${context_root}/explore/corpus">$treemap</a></dd>
 	#end
 	#if($tab == "stats")
 		<dd class="active"><a id="stats-link" href="#" onclick="event.preventDefault();">$stats</a></dd>
 	#else
-		<dd><a id="stats-link" href="/whitelab/explore/statistics">$stats</a></dd>
+		<dd><a id="stats-link" href="${context_root}/explore/statistics">$stats</a></dd>
 	#end
 	#if($tab == "ngram")
 		<dd class="active"><a id="ngram-link" href="#" onclick="event.preventDefault();">$ngram</a></dd>
 	#else
-		<dd><a id="ngram-link" href="/whitelab/explore/ngrams">$ngram</a></dd>
+		<dd><a id="ngram-link" href="${context_root}/explore/ngrams">$ngram</a></dd>
 	#end
 	#if($tab == "document")
 		<dd class="active"><a id="doc-link" href="#" onclick="event.preventDefault();">$doc</a></dd>
 	#else
-		<dd><a id="doc-link" href="/whitelab/explore/document">$doc</a></dd>
+		<dd><a id="doc-link" href="${context_root}/explore/document">$doc</a></dd>
 	#end
 	</dl>
 </div>

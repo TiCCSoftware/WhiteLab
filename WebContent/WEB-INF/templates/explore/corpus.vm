@@ -32,7 +32,7 @@
 	
 	#if($tour)
 		$(function() {
-			Whitelab.tour.start('explore','corpus',$tour,'$lang','/whitelab/explore/statistics?tour=1');
+			Whitelab.tour.start('explore','corpus',$tour,'$lang',Whitelab.baseUrl+'explore/statistics?tour=1');
 		});
 	#end
 </script>

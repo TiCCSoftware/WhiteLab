@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" omit-xml-declaration="yes" />
 	
+	<xsl:param name="context_root" select="''"/>
 	<xsl:param name="query_result_url" select="''"/>
 	<xsl:param name="query_document_url" select="''"/>
 	<xsl:param name="query_export_url" select="''"/>
@@ -199,7 +200,7 @@
 														<xsl:value-of select="$group_by_name" />
 														<xsl:text>','</xsl:text>
 														<xsl:value-of select="$query" />
-														<xsl:text>',true); document.location.href = '/whitelab/search/results?query='+cql+'&amp;view=1&amp;from=4&amp;</xsl:text>
+														<xsl:text>',true); document.location.href = '</xsl:text><xsl:value-of select="$context_root" /><xsl:text>search/results?query='+cql+'&amp;view=1&amp;from=4&amp;</xsl:text>
 														<xsl:value-of select="$query_filter" />
 														<xsl:text>';</xsl:text>
 													</xsl:attribute>

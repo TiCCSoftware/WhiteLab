@@ -85,7 +85,7 @@
 	function validateForm() {
 		var q = Whitelab.search.composeQuery('extended');
 		if (q)
-			window.location.href = '/whitelab/search/results?'+q;
+			window.location.href = Whitelab.baseUrl+'search/results?'+q;
 	}
 	
 	#if($query && $query.getFrom() <= 2)
@@ -97,7 +97,7 @@
 	#if($tour)
 		$(function() {
 			#if($tour==1)
-				Whitelab.tour.start('search','extended',$tour,'$lang','/whitelab/search/advanced?tour=1');
+				Whitelab.tour.start('search','extended',$tour,'$lang',Whitelab.baseUrl+'search/advanced?tour=1');
 			#end
 		});
 	#end

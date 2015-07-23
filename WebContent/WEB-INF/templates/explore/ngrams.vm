@@ -106,7 +106,7 @@
 			$("#ngram-info").addClass("hidden");
 			$("#result_ngram").addClass("hidden");
 			$("#loading").removeClass("hidden");
-			window.location.href = '/whitelab/explore/ngrams?from=6&'+q+'&size='+v;
+			window.location.href = Whitelab.baseUrl+'explore/ngrams?from=6&'+q+'&size='+v;
 		}
 	}
 	#if($query)
@@ -118,9 +118,9 @@
 	#if($tour)
 		$(function() {
 			#if($tour==1)
-				Whitelab.tour.start('explore','ngrams',$tour,'$lang','/whitelab/explore/ngrams?tour=2&query=[lemma="de"][][lemma="van"][lemma="de"][]&size=5&from=6&view=10&sort=&first=0&group=hit:lemma&number=50');
+				Whitelab.tour.start('explore','ngrams',$tour,'$lang',Whitelab.baseUrl+'explore/ngrams?tour=2&query=[lemma="de"][][lemma="van"][lemma="de"][]&size=5&from=6&view=10&sort=&first=0&group=hit:lemma&number=50');
 			#elseif($tour==2)
-				Whitelab.tour.start('explore','ngrams',$tour,'$lang','/whitelab/explore/document?tour=1');
+				Whitelab.tour.start('explore','ngrams',$tour,'$lang',Whitelab.baseUrl+'explore/document?tour=1');
 			#end
 		});
 	#end

@@ -5,10 +5,10 @@
 #set($result = $labels.getString("result"))
 #set($document = $labels.getString("document"))
 
-#set($simpleUrl="/whitelab/search/simple")
-#set($extendedUrl="/whitelab/search/extended")
-#set($advancedUrl="/whitelab/search/advanced")
-#set($expertUrl="/whitelab/search/expert")
+#set($simpleUrl="${context_root}/search/simple")
+#set($extendedUrl="${context_root}/search/extended")
+#set($advancedUrl="${context_root}/search/advanced")
+#set($expertUrl="${context_root}/search/expert")
 #set($emptyArray=[])
 #if ($tab != "results" && $tab != "document")
 	#if($query && $query.getFrom() == 1)
@@ -55,14 +55,14 @@
 	#if($tab == "results")
 		<dd id="result_link" class="sub-sub-nav active"><a class="tablink" href="#" onclick="event.preventDefault();">$result</a></dd>
 	#elseif($queryCount > 0)
-		<dd id="result_link" class="sub-sub-nav"><a class="tablink" href="/whitelab/search/results">$result</a></dd>
+		<dd id="result_link" class="sub-sub-nav"><a class="tablink" href="${context_root}/search/results">$result</a></dd>
 	#else
-		<dd id="result_link" class="sub-sub-nav hide"><a class="tablink" href="/whitelab/search/results">$result</a></dd>
+		<dd id="result_link" class="sub-sub-nav hide"><a class="tablink" href="${context_root}/search/results">$result</a></dd>
 	#end
 	#if($tab =="document")
 		<dd id="document_link" class="sub-sub-nav active"><a class="tablink" href="#" onclick="event.preventDefault();">$document</a></dd>
 	#else
-		<dd id="document_link" class="sub-sub-nav hide"><a class="tablink" href="/whitelab/search/document">$document</a></dd>
+		<dd id="document_link" class="sub-sub-nav hide"><a class="tablink" href="${context_root}/search/document">$document</a></dd>
 	#end
 	</dl>
 </div>

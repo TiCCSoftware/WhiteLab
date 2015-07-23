@@ -28,7 +28,7 @@ public class ResultResponse extends BaseResponse {
 				SessionManager.deleteTourQuery(session);
 				this.getContext().remove("tourQuery");
 				try {
-					response.sendRedirect("/whitelab/search/simple");
+					response.sendRedirect(this.servlet.contextRoot+"/search/simple");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -45,7 +45,7 @@ public class ResultResponse extends BaseResponse {
 					SessionManager.deleteTourQuery(session);
 					this.getContext().remove("tourQuery");
 					try {
-						response.sendRedirect("/whitelab/search/simple");
+						response.sendRedirect(this.servlet.contextRoot+"/search/simple");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -56,7 +56,7 @@ public class ResultResponse extends BaseResponse {
 				query = null;
 				if (queryCount == 0) {
 					try {
-						response.sendRedirect("/whitelab/search/simple");
+						response.sendRedirect(this.servlet.contextRoot+"/search/simple");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -74,7 +74,7 @@ public class ResultResponse extends BaseResponse {
 					for (int i = 1; i < patterns.length; i++) {
 						Map<String,Object> replace = new HashMap<String,Object>();
 						replace.put("pattern", patterns[i]);
-						Query q = new Query(query,replace);
+						Query q = new Query(query,replace,this.servlet.contextRoot);
 						q = resultHandler.executeQuery(q,null);
 						SessionManager.addQuery(session, q);
 					}
@@ -97,7 +97,7 @@ public class ResultResponse extends BaseResponse {
 				query = SessionManager.setCurrentQuery(session, null);
 			else if (query == null && queryCount == 0) {
 				try {
-					response.sendRedirect("/whitelab/search/simple");
+					response.sendRedirect(this.servlet.contextRoot+"/search/simple");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

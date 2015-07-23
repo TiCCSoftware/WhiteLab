@@ -240,6 +240,7 @@ public abstract class BaseResponse {
 		}
 		
 		this.setLocale();
+		this.getContext().put("context_root", this.servlet.contextRoot);
 		
 		SessionManager.setTour(session, this.getParameter("tour", 0));
 
