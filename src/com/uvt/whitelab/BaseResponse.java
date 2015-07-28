@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,6 +60,8 @@ public abstract class BaseResponse {
 	protected int queryCount = 0;
 	protected String namespace;
 	
+	protected Map<String,Object> queryDefaults = new HashMap<String,Object>();
+	
 	protected long startTime = new Date().getTime();
 
 	protected BaseResponse(String ns) {
@@ -98,15 +101,15 @@ public abstract class BaseResponse {
 	protected void initQuery() {
 		query = null;
 		String id = this.getParameter("id", "");
-		String patt = this.getParameter("query", "").replaceAll("&", "%26");
+		String patt = this.getParameter("query", (String) this.getQueryDefault("query", "")).replaceAll("&", "%26");
 		String within = this.getParameter("within", "");
-		int view = this.getParameter("view", 1);
-		int from = this.getParameter("from", 1);
+		int view = this.getParameter("view", (int) this.getQueryDefault("view", 1));
+		int from = this.getParameter("from", (int) this.getQueryDefault("from", 4));
 		boolean editQuery = Boolean.parseBoolean(this.getParameter("edit", "false"));
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
 		
-		this.servlet.log("QUERY VIEW: "+view);
+//		this.servlet.log("QUERY VIEW: "+view);
 		
 		if (id.length() > 0 && view != 9 && view != 17) {
 			query = SessionManager.getQuery(session, id, from);
@@ -147,8 +150,8 @@ public abstract class BaseResponse {
 		boolean deleteQuery = Boolean.parseBoolean(this.getParameter("delete", "false"));
 		boolean updateQuery = true;
 
-		this.servlet.log("TOUR QUERY VIEW: "+view);
-		this.servlet.log("TOUR QUERY FROM: "+this.getParameter("from", 0));
+//		this.servlet.log("TOUR QUERY VIEW: "+view);
+//		this.servlet.log("TOUR QUERY FROM: "+this.getParameter("from", 0));
 		
 		if (id.length() > 0 && view != 9 && view != 17) {
 			query = SessionManager.getQuery(session, id, from);
@@ -159,7 +162,7 @@ public abstract class BaseResponse {
 		}
 		
 		if (id.length() == 0 && patt.length() > 0) {
-			this.servlet.log("NEW TOUR QUERY");
+//			this.servlet.log("NEW TOUR QUERY");
 			query = new Query(this);
 			id = query.getId();
 		}
@@ -243,6 +246,7 @@ public abstract class BaseResponse {
 		this.getContext().put("context_root", this.servlet.contextRoot);
 		
 		SessionManager.setTour(session, this.getParameter("tour", 0));
+		this.setQueryDefaults();
 
 		if (SessionManager.isOnTour(session)) {
 			this.initTourQuery();
@@ -539,5 +543,14 @@ public abstract class BaseResponse {
 	abstract protected void logRequest();
 
 	abstract public BaseResponse duplicate();
+
+	protected void setQueryDefaults() {
+	}
+	
+	public Object getQueryDefault(String key, Object alt) {
+		if (this.queryDefaults.containsKey(key))
+			return this.queryDefaults.get(key);
+		return alt;
+	}
 
 }

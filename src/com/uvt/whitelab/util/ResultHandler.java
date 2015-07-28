@@ -170,7 +170,7 @@ public class ResultHandler {
 	}
 
 	private String getStylesheet(Integer view, boolean check) throws IOException {
-		this.servlet.log("STYLESHEET VIEW: "+view);
+//		this.servlet.log("STYLESHEET VIEW: "+view);
 		String stylesheet = "";
 		if (view == 1) {
 			return loadStylesheet("perhitresults.xsl");

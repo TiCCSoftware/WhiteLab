@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.uvt.whitelab.BaseResponse;
+import com.uvt.whitelab.util.Query;
 import com.uvt.whitelab.util.ResultHandler;
 import com.uvt.whitelab.util.WhitelabDocument;
 
@@ -137,6 +138,14 @@ public class ExploreDocumentResponse extends BaseResponse {
 	@Override
 	public ExploreDocumentResponse duplicate() {
 		return new ExploreDocumentResponse("explore");
+	}
+
+	@Override
+	protected void initQuery() {
+		query = null;
+		String docPid = this.getParameter("docpid", "");
+		if (docPid.length() > 0)
+			query = new Query(this);
 	}
 
 }

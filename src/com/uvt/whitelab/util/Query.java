@@ -120,11 +120,11 @@ public class Query implements Serializable {
 		contextRoot = br.getServlet().contextRoot;
 		try {
 			id = UUID.randomUUID().toString();
-			from = br.getParameter("from", 4);
-			pattern = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			from = br.getParameter("from", (int) br.getQueryDefault("view", 4));
+			pattern = URLDecoder.decode(br.getParameter("query", (String) br.getQueryDefault("query", "")), "UTF-8");
 			pattern = pattern.replaceAll("&", "%26");
-			view = br.getParameter("view", 1);
-			group = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
+			view = br.getParameter("view", (int) br.getQueryDefault("view", 1));
+			group = URLDecoder.decode(br.getParameter("group", (String) br.getQueryDefault("group", "")), "UTF-8");
 			sort = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
 			within = br.getParameter("within", "");
 			start = br.getParameter("start", -1);
@@ -151,12 +151,12 @@ public class Query implements Serializable {
 	
 	public Query updateQuery(BaseResponse br) {
 		try {
-			String p = URLDecoder.decode(br.getParameter("query", ""), "UTF-8");
+			String p = URLDecoder.decode(br.getParameter("query", (String) br.getQueryDefault("query", "")), "UTF-8");
 			p = p.replaceAll("&", "%26");
 			String w = br.getParameter("within", "");
-			int v = br.getParameter("view", 1);
-//			int f = br.getParameter("from", 0);
-			String g = URLDecoder.decode(br.getParameter("group", ""), "UTF-8");
+			int v = br.getParameter("view", (int) br.getQueryDefault("view", 1));
+//			int f = br.getParameter("from", (int) br.getQueryDefault("view", 4));
+			String g = URLDecoder.decode(br.getParameter("group", (String) br.getQueryDefault("group", "")), "UTF-8");
 			String s = URLDecoder.decode(br.getParameter("sort", ""), "UTF-8");
 			int st = br.getParameter("start", -1);
 			int en = br.getParameter("end", -1);
